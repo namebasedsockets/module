@@ -98,6 +98,8 @@ static int name_stream_release(struct socket *sock)
 		name->dname_answer_len = 0;
 		name->dname_answer_index = 0;
 	}
+	if (name->sname.sname_addr.name[0])
+		name_delete_registration(name->sname.sname_addr.name);
 	if (name->ipv6_sock) {
 		kernel_sock_shutdown(name->ipv6_sock, SHUT_WR);
 		sock_release(name->ipv6_sock);
@@ -188,7 +190,6 @@ name_stream_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	 * also be included in the request.  Note that the request is
 	 * stateless:  if the addresses change, a new request can be sent, and
 	 * it should replace the current name registration.
-	 * FIXME: the names should also be unregistered on close.
 	 */
 	err = name_send_registration(addr->sname_addr.name, name_bind_cb, sock);
 	if (err)
