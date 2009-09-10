@@ -119,7 +119,17 @@ out:
 	return 0;
 }
 
-static void name_bind_cb(int result, const char *bound_name, void *data)
+static void name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn)
+{
+	/* FIXME: need to check if the name is already registered */
+	/* FIXME: need attempt to bind to the specified port on each
+	 * transport socket.
+	 */
+	printk(KERN_INFO "bound to %s\n", fqdn);
+	strcpy(name->sname.sname_addr.name, fqdn);
+}
+
+static void name_register_cb(int result, const char *bound_name, void *data)
 {
 	struct socket *sock = data;
 	struct sock *sk = sock->sk;
@@ -128,14 +138,25 @@ static void name_bind_cb(int result, const char *bound_name, void *data)
 	sk->sk_state &= ~NAMEF_BINDING;
 	name->async_error = -result;
 	if (!result)
+		name_bind_to_fqdn(name, bound_name);
+}
+
+static void name_qualify_cb(const char *fully_qualified_name, void *data)
+{
+	struct socket *sock = data;
+	struct sock *sk = sock->sk;
+	struct name_stream_sock *name = name_stream_sk(sk);
+	int err;
+
+	printk(KERN_INFO "name qualified as %s\n", fully_qualified_name);
+	/* FIXME: need to select addresses to register for name */
+	err = name_send_registration(fully_qualified_name,
+				     name_register_cb, sock);
+	if (err)
 	{
-		/* FIXME: need attempt to bind to the specified port on each
-		 * transport socket.  Unfortunately none may exist at the
-		 * moment, because they're not created except in connect.
-		 * That needs to be fixed too.
-		 */
-		printk(KERN_INFO "bound to %s\n", bound_name);
-		strcpy(name->sname.sname_addr.name, bound_name);
+		name->async_error = -err;
+		sk->sk_state &= ~NAMEF_BINDING;
+		sk->sk_state_change(sk);
 	}
 }
 
@@ -167,7 +188,6 @@ name_stream_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 
 	if (addr_len < sizeof(struct sockaddr_name))
 		return -EINVAL;
-	/* FIXME: need to check whether the name has already been bound */
 	printk(KERN_INFO "requesting bind to %s\n", addr->sname_addr.name);
 
 	sk = sock->sk;
@@ -197,7 +217,7 @@ name_stream_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	 * stateless:  if the addresses change, a new request can be sent, and
 	 * it should replace the current name registration.
 	 */
-	err = name_send_registration(addr->sname_addr.name, name_bind_cb, sock);
+	err = name_fully_qualify(addr->sname_addr.name, name_qualify_cb, sock);
 	if (err)
 		goto out;
 

@@ -230,10 +230,47 @@ handle_register_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 }
 
 static int
+handle_qualify_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
+{
+	struct pending_node *node;
+
+	printk("received qualify reply message from user %d, process %d\n",
+		NETLINK_CREDS(skb)->uid,
+		NETLINK_CREDS(skb)->pid);
+	node = pending_queue_find_and_remove(nlh->nlmsg_seq);
+	if (node)
+	{
+		printk(KERN_INFO "found reply on pending queue\n");
+		if (NLMSG_PAYLOAD(nlh, 0) >= sizeof(int))
+		{
+			int name_len;
+			char name_buf[MAX_NAME_LEN];
+			qualify_cb cb = node->cb;
+
+			memcpy(&name_len, NLMSG_DATA(nlh), sizeof(int));
+			if (name_len)
+				memcpy(name_buf, NLMSG_DATA(nlh) + sizeof(int),
+				       name_len);
+			name_buf[name_len] = 0;
+			cb(name_buf, node->data);
+		}
+		else
+			printk(KERN_WARNING
+			       "invalid payload length in reply\n");
+	}
+	else
+		printk(KERN_WARNING "reply for unknown request\n");
+	/* Send an empty REPLY as an ack */
+	return namestack_send_message(NETLINK_CREDS(skb)->pid,
+		NAME_STACK_QUALIFY_REPLY, NULL, 0);
+}
+
+static int
 nos_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 {
 	int err = 0;
 
+	printk(KERN_INFO "got message type %d\n", nlh->nlmsg_type);
 	switch (nlh->nlmsg_type) {
 	case NAME_STACK_REGISTER:
 		err = handle_register(skb, nlh);
@@ -243,6 +280,9 @@ nos_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 		break;
 	case NAME_STACK_REGISTER_REPLY:
 		err = handle_register_reply(skb, nlh);
+		break;
+	case NAME_STACK_QUALIFY_REPLY:
+		err = handle_qualify_reply(skb, nlh);
 		break;
 	default:
 		err = -ENOSYS;
@@ -348,6 +388,25 @@ int name_send_query(const char *name, query_resolv_cb cb, void *data)
 		/* FIXME:  who handles retrying in case of failure? */
 		err = namestack_send_message_tracked(daemon_pid,
 						     NAME_STACK_NAME_QUERY,
+						     name, strlen(name) + 1,
+						     cb, data);
+	}
+	return err;
+}
+
+int name_fully_qualify(const char *name, qualify_cb cb, void *data)
+{
+	int err;
+
+	if (!daemon_pid) {
+		printk(KERN_WARNING "no resolver daemon, unable to send query\n");
+		err = -ENOSYS;
+	}
+	else {
+		printk(KERN_INFO "qualifying %s\n", name);
+		/* FIXME:  who handles retrying in case of failure? */
+		err = namestack_send_message_tracked(daemon_pid,
+						     NAME_STACK_QUALIFY_QUERY,
 						     name, strlen(name) + 1,
 						     cb, data);
 	}
