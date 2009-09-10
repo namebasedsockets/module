@@ -197,4 +197,12 @@ out:
 	return rc;
 }
 
+void name_af_exit(void)
+{
+	proto_unregister(&name_stream_proto);
+	proto_unregister(&name_dgram_proto);
+	sock_unregister(name_family_ops.family);
+}
+
 EXPORT_SYMBOL(name_af_init);
+EXPORT_SYMBOL(name_af_exit);

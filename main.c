@@ -112,6 +112,7 @@ static __init int namestack_init(void)
 
 static void __exit namestack_exit(void)
 {
+	name_af_exit();
 	netlink_kernel_release(nls);
 	printk(KERN_INFO "name-oriented stack module unloading\n");
 }
