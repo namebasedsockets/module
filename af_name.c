@@ -28,24 +28,6 @@ enum {
 	NAMEF_ESTABLISHED = (1 << NAME_ESTABLISHED),
 };
 
-struct name_stream_sock
-{
-	struct sock sk;
-	struct sockaddr_name sname;
-	struct sockaddr_name dname;
-	u_char *dname_answer;
-	int dname_answer_len;
-	uint16_t dname_answer_index;
-	int async_error;
-	struct socket *ipv4_sock;
-	struct socket *ipv6_sock;
-};
-
-static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
-{
-	return (struct name_stream_sock *)sk;
-}
-
 static void name_stream_state_change(struct sock *sk)
 {
 	struct name_stream_sock *name;
@@ -98,8 +80,10 @@ static int name_stream_release(struct socket *sock)
 		name->dname_answer_len = 0;
 		name->dname_answer_index = 0;
 	}
-	if (name->sname.sname_addr.name[0])
+	if (name->sname.sname_addr.name[0]) {
+		name_cache_delete(name->sname.sname_addr.name);
 		name_delete_registration(name->sname.sname_addr.name);
+	}
 	if (name->ipv6_sock) {
 		kernel_sock_shutdown(name->ipv6_sock, SHUT_WR);
 		sock_release(name->ipv6_sock);
@@ -121,12 +105,10 @@ out:
 
 static void name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn)
 {
-	/* FIXME: need to check if the name is already registered */
 	/* FIXME: need attempt to bind to the specified port on each
 	 * transport socket.
 	 */
 	printk(KERN_INFO "bound to %s\n", fqdn);
-	strcpy(name->sname.sname_addr.name, fqdn);
 }
 
 static void name_register_cb(int result, const char *bound_name, void *data)
@@ -148,11 +130,18 @@ static int name_register(struct socket *sock, const char *fully_qualified_name)
 	int err;
 
 	printk(KERN_INFO "name qualified as %s\n", fully_qualified_name);
+	strcpy(name->sname.sname_addr.name, fully_qualified_name);
+	err = name_cache_add(fully_qualified_name, sock);
+	if (err)
+		goto out;
 	/* FIXME: need to select addresses to register for name */
 	err = name_send_registration(fully_qualified_name,
 				     name_register_cb, sock);
 	if (err)
-	{
+		name_cache_delete(fully_qualified_name);
+
+out:
+	if (err) {
 		name->async_error = -err;
 		sk->sk_state &= ~NAMEF_BINDING;
 		sk->sk_state_change(sk);

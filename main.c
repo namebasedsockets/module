@@ -327,11 +327,14 @@ static __init int namestack_init(void)
 		return -ENOMEM;
 	}
 	rc = name_af_init();
+	if (!rc)
+		rc = name_cache_init();
 	return rc;
 }
 
 static void __exit namestack_exit(void)
 {
+	name_cache_free();
 	name_af_exit();
 	netlink_kernel_release(nls);
 	/* Only after no new requests can be received is it safe to free the
