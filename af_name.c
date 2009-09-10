@@ -130,6 +130,20 @@ static int name_bind_ipv6(struct socket *sock, const char *fqdn, __be16 port,
 	return kernel_bind(sock, (struct sockaddr *)&sin, sizeof(sin));
 }
 
+static int name_create_v6_sock(int type, int protocol, struct socket **sock)
+{
+	int err = sock_create_kern(PF_INET6, type, protocol, sock);
+
+	return err;
+}
+
+static int name_create_v4_sock(int type, int protocol, struct socket **sock)
+{
+	int err = sock_create_kern(PF_INET, type, protocol, sock);
+
+	return err;
+}
+
 static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 			     int local)
 {
@@ -146,14 +160,14 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 	 */
 	if (name->sname.sname_port) {
 		if (!name->ipv6_sock) {
-			err = sock_create_kern(PF_INET6, SOCK_STREAM, 0,
-					       &name->ipv6_sock);
+			err = name_create_v6_sock(SOCK_STREAM, 0,
+						  &name->ipv6_sock);
 			if (err)
 				goto out;
 		}
 		if (!name->ipv4_sock) {
-			err = sock_create_kern(PF_INET, SOCK_STREAM, 0,
-					       &name->ipv4_sock);
+			err = name_create_v4_sock(SOCK_STREAM, 0,
+						  &name->ipv4_sock);
 			if (err)
 				goto out;
 		}
@@ -657,14 +671,12 @@ static int name_stream_listen(struct socket *sock, int backlog)
 	 * what does backlog mean?
 	 */
 	if (!name->ipv6_sock) {
-		err = sock_create_kern(PF_INET6, SOCK_STREAM, 0,
-				       &name->ipv6_sock);
+		err = name_create_v6_sock(SOCK_STREAM, 0, &name->ipv6_sock);
 		if (err)
 			goto out;
 	}
 	if (!name->ipv4_sock) {
-		err = sock_create_kern(PF_INET, SOCK_STREAM, 0,
-				       &name->ipv4_sock);
+		err = name_create_v4_sock(SOCK_STREAM, 0, &name->ipv4_sock);
 		if (err)
 			goto out;
 	}
