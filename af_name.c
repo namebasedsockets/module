@@ -15,6 +15,7 @@ struct name_stream_sock
 	struct name_addr dname;
 	u_char *dname_answer;
 	int dname_answer_len;
+	uint16_t dname_answer_index;
 };
 
 static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
@@ -37,6 +38,7 @@ static int name_stream_release(struct socket *sock)
 		kfree(name->dname_answer);
 		name->dname_answer = NULL;
 		name->dname_answer_len = 0;
+		name->dname_answer_index = 0;
 	}
 
 	sock_set_flag(sk, SOCK_DEAD);
@@ -87,13 +89,15 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 	const u_char *rdata;
 
 	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
-				 T_AAAA, 0, &rdlength, &rdata)) {
+				 T_AAAA, name->dname_answer_index, &rdlength,
+				 &rdata)) {
 		/* FIXME: placeholder */
 		printk(KERN_INFO "connect to IPv6 address\n");
 	}
 	else if (!find_answer_of_type(name->dname_answer,
 				      name->dname_answer_len,
-				      T_A, 0, &rdlength, &rdata)) {
+				      T_A, name->dname_answer_index, &rdlength,
+				      &rdata)) {
 		/* FIXME: placeholder */
 		printk(KERN_INFO "connect to IPv4 address\n");
 	}
@@ -124,6 +128,7 @@ static void name_stream_query_resolve(const u_char *response, int len,
 		else
 		{
 			name->dname_answer_len = len;
+			name->dname_answer_index = 0;
 			memcpy(name->dname_answer, response, len);
 			sk->sk_state = NAME_CONNECTING;
 			sk->sk_state_change(sk);
@@ -259,6 +264,7 @@ static struct sock *name_alloc_stream_socket(struct net *net,
 	name->dname.name[0] = 0;
 	name->dname_answer = NULL;
 	name->dname_answer_len = 0;
+	name->dname_answer_index = 0;
 out:
 	return sk;
 }
