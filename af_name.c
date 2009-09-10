@@ -156,13 +156,27 @@ static void name_register_cb(int result, const char *bound_name, void *data)
 	name->async_error = -result;
 }
 
+static int name_is_local(const char *name)
+{
+	const char *p;
+
+	//assert(strlen(name) > 1);
+	p = name + strlen(name) - 1;
+	if (*p != '.')
+		return 0;
+	for (p = p - 1; *p != '.' && p >= name; p--)
+		;
+	if (p == name)
+		return 0;
+	return !strcasecmp(p + 1, "localhost.");
+}
+
 static int name_register(struct socket *sock, const char *fully_qualified_name,
 			__be16 port)
 {
 	struct sock *sk = sock->sk;
 	struct name_stream_sock *name = name_stream_sk(sk);
 	int err;
-	const char *p;
 
 	printk(KERN_INFO "name qualified as %s\n", fully_qualified_name);
 	strcpy(name->sname.sname_addr.name, fully_qualified_name);
@@ -172,11 +186,7 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 		goto out;
 	/* FIXME: need to select addresses to register for name */
 	//assert(strlen(fully_qualified_name) > 1);
-	p = fully_qualified_name + strlen(fully_qualified_name) - 1;
-	//assert(*p == '.');
-	for (p = p - 1; *p != '.' && p >= fully_qualified_name; p--)
-		;
-	if (p == fully_qualified_name) {
+	if (!strchr(fully_qualified_name, '.')) {
 		/* FIXME: name doesn't exist in any domain.  Do I need to make
 		 * a canonical name out of it?
 		 */
@@ -184,7 +194,7 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 		err = -EINVAL;
 		goto out;
 	}
-	if (!strcmp(p + 1, "localhost."))
+	if (name_is_local(fully_qualified_name))
 		err = name_bind_to_fqdn(name, fully_qualified_name, 1);
 	else
 		err = name_send_registration(fully_qualified_name,
