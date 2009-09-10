@@ -4,6 +4,8 @@
 #include <linux/module.h>
 #include <net/sock.h>
 #include <linux/inname.h>
+#include "dns.h"
+#include "nameser.h"
 #include "namestack_priv.h"
 
 struct name_stream_sock
@@ -78,6 +80,30 @@ static long name_wait_for_connect(struct sock *sk, long timeo)
 	return timeo;
 }
 
+static void name_stream_connect_to_resolved_name(struct sock *sk)
+{
+	struct name_stream_sock *name = name_stream_sk(sk);
+	uint16_t rdlength;
+	const u_char *rdata;
+
+	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
+				 T_AAAA, 0, &rdlength, &rdata)) {
+		/* FIXME: placeholder */
+		printk(KERN_INFO "connect to IPv6 address\n");
+	}
+	else if (!find_answer_of_type(name->dname_answer,
+				      name->dname_answer_len,
+				      T_A, 0, &rdlength, &rdata)) {
+		/* FIXME: placeholder */
+		printk(KERN_INFO "connect to IPv4 address\n");
+	}
+	else {
+		printk(KERN_WARNING "no supported address type found\n");
+		sk->sk_state = NAME_CLOSED;
+		sk->sk_state_change(sk);
+	}
+}
+
 static void name_stream_query_resolve(const u_char *response, int len,
 				      void *data)
 {
@@ -101,7 +127,7 @@ static void name_stream_query_resolve(const u_char *response, int len,
 			memcpy(name->dname_answer, response, len);
 			sk->sk_state = NAME_CONNECTING;
 			sk->sk_state_change(sk);
-			/* FIXME: send off connect request here */
+			name_stream_connect_to_resolved_name(sk);
 		}
 	}
 	else
