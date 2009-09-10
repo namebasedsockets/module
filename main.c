@@ -146,7 +146,7 @@ handle_register(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 }
 
 static int
-handle_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
+handle_name_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 {
 	struct pending_node *node;
 
@@ -195,7 +195,7 @@ nos_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 		err = handle_register(skb, nlh);
 		break;
 	case NAME_STACK_NAME_REPLY:
-		err = handle_reply(skb, nlh);
+		err = handle_name_reply(skb, nlh);
 		break;
 	default:
 		err = -ENOSYS;
