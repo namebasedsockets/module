@@ -109,6 +109,31 @@ out:
 	return 0;
 }
 
+static int
+name_stream_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+{
+	struct sockaddr_name *addr = (struct sockaddr_name *)uaddr;
+	int err;
+
+	if (addr_len < sizeof(struct sockaddr_name)) {
+		err = -EINVAL;
+		goto out;
+	}
+	printk(KERN_INFO "requesting bind to %s\n", addr->sname_addr.name);
+	/* FIXME: need to:
+	 * 1. Attempt to claim the name (in DNS).  Can't continue until this
+	 *    succeeds.  This should block the caller until this process
+	 *    completes, perhaps with another wait loop?
+	 * 2. Attempt to bind to the specified port on each transport socket.
+	 *    Unfortunately none may exist at the moment, because they're not
+	 *    created until connect.  That needs to be fixed too.
+	 * 3. Copy the name into the source name (easy.)
+	 */
+	err = 0;
+out:
+	return err;
+}
+
 static long name_wait_for_connect(struct sock *sk, long timeo)
 {
 	DEFINE_WAIT(wait);
@@ -400,7 +425,7 @@ static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,
 	.release = name_stream_release,
-	.bind = sock_no_bind,
+	.bind = name_stream_bind,
 	.connect = name_stream_connect,
 	.socketpair = sock_no_socketpair,
 	.accept = sock_no_accept,
