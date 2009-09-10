@@ -1337,6 +1337,26 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			err = name_stream_connect_to_v6_address(sk, sizeof(in6),
 								(const u_char *)&in6);
 		}
+		else if (name_find_v4_canonical_suffix(
+			name->dname.sname_addr.name) != NULL) {
+			__be32 v4;
+
+			err = name_parse_canonical_v4(
+				name->dname.sname_addr.name, &v4);
+			if (!err)
+				err = name_stream_connect_to_v4_address(sk,
+					sizeof(v4), (const u_char *)&v4);
+		}
+		else if (name_find_v6_canonical_suffix(
+			name->dname.sname_addr.name) != NULL) {
+			struct in6_addr in6;
+
+			err = name_parse_canonical_v6(
+				name->dname.sname_addr.name, &in6);
+			if (!err)
+				err = name_stream_connect_to_v6_address(sk,
+					sizeof(in6), in6.s6_addr);
+		}
 		else
 			err = name_send_query(sname->sname_addr.name,
 					      name_stream_query_resolve, sock);
