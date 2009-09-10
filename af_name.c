@@ -11,17 +11,31 @@ struct name_stream_sock
 	struct sock sk;
 	struct name_addr sname;
 	struct name_addr dname;
+	u_char *dname_answer;
+	int dname_answer_len;
 };
+
+static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
+{
+	return (struct name_stream_sock *)sk;
+}
 
 static int name_stream_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
+	struct name_stream_sock *name = name_stream_sk(sk);
 
 	if (!sk)
 		goto out;
 
 	if (!sock_flag(sk, SOCK_DEAD))
 		sk->sk_state_change(sk);
+
+	if (name->dname_answer) {
+		kfree(name->dname_answer);
+		name->dname_answer = NULL;
+		name->dname_answer_len = 0;
+	}
 
 	sock_set_flag(sk, SOCK_DEAD);
 	sock->sk = NULL;
@@ -72,9 +86,23 @@ static void name_stream_query_resolve(const u_char *response, int len,
 
 	if (len > 0)
 	{
-		sk->sk_state = NAME_CONNECTING;
-		sk->sk_state_change(sk);
-		/* FIXME: send off connect request here */
+		struct name_stream_sock *name = name_stream_sk(sk);
+
+		name->dname_answer = kmalloc(len, GFP_ATOMIC);
+		if (!name->dname_answer)
+		{
+			/* Allocation failure, close request */
+			sk->sk_state = NAME_CLOSED;
+			sk->sk_state_change(sk);
+		}
+		else
+		{
+			name->dname_answer_len = len;
+			memcpy(name->dname_answer, response, len);
+			sk->sk_state = NAME_CONNECTING;
+			sk->sk_state_change(sk);
+			/* FIXME: send off connect request here */
+		}
 	}
 	else
 	{
@@ -187,11 +215,6 @@ static struct proto name_stream_proto = {
 	.obj_size = sizeof(struct name_stream_sock),
 };
 
-static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
-{
-	return (struct name_stream_sock *)sk;
-}
-
 static struct sock *name_alloc_stream_socket(struct net *net,
 					     struct socket *sock)
 {
@@ -208,6 +231,8 @@ static struct sock *name_alloc_stream_socket(struct net *net,
 	name = name_stream_sk(sk);
 	name->sname.name[0] = 0;
 	name->dname.name[0] = 0;
+	name->dname_answer = NULL;
+	name->dname_answer_len = 0;
 out:
 	return sk;
 }
