@@ -962,6 +962,25 @@ static int name_stream_sendmsg(struct kiocb *iocb, struct socket *sock,
 	return connected_sock->ops->sendmsg(iocb, connected_sock, msg, len);
 }
 
+static int name_stream_recvmsg(struct kiocb *iocb, struct socket *sock,
+			       struct msghdr *msg, size_t len, int flags)
+{
+	struct sock *sk = sock->sk;
+	struct name_stream_sock *name = name_stream_sk(sk);
+	struct socket *connected_sock;
+
+	if (sock->state != SS_CONNECTED)
+		return -ENOTCONN;
+	if (name->ipv6_sock)
+		connected_sock = name->ipv6_sock;
+	else if (name->ipv4_sock)
+		connected_sock = name->ipv4_sock;
+	else
+		return -ENOTCONN;
+	return connected_sock->ops->recvmsg(iocb, connected_sock, msg, len,
+					    flags);
+}
+
 static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,
@@ -981,7 +1000,7 @@ static const struct proto_ops name_stream_ops = {
 	.setsockopt = sock_no_setsockopt,
 	.getsockopt = sock_no_getsockopt,
 	.sendmsg = name_stream_sendmsg,
-	.recvmsg = sock_no_recvmsg,
+	.recvmsg = name_stream_recvmsg,
 	.mmap = sock_no_mmap,
 	.sendpage = sock_no_sendpage,
 };
