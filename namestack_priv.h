@@ -48,6 +48,12 @@ struct in_ifaddr;
 int choose_addresses(int *num_v6_addresses, struct in6_addr **v6_addresses,
 		     int *num_v4_addresses, __be32 **v4_addresses);
 
+/* Matches the sin6_addr portion of the address to a scope id on the local
+ * host, and sets sin6's scope id to the matching scope id.
+ * Returns 0 if found, an error code on failure.
+ */
+int match_v6_address_to_scope(struct sockaddr_in6 *sin6);
+
 /* Name registration (bind()/DNS update) functions */
 typedef void (*qualify_cb)(const char *name, void *data);
 int name_fully_qualify(const char *name, qualify_cb cb, void *data);

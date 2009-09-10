@@ -157,3 +157,31 @@ int choose_addresses(int *num_v6_addresses, struct in6_addr **v6_addresses,
 out:
 	return err;
 }
+
+int match_v6_address_to_scope(struct sockaddr_in6 *sin6)
+{
+	struct net *net = &init_net;
+	struct net_device *dev;
+
+	/* FIXME: lock net? */
+	for_each_netdev(net, dev) {
+		if (!(dev->flags & IFF_UP))
+			continue;
+		if (dev->flags & IFF_LOOPBACK)
+			continue;
+		if (dev->ip6_ptr) {
+			struct inet6_dev *in6 = dev->ip6_ptr;
+			struct inet6_ifaddr *addr;
+
+			for (addr = in6->addr_list; addr; addr = addr->if_next)
+				if (!memcmp(&addr->addr,
+				    sin6->sin6_addr.s6_addr,
+				    sizeof(addr->addr)))
+				{
+					sin6->sin6_scope_id = dev->ifindex;
+					return 0;
+				}
+		}
+	}
+	return -ENODEV;
+}

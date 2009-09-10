@@ -732,8 +732,20 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 				goto out;
 		}
 		memset(&sin, 0, sizeof(sin));
-		if (v6addr)
+		if (v6addr) {
 			memcpy(&sin.sin6_addr, v6addr, sizeof(sin.sin6_addr));
+			/* If it's a link-local address, match the address to
+			 * a scope id that defines the interface on which it'll
+			 * be used.
+			 */
+			if (sin.sin6_addr.s6_addr[0] == 0xfe &&
+			    sin.sin6_addr.s6_addr[1] == 0x80)
+			{
+				err = match_v6_address_to_scope(&sin);
+				if (err)
+					goto out;
+			}
+		}
 		sin.sin6_port = name->sname.sname_port;
 		err = kernel_bind(name->ipv6_sock, (struct sockaddr *)&sin,
 				  sizeof(sin));
