@@ -143,11 +143,14 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			goto out;
 	}
 
-	/* FIXME: connection may have been closed externally, need to check
-	 * state.
-	 */
-	sock->state = SS_CONNECTED;
-	err = 0;
+	if ((1 << sk->sk_state) & (NAMEF_CLOSED)) {
+		sock->state = SOCK_DEAD;
+		err = -EHOSTUNREACH;
+	}
+	else {
+		sock->state = SS_CONNECTED;
+		err = 0;
+	}
 
 out:
 	release_sock(sk);
