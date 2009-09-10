@@ -62,6 +62,22 @@ static void name_stream_state_change(struct sock *sk)
 	read_unlock(&sk->sk_callback_lock);
 }
 
+static int name_is_local(const char *name)
+{
+	const char *p;
+
+        if (!name[0])
+		return 0;
+	p = name + strlen(name) - 1;
+	if (*p != '.')
+		return 0;
+	for (p = p - 1; *p != '.' && p >= name; p--)
+		;
+	if (p == name)
+		return 0;
+	return !strcasecmp(p + 1, "localhost.");
+}
+
 static int name_stream_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
@@ -81,7 +97,8 @@ static int name_stream_release(struct socket *sock)
 	}
 	if (name->sname.sname_addr.name[0]) {
 		name_cache_delete(name->sname.sname_addr.name);
-		name_delete_registration(name->sname.sname_addr.name);
+		if (!name_is_local(name->sname.sname_addr.name))
+			name_delete_registration(name->sname.sname_addr.name);
 	}
 	if (name->ipv6_sock) {
 		kernel_sock_shutdown(name->ipv6_sock, SHUT_WR);
@@ -707,21 +724,6 @@ static void name_register_cb(int result, const char *bound_name, void *data)
 		result = name_bind_to_fqdn(name, bound_name, 0);
 	sk->sk_state &= ~NAMEF_BINDING;
 	name->async_error = -result;
-}
-
-static int name_is_local(const char *name)
-{
-	const char *p;
-
-	//assert(strlen(name) > 1);
-	p = name + strlen(name) - 1;
-	if (*p != '.')
-		return 0;
-	for (p = p - 1; *p != '.' && p >= name; p--)
-		;
-	if (p == name)
-		return 0;
-	return !strcasecmp(p + 1, "localhost.");
 }
 
 static int name_register(struct socket *sock, const char *fully_qualified_name,
