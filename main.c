@@ -181,8 +181,8 @@ handle_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 	else
 		printk(KERN_WARNING "reply for unknown request\n");
 	/* Send an empty REPLY as an ack */
-	return namestack_send_message(NETLINK_CREDS(skb)->pid, NAME_STACK_REPLY,
-		NULL, 0);
+	return namestack_send_message(NETLINK_CREDS(skb)->pid,
+		NAME_STACK_NAME_REPLY, NULL, 0);
 }
 
 static int
@@ -194,7 +194,7 @@ nos_rcv_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
 	case NAME_STACK_REGISTER:
 		err = handle_register(skb, nlh);
 		break;
-	case NAME_STACK_REPLY:
+	case NAME_STACK_NAME_REPLY:
 		err = handle_reply(skb, nlh);
 		break;
 	default:
@@ -300,7 +300,7 @@ int name_send_query(const char *name, query_resolv_cb cb, void *data)
 		printk(KERN_INFO "resolving %s\n", name);
 		/* FIXME:  who handles retrying in case of failure? */
 		err = namestack_send_message_tracked(daemon_pid,
-						     NAME_STACK_QUERY,
+						     NAME_STACK_NAME_QUERY,
 						     name, strlen(name) + 1,
 						     cb, data);
 	}

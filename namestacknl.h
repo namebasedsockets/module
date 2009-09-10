@@ -8,8 +8,11 @@ enum {
      * vice-versa.  Should I separate message types by the direction they're
      * sent?
      */
-    NAME_STACK_QUERY,
-    NAME_STACK_REPLY
+    NAME_STACK_NAME_QUERY,
+    NAME_STACK_NAME_REPLY,
+    NAME_STACK_REGISTER_QUERY,
+    NAME_STACK_REGISTER_REPLY,
+    NAME_STACK_REGISTER_DELETE
 };
 
 #endif
