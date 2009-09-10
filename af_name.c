@@ -78,6 +78,44 @@ static int name_is_local(const char *name)
 	return !strcasecmp(p + 1, "localhost.");
 }
 
+/* If name ends in the IPv4 canonical suffix .in-addr.arpa., returns a
+ * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
+ */
+static const char *name_find_v4_canonical_suffix(const char *name)
+{
+	static const char canon_v4_suffix[] = ".in-addr.arpa.";
+
+	if (strlen(name) > strlen(canon_v4_suffix)) {
+		const char *p = name + strlen(name) - strlen(canon_v4_suffix);
+
+		if (!strcasecmp(p, canon_v4_suffix))
+			return p;
+	}
+	return NULL;
+}
+
+/* If name ends in the IPv6 canonical suffix .ip6.arpa., returns a
+ * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
+ */
+static const char *name_find_v6_canonical_suffix(const char *name)
+{
+	static const char canon_v6_suffix[] = ".ip6.arpa.";
+
+	if (strlen(name) > strlen(canon_v6_suffix)) {
+		const char *p = name + strlen(name) - strlen(canon_v6_suffix);
+
+		if (!strcasecmp(p, canon_v6_suffix))
+			return p;
+	}
+	return NULL;
+}
+
+static inline int name_is_canonical(const char *name)
+{
+	return name_find_v4_canonical_suffix(name) != NULL ||
+	       name_find_v6_canonical_suffix(name) != NULL;
+}
+
 static int name_stream_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
@@ -97,7 +135,8 @@ static int name_stream_release(struct socket *sock)
 	}
 	if (name->sname.sname_addr.name[0]) {
 		name_cache_delete(name->sname.sname_addr.name);
-		if (!name_is_local(name->sname.sname_addr.name))
+		if (!name_is_local(name->sname.sname_addr.name) &&
+		    !name_is_canonical(name->sname.sname_addr.name))
 			name_delete_registration(name->sname.sname_addr.name);
 	}
 	if (name->ipv6_sock) {
