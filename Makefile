@@ -1,4 +1,4 @@
-obj-m += namestack.o
+obj-m += namestack.o af_name.o
 namestack-objs := main.o
 
 # ordinary compiles:
