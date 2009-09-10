@@ -260,8 +260,11 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 		err = choose_addresses(&num_v6_addresses, &v6_addresses,
 				       &num_v4_addresses, &v4_addresses);
 		if (!err) {
-			/* FIXME: send addresses to register with name */
 			err = name_send_registration(fully_qualified_name,
+						     v6_addresses,
+						     num_v6_addresses,
+						     v4_addresses,
+						     num_v4_addresses,
 						     name_register_cb, sock);
 			kfree(v6_addresses);
 			kfree(v4_addresses);

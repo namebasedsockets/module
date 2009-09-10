@@ -416,7 +416,12 @@ int name_fully_qualify(const char *name, qualify_cb cb, void *data)
 	return err;
 }
 
-int name_send_registration(const char *name, register_cb cb, void *data)
+int name_send_registration(const char *name,
+			   const struct in6_addr *v6_addresses,
+			   int num_v6_addresses,
+			   const __be32 *v4_addresses,
+			   int num_v4_addresses,
+			   register_cb cb, void *data)
 {
 	int err;
 
@@ -425,13 +430,37 @@ int name_send_registration(const char *name, register_cb cb, void *data)
 		err = -ENOSYS;
 	}
 	else {
+		char *payload, *ptr;
+		size_t name_len, len;
+
 		printk(KERN_INFO "registering %s\n", name);
+		name_len = strlen(name) + 1;
+		len = name_len;
+		len += sizeof(int) + num_v6_addresses * sizeof(struct in6_addr);
+		len += sizeof(int) + num_v4_addresses * sizeof(__be32);
+		err = -ENOMEM;
+		payload = kmalloc(len, GFP_ATOMIC);
+		if (!payload)
+			goto out;
+		ptr = payload;
+		memcpy(ptr, name, name_len);
+		ptr += name_len;
+		memcpy(ptr, &num_v6_addresses, sizeof(int));
+		ptr += sizeof(int);
+		memcpy(ptr, v6_addresses,
+		       num_v6_addresses * sizeof(struct in6_addr));
+		ptr += num_v6_addresses * sizeof(struct in6_addr);
+		memcpy(ptr, &num_v4_addresses, sizeof(int));
+		ptr += sizeof(int);
+		memcpy(ptr, v4_addresses, num_v4_addresses * sizeof(__be32));
 		/* FIXME:  who handles retrying in case of failure? */
 		err = namestack_send_message_tracked(daemon_pid,
 						     NAME_STACK_REGISTER_QUERY,
-						     name, strlen(name) + 1,
+						     payload, len,
 						     cb, data);
+		kfree(payload);
 	}
+out:
 	return err;
 }
 

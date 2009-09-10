@@ -50,7 +50,9 @@ typedef void (*qualify_cb)(const char *name, void *data);
 int name_fully_qualify(const char *name, qualify_cb cb, void *data);
 typedef void (*register_cb)(int result, const char *name, void *data);
 /* FIXME: needs to be given a list of addresses */
-int name_send_registration(const char *name, register_cb cb, void *data);
+int name_send_registration(const char *name, const struct in6_addr *v6_addresses,
+			   int num_v6_addresses, const __be32 *v4_addresses,
+			   int num_v4_addresses, register_cb cb, void *data);
 void name_delete_registration(const char *name);
 
 /* Name cache functions */
