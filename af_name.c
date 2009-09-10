@@ -1744,6 +1744,13 @@ static int name_stream_recvmsg(struct kiocb *iocb, struct socket *sock,
 					    flags);
 }
 
+#ifdef CONFIG_COMPAT
+static int name_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+{
+	return -ENOIOCTLCMD;
+}
+#endif
+
 static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,
@@ -1756,7 +1763,7 @@ static const struct proto_ops name_stream_ops = {
 	.poll = sock_no_poll,
 	.ioctl = sock_no_ioctl,
 #ifdef CONFIG_COMPAT
-	.compat_ioctl = sock_no_compat_ioctl,
+	.compat_ioctl = name_compat_ioctl,
 #endif
 	.listen = name_stream_listen,
 	.shutdown = sock_no_shutdown,
@@ -1830,7 +1837,7 @@ static const struct proto_ops name_dgram_ops = {
 	.poll = sock_no_poll,
 	.ioctl = sock_no_ioctl,
 #ifdef CONFIG_COMPAT
-	.compat_ioctl = sock_no_compat_ioctl,
+	.compat_ioctl = name_compat_ioctl,
 #endif
 	.listen = sock_no_listen,
 	.shutdown = sock_no_shutdown,
