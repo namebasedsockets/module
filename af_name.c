@@ -816,6 +816,25 @@ out_err:
 	return err;
 }
 
+static int name_stream_getname(struct socket *sock, struct sockaddr *uaddr,
+			       int *uaddr_len, int peer)
+{
+	struct sock *sk = sock->sk;
+	struct name_stream_sock *name = name_stream_sk(sk);
+	struct sockaddr_name *sname = (struct sockaddr_name *)uaddr;
+
+	if (peer) {
+		if (sock->state != SS_CONNECTED)
+			return -ENOTCONN;
+		memcpy(sname, &name->dname, sizeof(struct sockaddr_name));
+	}
+	else {
+		memcpy(sname, &name->sname, sizeof(struct sockaddr_name));
+	}
+	*uaddr_len = sizeof(struct sockaddr_name);
+	return 0;
+}
+
 static int name_stream_listen(struct socket *sock, int backlog)
 {
 	struct sock *sk = sock->sk;
@@ -858,7 +877,7 @@ static const struct proto_ops name_stream_ops = {
 	.connect = name_stream_connect,
 	.socketpair = sock_no_socketpair,
 	.accept = name_stream_accept,
-	.getname = sock_no_getname,
+	.getname = name_stream_getname,
 	.poll = sock_no_poll,
 	.ioctl = sock_no_ioctl,
 #ifdef CONFIG_COMPAT
