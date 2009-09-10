@@ -186,6 +186,12 @@ name_stream_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 		break;
 	};
 
+	if (name->sname.sname_addr.name[0]) {
+		/* This socket is already bound. */
+		err = -EINVAL;
+		goto out;
+	}
+
 	/* FIXME: the address(es) to which the name should be bound should
 	 * also be included in the request.  Note that the request is
 	 * stateless:  if the addresses change, a new request can be sent, and
