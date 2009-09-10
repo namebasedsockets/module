@@ -62,6 +62,16 @@ static long name_wait_for_connect(struct sock *sk, long timeo)
 	return timeo;
 }
 
+static void name_stream_query_resolve(const u_char *response, int len,
+				      void *data)
+{
+	struct socket *sock = data;
+	struct sock *sk = sock->sk;
+
+	sk->sk_state = NAME_CONNECTING;
+	/* FIXME: send off connect request here */
+}
+
 static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			       int addr_len, int flags)
 {
@@ -96,10 +106,11 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		err = -EISCONN;
 
 		sock->state = SS_CONNECTING;
-		/* FIXME: connect is never actually attempted, need to try
-		 * it here.
-		 */
 		sk->sk_state = NAME_RESOLVING;
+		err = name_send_query(sname->sname_addr.name,
+				      name_stream_query_resolve, sock);
+		if (err)
+			goto out;
 
 		/* Just entered SS_CONNECTING state; the only
 		 * difference is that return value in non-blocking
