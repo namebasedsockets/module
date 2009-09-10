@@ -4,6 +4,7 @@
 #include <linux/module.h>
 #include <net/sock.h>
 #include <linux/inname.h>
+#include "namestack_priv.h"
 
 struct name_sock
 {
@@ -179,7 +180,7 @@ static struct net_proto_family name_family_ops = {
 	.owner = THIS_MODULE,
 };
 
-static int __init name_init(void)
+int name_af_init(void)
 {
 	int rc;
 
@@ -196,4 +197,4 @@ out:
 	return rc;
 }
 
-fs_initcall(name_init);
+EXPORT_SYMBOL(name_af_init);

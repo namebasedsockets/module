@@ -4,6 +4,7 @@
 #include <linux/netlink.h>
 #include <net/net_namespace.h>
 #include "namestacknl.h"
+#include "namestack_priv.h"
 
 static DEFINE_MUTEX(nos_mutex);
 static struct sock *nls = NULL;
@@ -95,6 +96,8 @@ nos_rcv_skb(struct sk_buff *skb)
 
 static __init int namestack_init(void)
 {
+	int rc;
+
 	printk(KERN_INFO "name-oriented stack module loading\n");
 
 	nls = netlink_kernel_create(&init_net, NETLINK_NAME_ORIENTED_STACK,
@@ -103,7 +106,8 @@ static __init int namestack_init(void)
 		printk(KERN_ERR "namestackmod: failed to create netlink socket\n");
 		return -ENOMEM;
 	}
-	return 0;
+	rc = name_af_init();
+	return rc;
 }
 
 static void __exit namestack_exit(void)

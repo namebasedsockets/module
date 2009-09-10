@@ -1,5 +1,5 @@
-obj-m += namestack.o af_name.o
-namestack-objs := main.o
+obj-m += namestack.o
+namestack-objs := main.o af_name.o
 
 # ordinary compiles:
 #KERN_BUILD := /lib/modules/$(shell uname -r)/build
