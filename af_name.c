@@ -156,7 +156,8 @@ static void name_register_cb(int result, const char *bound_name, void *data)
 	name->async_error = -result;
 }
 
-static int name_register(struct socket *sock, const char *fully_qualified_name)
+static int name_register(struct socket *sock, const char *fully_qualified_name,
+			__be16 port)
 {
 	struct sock *sk = sock->sk;
 	struct name_stream_sock *name = name_stream_sk(sk);
@@ -165,6 +166,7 @@ static int name_register(struct socket *sock, const char *fully_qualified_name)
 
 	printk(KERN_INFO "name qualified as %s\n", fully_qualified_name);
 	strcpy(name->sname.sname_addr.name, fully_qualified_name);
+	name->sname.sname_port = port;
 	err = name_cache_add(fully_qualified_name, sock);
 	if (err)
 		goto out;
@@ -202,8 +204,10 @@ out:
 static void name_qualify_cb(const char *fully_qualified_name, void *data)
 {
 	struct socket *sock = data;
+	struct sock *sk = sock->sk;
+	struct name_stream_sock *name = name_stream_sk(sk);
 
-	name_register(sock, fully_qualified_name);
+	name_register(sock, fully_qualified_name, name->sname.sname_port);
 }
 
 static long name_wait_for_bind(struct sock *sk, long timeo)
@@ -234,16 +238,21 @@ static int name_qualify_and_register(struct sockaddr_name *addr,
 	len = strlen(addr->sname_addr.name);
 	if (addr->sname_addr.name[len - 1] == '.') {
 		/* Name is already fully qualified, register it directly */
-		err = name_register(sock, addr->sname_addr.name);
+		err = name_register(sock, addr->sname_addr.name,
+				    addr->sname_port);
 	}
 	else {
+		sk = sock->sk;
+		name = name_stream_sk(sk);
+
+		/* Copy the port to the socket's source name, it'll be used
+		 * in name_qualify_cb.
+		 */
+		name->sname.sname_port = addr->sname_port;
 		err = name_fully_qualify(addr->sname_addr.name,
 					 name_qualify_cb, sock);
 		if (err)
 			goto out;
-
-		sk = sock->sk;
-		name = name_stream_sk(sk);
 
 		timeo = sock_sndtimeo(sk, 0);
 		if ((1 << sk->sk_state) & NAMEF_BINDING) {
