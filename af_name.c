@@ -111,7 +111,7 @@ out:
 	return 0;
 }
 
-static void name_bind_cb(int result, void *data)
+static void name_bind_cb(int result, const char *bound_name, void *data)
 {
 	struct socket *sock = data;
 	struct sock *sk = sock->sk;
@@ -121,14 +121,13 @@ static void name_bind_cb(int result, void *data)
 	name->async_error = -result;
 	if (!result)
 	{
-		/* FIXME: need to:
-		 * 1. Attempt to bind to the specified port on each transport
-		 *    socket.  Unfortunately none may exist at the moment,
-		 *    because they're not created except in connect.  That
-		 *    needs to be fixed too.
-		 * 2. Copy the name into the source name (easy, but the
-		 *    fully-qualified name should be in the reply.)
+		/* FIXME: need attempt to bind to the specified port on each
+		 * transport socket.  Unfortunately none may exist at the
+		 * moment, because they're not created except in connect.
+		 * That needs to be fixed too.
 		 */
+		printk(KERN_INFO "bound to %s\n", bound_name);
+		strcpy(name->sname.sname_addr.name, bound_name);
 	}
 }
 

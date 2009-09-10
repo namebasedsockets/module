@@ -185,6 +185,8 @@ handle_name_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 		NAME_STACK_NAME_REPLY, NULL, 0);
 }
 
+#define MAX_NAME_LEN 256
+
 static int
 handle_register_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 {
@@ -201,11 +203,20 @@ handle_register_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 		printk(KERN_INFO "found reply on pending queue\n");
 		if (NLMSG_PAYLOAD(nlh, 0) >= sizeof(result))
 		{
+			int name_len;
+			char name_buf[MAX_NAME_LEN];
 			register_cb cb = node->cb;
 
 			memcpy(&result, NLMSG_DATA(nlh), sizeof(result));
+			memcpy(&name_len, NLMSG_DATA(nlh) + sizeof(int),
+			       sizeof(int));
+			if (name_len)
+				memcpy(name_buf,
+				       NLMSG_DATA(nlh) + 2 * sizeof(int),
+				       name_len);
+			name_buf[name_len] = 0;
 			printk(KERN_INFO "result is %d\n", result);
-			cb(result, node->data);
+			cb(result, name_buf, node->data);
 		}
 		else
 			printk(KERN_WARNING
