@@ -387,6 +387,10 @@ static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 	int err = sock_create_kern(PF_INET6, type, protocol, sock);
 
 	if (!err) {
+		err = set_name_option(*sock, name->sname.sname_addr.name,
+				      NAME_OPTION_SOURCE_NAME);
+	}
+	if (!err) {
 		int on = 1;
 
 		err = kernel_setsockopt(*sock, IPPROTO_IPV6, IPV6_V6ONLY,
