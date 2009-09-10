@@ -17,6 +17,9 @@ struct name_stream_sock
 	int async_error;
 	struct socket *ipv4_sock;
 	struct socket *ipv6_sock;
+	struct sock *(*orig_syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
+					   struct request_sock *req,
+					   struct dst_entry *dst);
 };
 
 static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
