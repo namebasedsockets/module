@@ -34,7 +34,7 @@ struct name_stream_sock
 	u_char *dname_answer;
 	int dname_answer_len;
 	uint16_t dname_answer_index;
-	int connect_error;
+	int async_error;
 	struct socket *transport_sock;
 };
 
@@ -302,7 +302,7 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 		sk->sk_state_change(sk);
 		err = -EHOSTUNREACH;
 	}
-	name->connect_error = err;
+	name->async_error = err;
 }
 
 static void name_stream_query_resolve(const u_char *response, int len,
@@ -406,8 +406,8 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		struct name_stream_sock *name = name_stream_sk(sk);
 
 		sock->state = SOCK_DEAD;
-		if (name->connect_error)
-			err = name->connect_error;
+		if (name->async_error)
+			err = name->async_error;
 		else
 			err = -EHOSTUNREACH;
 	}
@@ -470,7 +470,7 @@ static struct sock *name_alloc_stream_socket(struct net *net,
 	name->dname_answer = NULL;
 	name->dname_answer_len = 0;
 	name->dname_answer_index = 0;
-	name->connect_error = 0;
+	name->async_error = 0;
 	name->transport_sock = NULL;
 out:
 	return sk;
