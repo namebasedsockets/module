@@ -31,12 +31,30 @@ out:
 	return 0;
 }
 
+static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+			       int addr_len, int flags)
+{
+	struct sockaddr_name *sname = (struct sockaddr_name *)uaddr;
+	int err;
+
+	if (addr_len < sizeof(struct sockaddr_name))
+		return -EINVAL;
+	if (uaddr->sa_family != AF_NAME)
+		return -EAFNOSUPPORT;
+
+	printk(KERN_INFO "name_stream_connect requested to %s\n",
+	       sname->sname_addr.name);
+	err = -EINPROGRESS;
+
+	return err;
+}
+
 static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,
 	.release = name_stream_release,
 	.bind = sock_no_bind,
-	.connect = sock_no_connect,
+	.connect = name_stream_connect,
 	.socketpair = sock_no_socketpair,
 	.accept = sock_no_accept,
 	.getname = sock_no_getname,
