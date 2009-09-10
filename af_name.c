@@ -159,17 +159,6 @@ out:
 	return 0;
 }
 
-static int name_bind_ipv4(struct socket *sock, const __be32 *addr, __be16 port)
-{
-	struct sockaddr_in sin;
-
-	memset(&sin, 0, sizeof(sin));
-	if (addr)
-		memcpy(&sin.sin_addr.s_addr, addr, sizeof(*addr));
-	sin.sin_port = port;
-	return kernel_bind(sock, (struct sockaddr *)&sin, sizeof(sin));
-}
-
 /* Stolen from net/ipv6/ipv6_sockglue.c */
 static
 struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
@@ -716,14 +705,20 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 	 * listen().)
 	 */
 	if (name->sname.sname_port || v4addr) {
+		struct sockaddr_in sin;
+
 		if (!name->ipv4_sock) {
 			err = name_create_v4_sock(SOCK_STREAM, 0,
 						  &name->ipv4_sock, name);
 			if (err)
 				goto out;
 		}
-		err = name_bind_ipv4(name->ipv4_sock, v4addr,
-				     name->sname.sname_port);
+		memset(&sin, 0, sizeof(sin));
+		if (v4addr)
+			memcpy(&sin.sin_addr.s_addr, &v4addr, sizeof(v4addr));
+		sin.sin_port = name->sname.sname_port;
+		err = kernel_bind(name->ipv4_sock, (struct sockaddr *)&sin,
+				  sizeof(sin));
 		if (err)
 			goto out;
 	}
