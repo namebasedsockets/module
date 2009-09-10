@@ -32,13 +32,15 @@ out:
 }
 
 enum {
-	NAME_RESOLVING = 1,
+	NAME_CLOSED = 1,
+	NAME_RESOLVING,
 	NAME_CONNECTING,
 	NAME_LISTEN,
 	NAME_ESTABLISHED,
 };
 
 enum {
+	NAMEF_CLOSED      = (1 << NAME_CLOSED),
 	NAMEF_RESOLVING   = (1 << NAME_RESOLVING),
 	NAMEF_CONNECTING  = (1 << NAME_CONNECTING),
 	NAMEF_LISTEN      = (1 << NAME_LISTEN),
@@ -68,8 +70,18 @@ static void name_stream_query_resolve(const u_char *response, int len,
 	struct socket *sock = data;
 	struct sock *sk = sock->sk;
 
-	sk->sk_state = NAME_CONNECTING;
-	/* FIXME: send off connect request here */
+	if (len > 0)
+	{
+		sk->sk_state = NAME_CONNECTING;
+		sk->sk_state_change(sk);
+		/* FIXME: send off connect request here */
+	}
+	else
+	{
+		/* Name resolution failure, close request */
+		sk->sk_state = NAME_CLOSED;
+		sk->sk_state_change(sk);
+	}
 }
 
 static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
