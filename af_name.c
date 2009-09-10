@@ -1272,27 +1272,12 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 	release_sock(sk);
 
 handle_incoming:
-	err = -ENOMEM;
-	incoming_sock = name_alloc_stream_socket(&init_net, newsock);
-	if (!incoming_sock) {
-		if (new_v6_sk)
-			sock_put(new_v6_sk);
-		if (new_v4_sk)
-			sock_put(new_v4_sk);
-		goto out_err;
-	}
-	new_name = name_stream_sk(incoming_sock);
-	memcpy(&new_name->sname, &name->sname, sizeof(name->sname));
-	if (new_v6_sk) {
-		new_name->ipv6_sock = create_stream_sock_from_sk(PF_INET6,
-								 new_v6_sk);
-		if (!new_name->ipv6_sock) {
-			sock_put(incoming_sock);
-			goto out_err;
-		}
-		get_name_from_v6_sock(&new_name->dname, new_name->ipv6_sock);
-	}
 	if (new_v4_sk) {
+		err = -ENOMEM;
+		incoming_sock = name_alloc_stream_socket(&init_net, newsock);
+		if (!incoming_sock)
+			goto out_err;
+		new_name = name_stream_sk(incoming_sock);
 		new_name->ipv4_sock = create_stream_sock_from_sk(PF_INET,
 								 new_v4_sk);
 		if (!new_name->ipv4_sock) {
@@ -1301,6 +1286,21 @@ handle_incoming:
 		}
 		get_name_from_v4_sock(&new_name->dname, new_name->ipv4_sock);
 	}
+	else {
+		err = -ENOMEM;
+		incoming_sock = name_alloc_stream_socket(&init_net, newsock);
+		if (!incoming_sock)
+			goto out_err;
+		new_name = name_stream_sk(incoming_sock);
+		new_name->ipv6_sock = create_stream_sock_from_sk(PF_INET6,
+								 new_v6_sk);
+		if (!new_name->ipv6_sock) {
+			sock_put(incoming_sock);
+			goto out_err;
+		}
+		get_name_from_v6_sock(&new_name->dname, new_name->ipv6_sock);
+	}
+	memcpy(&new_name->sname, &name->sname, sizeof(name->sname));
 	printk(KERN_INFO "connection accepted from %s\n",
 	       new_name->dname.sname_addr.name);
 	sock_graft(incoming_sock, newsock);
