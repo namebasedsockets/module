@@ -240,7 +240,6 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 	err = name_cache_add(fully_qualified_name, sock);
 	if (err)
 		goto out;
-	/* FIXME: need to select addresses to register for name */
 	//assert(strlen(fully_qualified_name) > 1);
 	if (!strchr(fully_qualified_name, '.')) {
 		/* FIXME: name doesn't exist in any domain.  Do I need to make
@@ -252,9 +251,22 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 	}
 	if (name_is_local(fully_qualified_name))
 		err = name_bind_to_fqdn(name, fully_qualified_name, 1);
-	else
-		err = name_send_registration(fully_qualified_name,
-					     name_register_cb, sock);
+	else {
+		struct in6_addr *v6_addresses;
+		__be32 *v4_addresses;
+		int num_v6_addresses;
+		int num_v4_addresses;
+
+		err = choose_addresses(&num_v6_addresses, &v6_addresses,
+				       &num_v4_addresses, &v4_addresses);
+		if (!err) {
+			/* FIXME: send addresses to register with name */
+			err = name_send_registration(fully_qualified_name,
+						     name_register_cb, sock);
+			kfree(v6_addresses);
+			kfree(v4_addresses);
+		}
+	}
 	if (err)
 		name_cache_delete(fully_qualified_name);
 

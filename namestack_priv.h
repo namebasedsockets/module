@@ -33,6 +33,18 @@ typedef void (*query_resolv_cb)(const __u8 *response, int len, void *data);
 int name_send_query(const char *name, query_resolv_cb cb, void *data);
 void name_cancel_query(void *data);
 
+struct inet6_ifaddr;
+struct in_ifaddr;
+
+/* Selects best addresses to use.  For now, assumes that each name should use
+ * the same heuristic for choosing an address.  Returns a list of IPv6 and
+ * IPv4 addresses, in order of preference.
+ * Returns 0 on success, an error code on failure.  On success, free the
+ * returned addresses with kfree().
+ */
+int choose_addresses(int *num_v6_addresses, struct in6_addr **v6_addresses,
+		     int *num_v4_addresses, __be32 **v4_addresses);
+
 /* Name registration (bind()/DNS update) functions */
 typedef void (*qualify_cb)(const char *name, void *data);
 int name_fully_qualify(const char *name, qualify_cb cb, void *data);
