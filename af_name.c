@@ -566,8 +566,17 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		sock->state = SS_CONNECTING;
 		sk->sk_state = NAME_RESOLVING;
 		memcpy(&name->dname, uaddr, addr_len);
-		err = name_send_query(sname->sname_addr.name,
-				      name_stream_query_resolve, sock);
+		if (name_is_local(name->dname.sname_addr.name)) {
+			__u8 loopback[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
+			struct in6_addr in6;
+
+			memcpy(&in6.s6_addr, &loopback, sizeof(in6.s6_addr));
+			err = name_stream_connect_to_v6_address(sk, sizeof(in6),
+								(const u_char *)&in6);
+		}
+		else
+			err = name_send_query(sname->sname_addr.name,
+					      name_stream_query_resolve, sock);
 		if (err)
 			goto out;
 
