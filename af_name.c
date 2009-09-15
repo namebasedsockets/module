@@ -1137,6 +1137,24 @@ static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 	sin6.sin6_family = AF_INET6;
 	sin6.sin6_port = name->dname.sname_port;
 	memcpy(&sin6.sin6_addr, addr, sizeof(*addr));
+	/* If the destination is a link-local address, choose the scope id
+	 * that defines the interface with which to attempt the connection.
+	 * FIXME: if it's ambiguous, should we try on every interface with
+	 * an IPv6 address?
+	 */
+	if (sin6.sin6_addr.s6_addr[0] == 0xfe &&
+	    sin6.sin6_addr.s6_addr[1] == 0x80)
+	{
+		err = choose_scope_for_v6_address(&sin6);
+		if (err) {
+			printk(KERN_WARNING "choose_scope_for_v6_address failed: %d\n",
+			       err);
+			goto out;
+                }
+		else
+			printk(KERN_INFO "chose scope %d\n",
+			       sin6.sin6_scope_id);
+	}
 
 	if (name->sname.sname_addr.name[0]) {
 		err = set_name_option(name->ipv6_sock,

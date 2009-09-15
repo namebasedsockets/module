@@ -185,3 +185,49 @@ int match_v6_address_to_scope(struct sockaddr_in6 *sin6)
 	}
 	return -ENODEV;
 }
+
+int choose_scope_for_v6_address(struct sockaddr_in6 *sin6)
+{
+	/* FIXME: for now, always picks the first interface with an IPv6
+	 * address, or the first up interface if that fails.  Should instead:
+	 * 1. Use the source name's scope ID, if the socket is bound to a local
+	 *    name and the local name is a link-local address.
+	 * 2. Allow choosing among multiple possible interfaces.
+	 */
+	struct net *net = &init_net;
+	struct net_device *dev;
+
+	/* FIXME: lock net? */
+	for_each_netdev(net, dev) {
+		if (!(dev->flags & IFF_UP))
+			continue;
+		if (dev->flags & IFF_LOOPBACK)
+			continue;
+		if (dev->ip6_ptr) {
+			struct inet6_dev *in6 = dev->ip6_ptr;
+			struct inet6_ifaddr *addr;
+
+			for (addr = in6->addr_list; addr; addr = addr->if_next) {
+				printk(KERN_INFO "using scope id %d for %s\n",
+				       dev->ifindex, dev->name);
+				sin6->sin6_scope_id = dev->ifindex;
+				return 0;
+			}
+		}
+	}
+	/* If no IPv6 address was configured, hope for the best with the first
+	 * up interface.
+	 */
+	for_each_netdev(net, dev) {
+		if (!(dev->flags & IFF_UP))
+			continue;
+		if (dev->flags & IFF_LOOPBACK)
+			continue;
+		printk(KERN_INFO "using scope id %d for %s\n",
+		       dev->ifindex, dev->name);
+		sin6->sin6_scope_id = dev->ifindex;
+		return 0;
+	}
+	/* No interface, that'll definitely fail */
+	return -ENODEV;
+}
