@@ -121,13 +121,13 @@ int find_answer_of_type(const u_char *ptr, uint16_t len, uint16_t t,
 			overrun = 1;
 			goto out;
 		}
-				ptr += sizeof(uint16_t);
+		ptr += sizeof(uint16_t);
 		if (ptr - original_ptr + sizeof(uint16_t) > len)
 		{
 			overrun = 1;
 			goto out;
 		}
-				ptr += sizeof(uint16_t);
+		ptr += sizeof(uint16_t);
 	}
 	/* Walk through answers, looking for nth instance of type t */
 	for (i = 0, matching_answers = 0; i < ancount; i++)
