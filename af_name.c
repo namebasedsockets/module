@@ -1239,6 +1239,19 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 	int err;
 
 	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
+				 T_CNAME, 0, &rdlength, &rdata)) {
+		char *fqdn = rfc1035_decode_name(rdata, rdlength);
+
+		/* The response contains a CNAME.  Use this as the destination
+		 * name, rather than name the application provided.
+		 */
+		if (fqdn) {
+			printk(KERN_INFO "connecting to %s\n", fqdn);
+			strcpy(name->dname.sname_addr.name, fqdn);
+			kfree(fqdn);
+		}
+	}
+	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
 				 T_AAAA, name->dname_answer_index, &rdlength,
 				 &rdata)) {
 		err = name_stream_connect_to_v6_address(sk, rdlength,

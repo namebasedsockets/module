@@ -78,7 +78,8 @@ typedef struct {
 	unsigned	arcount :16;	/*%< number of resource entries */
 } HEADER;
 
-#define T_A     1
-#define T_AAAA 28
+#define T_A      1
+#define T_CNAME  5
+#define T_AAAA  28
 
 #endif /* __NAMESER_H__ */
