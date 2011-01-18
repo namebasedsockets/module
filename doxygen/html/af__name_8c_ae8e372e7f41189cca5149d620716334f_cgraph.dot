@@ -1,0 +1,15 @@
+digraph G
+{
+  edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10"];
+  node [fontname="FreeSans",fontsize="10",shape=record];
+  rankdir=LR;
+  Node1 [label="set_name_option",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node2 [label="ipv6_update_options",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$af__name_8c.html#a92dcdbf16767c4bf91dea33ec0b26bab"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node3 [label="namestack_ipv6_renew_options",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$af__name_8c.html#a7b0682716a3329de6d42caba391f374d"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node4 [label="ipv6_renew_option",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$af__name_8c.html#a51a93e25a456b14fc961232360eea4c9"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="FreeSans"];
+  Node5 [label="rfc1035_encode_name",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$af__name_8c.html#a91562471c07791fae97674a650dc13dd"];
+}

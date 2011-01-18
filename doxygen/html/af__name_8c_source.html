@@ -56,23 +56,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00020"></a>00020 <span class="preprocessor">#include &lt;net/tcp_states.h&gt;</span>
 <a name="l00021"></a>00021 <span class="preprocessor">#include &lt;net/transp_v6.h&gt;</span>
 <a name="l00022"></a>00022 <span class="preprocessor">#include &lt;linux/inname.h&gt;</span>
-<a name="l00023"></a>00023 <span class="preprocessor">#include &quot;dns.h&quot;</span>
-<a name="l00024"></a>00024 <span class="preprocessor">#include &quot;nameser.h&quot;</span>
-<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;namestack_priv.h&quot;</span>
+<a name="l00023"></a>00023 <span class="preprocessor">#include &quot;<a class="code" href="dns_8h.html">dns.h</a>&quot;</span>
+<a name="l00024"></a>00024 <span class="preprocessor">#include &quot;<a class="code" href="nameser_8h.html">nameser.h</a>&quot;</span>
+<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;<a class="code" href="namestack__priv_8h.html">namestack_priv.h</a>&quot;</span>
 <a name="l00026"></a>00026 
 <a name="l00028"></a>00028 <span class="keyword">enum</span> {
-<a name="l00029"></a>00029         NAME_RESOLVING = TCP_MAX_STATES, <span class="comment">/* Don&#39;t overlap with TCP states */</span>
-<a name="l00030"></a>00030         NAME_BINDING,
-<a name="l00031"></a>00031         NAME_CONNECTING,
-<a name="l00032"></a>00032 };
-<a name="l00033"></a>00033 
+<a name="l00029"></a>00029         <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba66c66f9dd0387b93b47bf4566f3d2ab7">NAME_RESOLVING</a> = TCP_MAX_STATES, <span class="comment">/* Don&#39;t overlap with TCP states */</span>
+<a name="l00030"></a>00030         <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba3764afc223a5b869fd5560a12cb402f4">NAME_BINDING</a>,
+<a name="l00031"></a>00031         <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba5888c13423de57b9bf30c2188e694e65">NAME_CONNECTING</a>,
+<a name="l00032"></a><a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba66c66f9dd0387b93b47bf4566f3d2ab7">00032</a> };
+<a name="l00033"></a><a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba3764afc223a5b869fd5560a12cb402f4">00033</a> 
 <a name="l00035"></a>00035 <span class="keyword">enum</span> {
-<a name="l00036"></a>00036         NAMEF_RESOLVING   = (1 &lt;&lt; NAME_RESOLVING),
-<a name="l00037"></a>00037         NAMEF_BINDING     = (1 &lt;&lt; NAME_BINDING),
-<a name="l00038"></a>00038         NAMEF_CONNECTING  = (1 &lt;&lt; NAME_CONNECTING),
+<a name="l00036"></a><a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a1fe9d494d7abe8b96b154fa5d160e4e6">00036</a>         <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a1fe9d494d7abe8b96b154fa5d160e4e6">NAMEF_RESOLVING</a>   = (1 &lt;&lt; <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba66c66f9dd0387b93b47bf4566f3d2ab7">NAME_RESOLVING</a>),
+<a name="l00037"></a><a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">00037</a>         <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>     = (1 &lt;&lt; <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba3764afc223a5b869fd5560a12cb402f4">NAME_BINDING</a>),
+<a name="l00038"></a><a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7af9e2e6dedfdd6a7433c6c23c8e3b5835">00038</a>         <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7af9e2e6dedfdd6a7433c6c23c8e3b5835">NAMEF_CONNECTING</a>  = (1 &lt;&lt; <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba5888c13423de57b9bf30c2188e694e65">NAME_CONNECTING</a>),
 <a name="l00039"></a>00039 };
 <a name="l00040"></a>00040 
-<a name="l00041"></a>00041 <span class="keyword">static</span> <span class="keywordtype">void</span> name_stream_state_change(<span class="keyword">struct</span> sock *sk)
+<a name="l00041"></a><a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">00041</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">name_stream_state_change</a>(<span class="keyword">struct</span> sock *sk)
 <a name="l00042"></a>00042 {
 <a name="l00043"></a>00043         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name;
 <a name="l00044"></a>00044 
@@ -83,8 +83,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00049"></a>00049         printk(KERN_INFO <span class="stringliteral">&quot;sk_state is %d\n&quot;</span>, sk-&gt;sk_state);
 <a name="l00050"></a>00050         <span class="keywordflow">switch</span> (sk-&gt;sk_state) {
 <a name="l00051"></a>00051         <span class="keywordflow">case</span> TCP_ESTABLISHED:
-<a name="l00052"></a>00052                 name-&gt;sk.sk_state = TCP_ESTABLISHED;
-<a name="l00053"></a>00053                 name-&gt;sk.sk_state_change(&amp;name-&gt;sk);
+<a name="l00052"></a>00052                 name-&gt;<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>.sk_state = TCP_ESTABLISHED;
+<a name="l00053"></a>00053                 name-&gt;<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>.sk_state_change(&amp;name-&gt;<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>);
 <a name="l00054"></a>00054                 <span class="keywordflow">break</span>;
 <a name="l00055"></a>00055         <span class="keywordflow">case</span> TCP_FIN_WAIT1:
 <a name="l00056"></a>00056                 <span class="comment">/* The client initiated a shutdown of the socket */</span>
@@ -107,7 +107,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00073"></a>00073         read_unlock(&amp;sk-&gt;sk_callback_lock);
 <a name="l00074"></a>00074 }
 <a name="l00075"></a>00075 
-<a name="l00076"></a>00076 <span class="keyword">static</span> <span class="keywordtype">int</span> name_is_local(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
+<a name="l00076"></a><a class="code" href="af__name_8c.html#a5768da3ffa0275fa10335132581d896a">00076</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a5768da3ffa0275fa10335132581d896a">name_is_local</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00077"></a>00077 {
 <a name="l00078"></a>00078         <span class="keyword">const</span> <span class="keywordtype">char</span> *p;
 <a name="l00079"></a>00079 
@@ -123,7 +123,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00089"></a>00089         <span class="keywordflow">return</span> !strcasecmp(p + 1, <span class="stringliteral">&quot;localhost.&quot;</span>);
 <a name="l00090"></a>00090 }
 <a name="l00091"></a>00091 
-<a name="l00096"></a>00096 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *name_find_v4_canonical_suffix(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
+<a name="l00096"></a><a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">00096</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">name_find_v4_canonical_suffix</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00097"></a>00097 {
 <a name="l00098"></a>00098         <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> canon_v4_suffix[] = <span class="stringliteral">&quot;.in-addr.arpa.&quot;</span>;
 <a name="l00099"></a>00099 
@@ -136,7 +136,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00106"></a>00106         <span class="keywordflow">return</span> NULL;
 <a name="l00107"></a>00107 }
 <a name="l00108"></a>00108 
-<a name="l00113"></a>00113 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *name_find_v6_canonical_suffix(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
+<a name="l00113"></a><a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">00113</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">name_find_v6_canonical_suffix</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00114"></a>00114 {
 <a name="l00115"></a>00115         <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> canon_v6_suffix[] = <span class="stringliteral">&quot;.ip6.arpa.&quot;</span>;
 <a name="l00116"></a>00116 
@@ -149,16 +149,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00123"></a>00123         <span class="keywordflow">return</span> NULL;
 <a name="l00124"></a>00124 }
 <a name="l00125"></a>00125 
-<a name="l00126"></a>00126 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> name_is_canonical(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
+<a name="l00126"></a><a class="code" href="af__name_8c.html#a66986f06bcd9bef3f0acf5856bfff71f">00126</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a66986f06bcd9bef3f0acf5856bfff71f">name_is_canonical</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00127"></a>00127 {
-<a name="l00128"></a>00128         <span class="keywordflow">return</span> name_find_v4_canonical_suffix(name) != NULL ||
-<a name="l00129"></a>00129                name_find_v6_canonical_suffix(name) != NULL;
+<a name="l00128"></a>00128         <span class="keywordflow">return</span> <a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">name_find_v4_canonical_suffix</a>(name) != NULL ||
+<a name="l00129"></a>00129                <a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">name_find_v6_canonical_suffix</a>(name) != NULL;
 <a name="l00130"></a>00130 }
 <a name="l00131"></a>00131 
-<a name="l00132"></a>00132 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_release(<span class="keyword">struct</span> socket *sock)
+<a name="l00132"></a><a class="code" href="af__name_8c.html#a562b6dd09744c1ddb2d1a8378d30addc">00132</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a562b6dd09744c1ddb2d1a8378d30addc">name_stream_release</a>(<span class="keyword">struct</span> socket *sock)
 <a name="l00133"></a>00133 {
 <a name="l00134"></a>00134         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l00135"></a>00135         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l00135"></a>00135         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l00136"></a>00136 
 <a name="l00137"></a>00137         <span class="keywordflow">if</span> (!sk)
 <a name="l00138"></a>00138                 <span class="keywordflow">goto</span> out;
@@ -166,27 +166,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00140"></a>00140         <span class="keywordflow">if</span> (!sock_flag(sk, SOCK_DEAD))
 <a name="l00141"></a>00141                 sk-&gt;sk_state_change(sk);
 <a name="l00142"></a>00142 
-<a name="l00143"></a>00143         <span class="keywordflow">if</span> (name-&gt;dname_answer) {
-<a name="l00144"></a>00144                 kfree(name-&gt;dname_answer);
-<a name="l00145"></a>00145                 name-&gt;dname_answer = NULL;
-<a name="l00146"></a>00146                 name-&gt;dname_answer_len = 0;
-<a name="l00147"></a>00147                 name-&gt;dname_answer_index = 0;
+<a name="l00143"></a>00143         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>) {
+<a name="l00144"></a>00144                 kfree(name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>);
+<a name="l00145"></a>00145                 name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a> = NULL;
+<a name="l00146"></a>00146                 name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a> = 0;
+<a name="l00147"></a>00147                 name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a> = 0;
 <a name="l00148"></a>00148         }
-<a name="l00149"></a>00149         <span class="keywordflow">if</span> (name-&gt;sname.sname_addr.name[0]) {
-<a name="l00150"></a>00150                 name_cache_delete(name-&gt;sname.sname_addr.name);
-<a name="l00151"></a>00151                 <span class="keywordflow">if</span> (!name_is_local(name-&gt;sname.sname_addr.name) &amp;&amp;
-<a name="l00152"></a>00152                     !name_is_canonical(name-&gt;sname.sname_addr.name))
-<a name="l00153"></a>00153                         name_delete_registration(name-&gt;sname.sname_addr.name);
+<a name="l00149"></a>00149         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name[0]) {
+<a name="l00150"></a>00150                 <a class="code" href="namecache_8c.html#aa1fb6667246cbfbc4f63436093f59535">name_cache_delete</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name);
+<a name="l00151"></a>00151                 <span class="keywordflow">if</span> (!<a class="code" href="af__name_8c.html#a5768da3ffa0275fa10335132581d896a">name_is_local</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name) &amp;&amp;
+<a name="l00152"></a>00152                     !<a class="code" href="af__name_8c.html#a66986f06bcd9bef3f0acf5856bfff71f">name_is_canonical</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name))
+<a name="l00153"></a>00153                         <a class="code" href="main_8c.html#a8bda9733b25a90bc533e4503c32830ad">name_delete_registration</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name);
 <a name="l00154"></a>00154         }
-<a name="l00155"></a>00155         <span class="keywordflow">if</span> (name-&gt;ipv6_sock) {
-<a name="l00156"></a>00156                 kernel_sock_shutdown(name-&gt;ipv6_sock, SHUT_WR);
-<a name="l00157"></a>00157                 sock_release(name-&gt;ipv6_sock);
-<a name="l00158"></a>00158                 name-&gt;ipv6_sock = NULL;
+<a name="l00155"></a>00155         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>) {
+<a name="l00156"></a>00156                 kernel_sock_shutdown(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, SHUT_WR);
+<a name="l00157"></a>00157                 sock_release(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>);
+<a name="l00158"></a>00158                 name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a> = NULL;
 <a name="l00159"></a>00159         }
-<a name="l00160"></a>00160         <span class="keywordflow">if</span> (name-&gt;ipv4_sock) {
-<a name="l00161"></a>00161                 kernel_sock_shutdown(name-&gt;ipv4_sock, SHUT_WR);
-<a name="l00162"></a>00162                 sock_release(name-&gt;ipv4_sock);
-<a name="l00163"></a>00163                 name-&gt;ipv4_sock = NULL;
+<a name="l00160"></a>00160         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>) {
+<a name="l00161"></a>00161                 kernel_sock_shutdown(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>, SHUT_WR);
+<a name="l00162"></a>00162                 sock_release(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>);
+<a name="l00163"></a>00163                 name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a> = NULL;
 <a name="l00164"></a>00164         }
 <a name="l00165"></a>00165 
 <a name="l00166"></a>00166         sock_set_flag(sk, SOCK_DEAD);
@@ -198,7 +198,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00172"></a>00172 }
 <a name="l00173"></a>00173 
 <a name="l00177"></a>00177 <span class="keyword">static</span>
-<a name="l00178"></a>00178 <span class="keyword">struct </span>ipv6_txoptions *ipv6_update_options(<span class="keyword">struct</span> sock *sk,
+<a name="l00178"></a><a class="code" href="af__name_8c.html#a92dcdbf16767c4bf91dea33ec0b26bab">00178</a> <span class="keyword">struct </span>ipv6_txoptions *<a class="code" href="af__name_8c.html#a92dcdbf16767c4bf91dea33ec0b26bab">ipv6_update_options</a>(<span class="keyword">struct</span> sock *sk,
 <a name="l00179"></a>00179                                            <span class="keyword">struct</span> ipv6_txoptions *opt)
 <a name="l00180"></a>00180 {
 <a name="l00181"></a>00181         <span class="keywordflow">if</span> (inet_sk(sk)-&gt;is_icsk) {
@@ -223,7 +223,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00200"></a>00200         <span class="keywordflow">return</span> opt;
 <a name="l00201"></a>00201 }
 <a name="l00202"></a>00202 
-<a name="l00207"></a>00207 <span class="keyword">static</span> <span class="keywordtype">int</span> ipv6_renew_option(<span class="keywordtype">void</span> *ohdr,
+<a name="l00207"></a><a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">00207</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">ipv6_renew_option</a>(<span class="keywordtype">void</span> *ohdr,
 <a name="l00208"></a>00208                              <span class="keyword">struct</span> ipv6_opt_hdr *newopt, <span class="keywordtype">int</span> newoptlen,
 <a name="l00209"></a>00209                              <span class="keywordtype">int</span> inherit,
 <a name="l00210"></a>00210                              <span class="keyword">struct</span> ipv6_opt_hdr **hdr,
@@ -282,25 +282,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00267"></a>00267         opt2-&gt;tot_len = tot_len;
 <a name="l00268"></a>00268         p = (<span class="keywordtype">char</span> *)(opt2 + 1);
 <a name="l00269"></a>00269 
-<a name="l00270"></a>00270         err = ipv6_renew_option(opt ? opt-&gt;hopopt : NULL, newopt, newoptlen,
+<a name="l00270"></a>00270         err = <a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">ipv6_renew_option</a>(opt ? opt-&gt;hopopt : NULL, newopt, newoptlen,
 <a name="l00271"></a>00271                                 newtype != IPV6_HOPOPTS,
 <a name="l00272"></a>00272                                 &amp;opt2-&gt;hopopt, &amp;p);
 <a name="l00273"></a>00273         <span class="keywordflow">if</span> (err)
 <a name="l00274"></a>00274                 <span class="keywordflow">goto</span> out;
 <a name="l00275"></a>00275 
-<a name="l00276"></a>00276         err = ipv6_renew_option(opt ? opt-&gt;dst0opt : NULL, newopt, newoptlen,
+<a name="l00276"></a>00276         err = <a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">ipv6_renew_option</a>(opt ? opt-&gt;dst0opt : NULL, newopt, newoptlen,
 <a name="l00277"></a>00277                                 newtype != IPV6_RTHDRDSTOPTS,
 <a name="l00278"></a>00278                                 &amp;opt2-&gt;dst0opt, &amp;p);
 <a name="l00279"></a>00279         <span class="keywordflow">if</span> (err)
 <a name="l00280"></a>00280                 <span class="keywordflow">goto</span> out;
 <a name="l00281"></a>00281 
-<a name="l00282"></a>00282         err = ipv6_renew_option(opt ? opt-&gt;srcrt : NULL, newopt, newoptlen,
+<a name="l00282"></a>00282         err = <a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">ipv6_renew_option</a>(opt ? opt-&gt;srcrt : NULL, newopt, newoptlen,
 <a name="l00283"></a>00283                                 newtype != IPV6_RTHDR,
 <a name="l00284"></a>00284                                 (<span class="keyword">struct</span> ipv6_opt_hdr **)&amp;opt2-&gt;srcrt, &amp;p);
 <a name="l00285"></a>00285         <span class="keywordflow">if</span> (err)
 <a name="l00286"></a>00286                 <span class="keywordflow">goto</span> out;
 <a name="l00287"></a>00287 
-<a name="l00288"></a>00288         err = ipv6_renew_option(opt ? opt-&gt;dst1opt : NULL, newopt, newoptlen,
+<a name="l00288"></a>00288         err = <a class="code" href="af__name_8c.html#a51a93e25a456b14fc961232360eea4c9">ipv6_renew_option</a>(opt ? opt-&gt;dst1opt : NULL, newopt, newoptlen,
 <a name="l00289"></a>00289                                 newtype != IPV6_DSTOPTS,
 <a name="l00290"></a>00290                                 &amp;opt2-&gt;dst1opt, &amp;p);
 <a name="l00291"></a>00291         <span class="keywordflow">if</span> (err)
@@ -319,15 +319,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00304"></a>00304 
 <a name="l00305"></a><a class="code" href="structname__opt__hdr.html">00305</a> <span class="keyword">struct </span><a class="code" href="structname__opt__hdr.html">name_opt_hdr</a>
 <a name="l00306"></a>00306 {
-<a name="l00307"></a>00307         __u8 type;
-<a name="l00308"></a>00308         __u8 len;
+<a name="l00307"></a><a class="code" href="structname__opt__hdr.html#aa05eefca31ad6bd4617aac0176b8366e">00307</a>         __u8 <a class="code" href="structname__opt__hdr.html#aa05eefca31ad6bd4617aac0176b8366e">type</a>;
+<a name="l00308"></a><a class="code" href="structname__opt__hdr.html#aa1460ec7ef11d3c3a91c8ee9fb6380d5">00308</a>         __u8 <a class="code" href="structname__opt__hdr.html#aa1460ec7ef11d3c3a91c8ee9fb6380d5">len</a>;
 <a name="l00309"></a>00309         <span class="comment">/* Followed by the actual name */</span>
 <a name="l00310"></a>00310 };
 <a name="l00311"></a>00311 
 <a name="l00315"></a><a class="code" href="af__name_8c.html#aa8c3331a282a806f6be4407fb838f0f1">00315</a> <span class="preprocessor">#define NAME_OPTION_SOURCE_NAME 17</span>
-<a name="l00316"></a>00316 <span class="preprocessor"></span><span class="preprocessor">#define NAME_OPTION_DEST_NAME   18</span>
+<a name="l00316"></a><a class="code" href="af__name_8c.html#a27e27a3ec80a8830a34cfc4313b261ad">00316</a> <span class="preprocessor"></span><span class="preprocessor">#define NAME_OPTION_DEST_NAME   18</span>
 <a name="l00317"></a>00317 <span class="preprocessor"></span>
-<a name="l00318"></a>00318 <span class="keyword">static</span> <span class="keywordtype">void</span> rfc1035_encode_name(<span class="keywordtype">char</span> *dst, <span class="keyword">const</span> <span class="keywordtype">char</span> *name)
+<a name="l00318"></a><a class="code" href="af__name_8c.html#a91562471c07791fae97674a650dc13dd">00318</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#a91562471c07791fae97674a650dc13dd">rfc1035_encode_name</a>(<span class="keywordtype">char</span> *dst, <span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00319"></a>00319 {
 <a name="l00320"></a>00320         <span class="keyword">const</span> <span class="keywordtype">char</span> *p = name;
 <a name="l00321"></a>00321 
@@ -350,7 +350,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00338"></a>00338         *dst = 0;
 <a name="l00339"></a>00339 }
 <a name="l00340"></a>00340 
-<a name="l00341"></a>00341 <span class="keyword">static</span> <span class="keywordtype">int</span> set_name_option(<span class="keyword">struct</span> socket *sock, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, __u8 opt_type)
+<a name="l00341"></a><a class="code" href="af__name_8c.html#ae8e372e7f41189cca5149d620716334f">00341</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ae8e372e7f41189cca5149d620716334f">set_name_option</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">const</span> <span class="keywordtype">char</span> *name, __u8 opt_type)
 <a name="l00342"></a>00342 {
 <a name="l00343"></a>00343         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
 <a name="l00344"></a>00344         <span class="keyword">struct </span>ipv6_pinfo *np = inet6_sk(sk);
@@ -375,12 +375,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00363"></a>00363                 name_opt_hdr = (<span class="keyword">struct </span>name_opt_hdr *)(opt_hdr + 1);
 <a name="l00364"></a>00364                 name_opt_hdr = (<span class="keyword">struct </span>name_opt_hdr *)((<span class="keywordtype">char</span> *)name_opt_hdr +
 <a name="l00365"></a>00365                         <span class="keyword">sizeof</span>(<span class="keyword">struct </span>name_opt_hdr) + name_opt_hdr-&gt;len);
-<a name="l00366"></a>00366                 name_opt_hdr-&gt;type = opt_type;
+<a name="l00366"></a>00366                 name_opt_hdr-&gt;<a class="code" href="structname__opt__hdr.html#aa05eefca31ad6bd4617aac0176b8366e">type</a> = opt_type;
 <a name="l00367"></a>00367                 <span class="comment">/* Happily the RFC1035-encoded name has the same length as the</span>
 <a name="l00368"></a>00368 <span class="comment">                 * C string.</span>
 <a name="l00369"></a>00369 <span class="comment">                 */</span>
-<a name="l00370"></a>00370                 name_opt_hdr-&gt;len = strlen(name) + 1;
-<a name="l00371"></a>00371                 rfc1035_encode_name((<span class="keywordtype">char</span> *)(name_opt_hdr + 1), name);
+<a name="l00370"></a>00370                 name_opt_hdr-&gt;<a class="code" href="structname__opt__hdr.html#aa1460ec7ef11d3c3a91c8ee9fb6380d5">len</a> = strlen(name) + 1;
+<a name="l00371"></a>00371                 <a class="code" href="af__name_8c.html#a91562471c07791fae97674a650dc13dd">rfc1035_encode_name</a>((<span class="keywordtype">char</span> *)(name_opt_hdr + 1), name);
 <a name="l00372"></a>00372                 opt_hdr-&gt;nexthdr = 0;
 <a name="l00373"></a>00373                 opt_hdr-&gt;hdrlen = (name_opt_len + 1) &gt;&gt; 3;
 <a name="l00374"></a>00374         }
@@ -404,12 +404,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00392"></a>00392                 memset(name_opt_buf, 0, name_opt_len);
 <a name="l00393"></a>00393                 opt_hdr = (<span class="keyword">struct </span>ipv6_opt_hdr *)name_opt_buf;
 <a name="l00394"></a>00394                 name_opt_hdr = (<span class="keyword">struct </span>name_opt_hdr *)(opt_hdr + 1);
-<a name="l00395"></a>00395                 name_opt_hdr-&gt;type = opt_type;
+<a name="l00395"></a>00395                 name_opt_hdr-&gt;<a class="code" href="structname__opt__hdr.html#aa05eefca31ad6bd4617aac0176b8366e">type</a> = opt_type;
 <a name="l00396"></a>00396                 <span class="comment">/* Happily the RFC1035-encoded name has the same length as the</span>
 <a name="l00397"></a>00397 <span class="comment">                 * C string.</span>
 <a name="l00398"></a>00398 <span class="comment">                 */</span>
-<a name="l00399"></a>00399                 name_opt_hdr-&gt;len = strlen(name) + 1;
-<a name="l00400"></a>00400                 rfc1035_encode_name((<span class="keywordtype">char</span> *)(name_opt_hdr + 1), name);
+<a name="l00399"></a>00399                 name_opt_hdr-&gt;<a class="code" href="structname__opt__hdr.html#aa1460ec7ef11d3c3a91c8ee9fb6380d5">len</a> = strlen(name) + 1;
+<a name="l00400"></a>00400                 <a class="code" href="af__name_8c.html#a91562471c07791fae97674a650dc13dd">rfc1035_encode_name</a>((<span class="keywordtype">char</span> *)(name_opt_hdr + 1), name);
 <a name="l00401"></a>00401                 opt_hdr-&gt;nexthdr = 0;
 <a name="l00402"></a>00402                 opt_hdr-&gt;hdrlen =
 <a name="l00403"></a>00403                         (<span class="keyword">sizeof</span>(<span class="keyword">struct </span>name_opt_hdr) + name_opt_hdr-&gt;len) &gt;&gt; 3;
@@ -425,7 +425,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00413"></a>00413                 <span class="keywordflow">goto</span> out;
 <a name="l00414"></a>00414         }
 <a name="l00415"></a>00415         err = 0;
-<a name="l00416"></a>00416         opt = ipv6_update_options(sk, opt);
+<a name="l00416"></a>00416         opt = <a class="code" href="af__name_8c.html#a92dcdbf16767c4bf91dea33ec0b26bab">ipv6_update_options</a>(sk, opt);
 <a name="l00417"></a>00417         <span class="keywordflow">if</span> (opt)
 <a name="l00418"></a>00418                 sock_kfree_s(sk, opt, opt-&gt;tot_len);
 <a name="l00419"></a>00419 out:
@@ -436,7 +436,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00424"></a>00424 
 <a name="l00425"></a>00425 <span class="preprocessor">#if defined(CONFIG_NAMESTACK_MODULE)</span>
 <a name="l00426"></a>00426 <span class="preprocessor"></span>
-<a name="l00429"></a>00429 <span class="keywordtype">int</span> ipv6_find_tlv(<span class="keyword">struct</span> sk_buff *skb, <span class="keywordtype">int</span> offset, <span class="keywordtype">int</span> type)
+<a name="l00429"></a>00429 <span class="keywordtype">int</span> ipv6_find_tlv(<span class="keyword">struct</span> sk_buff *skb, <span class="keywordtype">int</span> offset, <span class="keywordtype">int</span> <a class="code" href="structname__opt__hdr.html#aa05eefca31ad6bd4617aac0176b8366e">type</a>)
 <a name="l00430"></a>00430 {
 <a name="l00431"></a>00431         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *nh = skb_network_header(skb);
 <a name="l00432"></a>00432         <span class="keywordtype">int</span> packet_len = skb-&gt;tail - skb-&gt;network_header;
@@ -480,7 +480,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00470"></a>00470 }
 <a name="l00471"></a>00471 <span class="preprocessor">#endif</span>
 <a name="l00472"></a>00472 <span class="preprocessor"></span>
-<a name="l00473"></a>00473 <span class="keyword">static</span> <span class="keywordtype">char</span> *rfc1035_decode_name(<span class="keyword">const</span> u8 *p, <span class="keywordtype">int</span> len)
+<a name="l00473"></a><a class="code" href="af__name_8c.html#ac074fda8f283c687545be2e53de79e49">00473</a> <span class="keyword">static</span> <span class="keywordtype">char</span> *<a class="code" href="af__name_8c.html#ac074fda8f283c687545be2e53de79e49">rfc1035_decode_name</a>(<span class="keyword">const</span> u8 *p, <span class="keywordtype">int</span> len)
 <a name="l00474"></a>00474 {
 <a name="l00475"></a>00475         <span class="keyword">const</span> u8 *q;
 <a name="l00476"></a>00476         <span class="keywordtype">int</span> name_len = 0;
@@ -505,21 +505,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00495"></a>00495         <span class="keywordflow">return</span> name;
 <a name="l00496"></a>00496 }
 <a name="l00497"></a>00497 
-<a name="l00498"></a>00498 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">char</span> *name_option_to_str(<span class="keyword">struct</span> sk_buff *skb, u16 offset)
+<a name="l00498"></a><a class="code" href="af__name_8c.html#ab2674d7b86ff762416ddb3dc835c4880">00498</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">char</span> *<a class="code" href="af__name_8c.html#ab2674d7b86ff762416ddb3dc835c4880">name_option_to_str</a>(<span class="keyword">struct</span> sk_buff *skb, u16 offset)
 <a name="l00499"></a>00499 {
 <a name="l00500"></a>00500         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *nh = skb_network_header(skb);
-<a name="l00501"></a>00501         <span class="keyword">const</span> <span class="keyword">struct </span>name_opt_hdr *name_hdr =
-<a name="l00502"></a>00502                 (<span class="keyword">const</span> <span class="keyword">struct </span>name_opt_hdr *)(nh + offset);
+<a name="l00501"></a>00501         <span class="keyword">const</span> <span class="keyword">struct </span><a class="code" href="structname__opt__hdr.html">name_opt_hdr</a> *name_hdr =
+<a name="l00502"></a>00502                 (<span class="keyword">const</span> <span class="keyword">struct </span><a class="code" href="structname__opt__hdr.html">name_opt_hdr</a> *)(nh + offset);
 <a name="l00503"></a>00503         <span class="keyword">const</span> u8 *name_ptr = (<span class="keyword">const</span> u8 *)(name_hdr + 1);
 <a name="l00504"></a>00504 
-<a name="l00505"></a>00505         <span class="keywordflow">return</span> rfc1035_decode_name(name_ptr, name_hdr-&gt;len);
+<a name="l00505"></a>00505         <span class="keywordflow">return</span> <a class="code" href="af__name_8c.html#ac074fda8f283c687545be2e53de79e49">rfc1035_decode_name</a>(name_ptr, name_hdr-&gt;<a class="code" href="structname__opt__hdr.html#aa1460ec7ef11d3c3a91c8ee9fb6380d5">len</a>);
 <a name="l00506"></a>00506 }
 <a name="l00507"></a>00507 
-<a name="l00511"></a>00511 <span class="keyword">static</span> <span class="keywordtype">int</span> name_option_matches(<span class="keyword">struct</span> sk_buff *skb, u16 offset,
+<a name="l00511"></a><a class="code" href="af__name_8c.html#ad429fdf3c1a016828a502ff8eea46821">00511</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ad429fdf3c1a016828a502ff8eea46821">name_option_matches</a>(<span class="keyword">struct</span> sk_buff *skb, u16 offset,
 <a name="l00512"></a>00512                                <span class="keyword">const</span> <span class="keywordtype">char</span> *name)
 <a name="l00513"></a>00513 {
 <a name="l00514"></a>00514         <span class="keywordtype">int</span> matches = 0;
-<a name="l00515"></a>00515         <span class="keywordtype">char</span> *option_name = name_option_to_str(skb, offset);
+<a name="l00515"></a>00515         <span class="keywordtype">char</span> *option_name = <a class="code" href="af__name_8c.html#ab2674d7b86ff762416ddb3dc835c4880">name_option_to_str</a>(skb, offset);
 <a name="l00516"></a>00516 
 <a name="l00517"></a>00517         <span class="keywordflow">if</span> (option_name) {
 <a name="l00518"></a>00518                 matches = !strcmp(name, option_name);
@@ -532,21 +532,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00525"></a>00525 
 <a name="l00526"></a><a class="code" href="structsyn__entry.html">00526</a> <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a>
 <a name="l00527"></a>00527 {
-<a name="l00528"></a>00528         <span class="keyword">struct </span>in6_addr peer_addr;
-<a name="l00529"></a>00529         __be16 peer_port;
-<a name="l00530"></a>00530         <span class="keyword">struct </span>name_addr name;
-<a name="l00531"></a>00531         <span class="keyword">struct </span>hlist_node entry;
+<a name="l00528"></a><a class="code" href="structsyn__entry.html#a3ccd28993a276a6ccab115e1e713381a">00528</a>         <span class="keyword">struct </span>in6_addr <a class="code" href="structsyn__entry.html#a3ccd28993a276a6ccab115e1e713381a">peer_addr</a>;
+<a name="l00529"></a><a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">00529</a>         __be16 <a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">peer_port</a>;
+<a name="l00530"></a><a class="code" href="structsyn__entry.html#a36d221f23aec51d6ea455bc9dcd56172">00530</a>         <span class="keyword">struct </span>name_addr <a class="code" href="structsyn__entry.html#a36d221f23aec51d6ea455bc9dcd56172">name</a>;
+<a name="l00531"></a><a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">00531</a>         <span class="keyword">struct </span>hlist_node <a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>;
 <a name="l00532"></a>00532 };
 <a name="l00533"></a>00533 
 <a name="l00534"></a>00534 <span class="comment">/* *</span>
 <a name="l00535"></a>00535 <span class="comment"> * NAME_SYN_BUCKETS must be a power of 2, or the &quot;&amp; (NAME_SYN_BUCKETS - 1)&quot;</span>
 <a name="l00536"></a>00536 <span class="comment"> * below must be changed to &quot;% NAME_SYN_BUCKETS&quot;.</span>
 <a name="l00537"></a>00537 <span class="comment"> */</span>
-<a name="l00538"></a>00538 <span class="preprocessor">#define NAME_SYN_BUCKETS 16</span>
-<a name="l00539"></a>00539 <span class="preprocessor"></span><span class="keyword">static</span> <span class="keyword">struct </span>hlist_head name_stream_syns[NAME_SYN_BUCKETS];
-<a name="l00540"></a>00540 <span class="keyword">static</span> DEFINE_SPINLOCK(name_stream_syn_lock);
+<a name="l00538"></a><a class="code" href="af__name_8c.html#ab0d1446d191ef9a97f571715861aa15e">00538</a> <span class="preprocessor">#define NAME_SYN_BUCKETS 16</span>
+<a name="l00539"></a><a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">00539</a> <span class="preprocessor"></span><span class="keyword">static</span> <span class="keyword">struct </span>hlist_head <a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">name_stream_syns</a>[<a class="code" href="af__name_8c.html#ab0d1446d191ef9a97f571715861aa15e">NAME_SYN_BUCKETS</a>];
+<a name="l00540"></a>00540 <span class="keyword">static</span> <a class="code" href="af__name_8c.html#a0d78bf61df3d62eb9098b05830ea3266">DEFINE_SPINLOCK</a>(name_stream_syn_lock);
 <a name="l00541"></a>00541 
-<a name="l00542"></a>00542 <span class="keyword">static</span> <span class="keywordtype">void</span> name_stream_store_syn(<span class="keyword">struct</span> sock *sk, <span class="keyword">struct</span> sk_buff *skb,
+<a name="l00542"></a><a class="code" href="af__name_8c.html#a972a50214997bd814cd05f97d81a81f7">00542</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#a972a50214997bd814cd05f97d81a81f7">name_stream_store_syn</a>(<span class="keyword">struct</span> sock *sk, <span class="keyword">struct</span> sk_buff *skb,
 <a name="l00543"></a>00543                                   <span class="keywordtype">int</span> source_name_offset)
 <a name="l00544"></a>00544 {
 <a name="l00545"></a>00545         u32 bucket;
@@ -556,11 +556,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00549"></a>00549         <span class="keyword">const</span> <span class="keyword">struct </span>in6_addr *saddr = &amp;np-&gt;rcv_saddr;
 <a name="l00550"></a>00550         <span class="keyword">const</span> __u16 port = inet-&gt;dport;
 <a name="l00551"></a>00551 
-<a name="l00552"></a>00552         bucket = inet6_sk_ehashfn(sk) &amp; (NAME_SYN_BUCKETS - 1);
+<a name="l00552"></a>00552         bucket = inet6_sk_ehashfn(sk) &amp; (<a class="code" href="af__name_8c.html#ab0d1446d191ef9a97f571715861aa15e">NAME_SYN_BUCKETS</a> - 1);
 <a name="l00553"></a>00553 
-<a name="l00554"></a>00554         source_name = name_option_to_str(skb, source_name_offset);
+<a name="l00554"></a>00554         source_name = <a class="code" href="af__name_8c.html#ab2674d7b86ff762416ddb3dc835c4880">name_option_to_str</a>(skb, source_name_offset);
 <a name="l00555"></a>00555         <span class="keywordflow">if</span> (source_name) {
-<a name="l00556"></a>00556                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *entry, *found = NULL;
+<a name="l00556"></a>00556                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *<a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>, *found = NULL;
 <a name="l00557"></a>00557                 <span class="keyword">struct </span>hlist_node *node;
 <a name="l00558"></a>00558 
 <a name="l00559"></a>00559                 printk(KERN_INFO <span class="stringliteral">&quot;see source name option %s\n&quot;</span>,
@@ -571,11 +571,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00564"></a>00564                 spin_lock_irq(&amp;name_stream_syn_lock);
 <a name="l00565"></a>00565                 hlist_for_each_entry(entry,
 <a name="l00566"></a>00566                                      node,
-<a name="l00567"></a>00567                                      &amp;name_stream_syns[bucket],
+<a name="l00567"></a>00567                                      &amp;<a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">name_stream_syns</a>[bucket],
 <a name="l00568"></a>00568                                      entry)
 <a name="l00569"></a>00569                 {
-<a name="l00570"></a>00570                         <span class="keywordflow">if</span> (!memcmp(saddr, &amp;entry-&gt;peer_addr, <span class="keyword">sizeof</span>(saddr))
-<a name="l00571"></a>00571                             &amp;&amp; port == entry-&gt;peer_port)
+<a name="l00570"></a>00570                         <span class="keywordflow">if</span> (!memcmp(saddr, &amp;entry-&gt;<a class="code" href="structsyn__entry.html#a3ccd28993a276a6ccab115e1e713381a">peer_addr</a>, <span class="keyword">sizeof</span>(saddr))
+<a name="l00571"></a>00571                             &amp;&amp; port == entry-&gt;<a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">peer_port</a>)
 <a name="l00572"></a>00572                         {
 <a name="l00573"></a>00573                                 found = entry;
 <a name="l00574"></a>00574                                 <span class="keywordflow">break</span>;
@@ -586,7 +586,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00579"></a>00579                         <span class="comment">/* An entry with the same IP address and port exists,</span>
 <a name="l00580"></a>00580 <span class="comment">                         * replace its name.</span>
 <a name="l00581"></a>00581 <span class="comment">                         */</span>
-<a name="l00582"></a>00582                         strcpy(found-&gt;name.name, source_name);
+<a name="l00582"></a>00582                         strcpy(found-&gt;<a class="code" href="structsyn__entry.html#a36d221f23aec51d6ea455bc9dcd56172">name</a>.name, source_name);
 <a name="l00583"></a>00583                 }
 <a name="l00584"></a>00584                 <span class="keywordflow">else</span>
 <a name="l00585"></a>00585                 {
@@ -597,11 +597,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00590"></a>00590 <span class="comment">                         */</span>
 <a name="l00591"></a>00591                         <span class="keywordflow">if</span> (found)
 <a name="l00592"></a>00592                         {
-<a name="l00593"></a>00593                                 strcpy(found-&gt;name.name, source_name);
-<a name="l00594"></a>00594                                 memcpy(&amp;found-&gt;peer_addr, saddr, <span class="keyword">sizeof</span>(saddr));
-<a name="l00595"></a>00595                                 found-&gt;peer_port = port;
-<a name="l00596"></a>00596                                 hlist_add_head(&amp;found-&gt;entry,
-<a name="l00597"></a>00597                                                &amp;name_stream_syns[bucket]);
+<a name="l00593"></a>00593                                 strcpy(found-&gt;<a class="code" href="structsyn__entry.html#a36d221f23aec51d6ea455bc9dcd56172">name</a>.name, source_name);
+<a name="l00594"></a>00594                                 memcpy(&amp;found-&gt;<a class="code" href="structsyn__entry.html#a3ccd28993a276a6ccab115e1e713381a">peer_addr</a>, saddr, <span class="keyword">sizeof</span>(saddr));
+<a name="l00595"></a>00595                                 found-&gt;<a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">peer_port</a> = port;
+<a name="l00596"></a>00596                                 hlist_add_head(&amp;found-&gt;<a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>,
+<a name="l00597"></a>00597                                                &amp;<a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">name_stream_syns</a>[bucket]);
 <a name="l00598"></a>00598                         }
 <a name="l00599"></a>00599                 }
 <a name="l00600"></a>00600                 spin_unlock_irq(&amp;name_stream_syn_lock);
@@ -609,7 +609,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00602"></a>00602         }
 <a name="l00603"></a>00603 }
 <a name="l00604"></a>00604 
-<a name="l00605"></a>00605 <span class="keyword">static</span> <span class="keyword">struct </span>sock *name_v6_recv_syn(<span class="keyword">struct</span> sock *sk, <span class="keyword">struct</span> sk_buff *skb,
+<a name="l00605"></a><a class="code" href="af__name_8c.html#a00476616fd9d75f46a40e02f6844e81a">00605</a> <span class="keyword">static</span> <span class="keyword">struct </span>sock *<a class="code" href="af__name_8c.html#a00476616fd9d75f46a40e02f6844e81a">name_v6_recv_syn</a>(<span class="keyword">struct</span> sock *sk, <span class="keyword">struct</span> sk_buff *skb,
 <a name="l00606"></a>00606                                      <span class="keyword">struct</span> request_sock *req,
 <a name="l00607"></a>00607                                      <span class="keyword">struct</span> dst_entry *dst)
 <a name="l00608"></a>00608 {
@@ -630,7 +630,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00623"></a>00623                 <span class="keywordflow">case</span> NEXTHDR_DEST:
 <a name="l00624"></a>00624                         <span class="keywordflow">if</span> (dest_name_offset == -1)
 <a name="l00625"></a>00625                                 dest_name_offset = ipv6_find_tlv(skb, offset,
-<a name="l00626"></a>00626                                         NAME_OPTION_DEST_NAME);
+<a name="l00626"></a>00626                                         <a class="code" href="af__name_8c.html#a27e27a3ec80a8830a34cfc4313b261ad">NAME_OPTION_DEST_NAME</a>);
 <a name="l00627"></a>00627                         <span class="keywordflow">if</span> (source_name_offset == -1)
 <a name="l00628"></a>00628                                 source_name_offset = ipv6_find_tlv(skb, offset,
 <a name="l00629"></a>00629                                         <a class="code" href="af__name_8c.html#aa8c3331a282a806f6be4407fb838f0f1">NAME_OPTION_SOURCE_NAME</a>);
@@ -645,9 +645,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00638"></a>00638 <span class="comment">         * matches our (source) name.</span>
 <a name="l00639"></a>00639 <span class="comment">         */</span>
 <a name="l00640"></a>00640         <span class="keywordflow">if</span> (dest_name_offset == -1 ||
-<a name="l00641"></a>00641             name_option_matches(skb, dest_name_offset,
-<a name="l00642"></a>00642                                 name-&gt;sname.sname_addr.name)) {
-<a name="l00643"></a>00643                 ret = name-&gt;orig_syn_recv_sock(sk, skb, req, dst);
+<a name="l00641"></a>00641             <a class="code" href="af__name_8c.html#ad429fdf3c1a016828a502ff8eea46821">name_option_matches</a>(skb, dest_name_offset,
+<a name="l00642"></a>00642                                 name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name)) {
+<a name="l00643"></a>00643                 ret = name-&gt;<a class="code" href="structname__stream__sock.html#a617de33d5621dba8d4511e6d1c03a095">orig_syn_recv_sock</a>(sk, skb, req, dst);
 <a name="l00644"></a>00644                 <span class="keywordflow">if</span> (ret) {
 <a name="l00645"></a>00645                         <span class="keywordflow">if</span> (source_name_offset != -1) {
 <a name="l00646"></a>00646                                 <span class="comment">/* The SYN packet contains a source name option,</span>
@@ -662,7 +662,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00655"></a>00655 <span class="comment">                                 * This approach works around my own lack of</span>
 <a name="l00656"></a>00656 <span class="comment">                                 * understanding.)</span>
 <a name="l00657"></a>00657 <span class="comment">                                 */</span>
-<a name="l00658"></a>00658                                 name_stream_store_syn(ret, skb,
+<a name="l00658"></a>00658                                 <a class="code" href="af__name_8c.html#a972a50214997bd814cd05f97d81a81f7">name_stream_store_syn</a>(ret, skb,
 <a name="l00659"></a>00659                                                       source_name_offset);
 <a name="l00660"></a>00660                         }
 <a name="l00661"></a>00661                 }
@@ -670,16 +670,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00663"></a>00663         <span class="keywordflow">return</span> ret;
 <a name="l00664"></a>00664 }
 <a name="l00665"></a>00665 
-<a name="l00666"></a>00666 <span class="keyword">static</span> <span class="keyword">struct </span>inet_connection_sock_af_ops name_tcp6_af_ops;
-<a name="l00667"></a>00667 <span class="keyword">static</span> <span class="keywordtype">int</span> name_tcp6_af_ops_init;
+<a name="l00666"></a><a class="code" href="af__name_8c.html#a9d7eb814b3db9d73d14ff9bc3f1a7efc">00666</a> <span class="keyword">static</span> <span class="keyword">struct </span>inet_connection_sock_af_ops <a class="code" href="af__name_8c.html#a9d7eb814b3db9d73d14ff9bc3f1a7efc">name_tcp6_af_ops</a>;
+<a name="l00667"></a><a class="code" href="af__name_8c.html#a3c2a2433ab2c68108edcb2c4fbf12f07">00667</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a3c2a2433ab2c68108edcb2c4fbf12f07">name_tcp6_af_ops_init</a>;
 <a name="l00668"></a>00668 
-<a name="l00672"></a>00672 <span class="keyword">static</span> <span class="keywordtype">int</span> name_create_v6_sock(<span class="keywordtype">int</span> type, <span class="keywordtype">int</span> protocol, <span class="keyword">struct</span> socket **sock,
+<a name="l00672"></a><a class="code" href="af__name_8c.html#a0067c3ae535b8bfa3b7874517115dd0d">00672</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a0067c3ae535b8bfa3b7874517115dd0d">name_create_v6_sock</a>(<span class="keywordtype">int</span> type, <span class="keywordtype">int</span> protocol, <span class="keyword">struct</span> socket **sock,
 <a name="l00673"></a>00673                                <span class="keyword">struct</span> <a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name)
 <a name="l00674"></a>00674 {
 <a name="l00675"></a>00675         <span class="keywordtype">int</span> err = sock_create_kern(PF_INET6, type, protocol, sock);
 <a name="l00676"></a>00676 
 <a name="l00677"></a>00677         <span class="keywordflow">if</span> (!err) {
-<a name="l00678"></a>00678                 err = set_name_option(*sock, name-&gt;sname.sname_addr.name,
+<a name="l00678"></a>00678                 err = <a class="code" href="af__name_8c.html#ae8e372e7f41189cca5149d620716334f">set_name_option</a>(*sock, name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name,
 <a name="l00679"></a>00679                                       <a class="code" href="af__name_8c.html#aa8c3331a282a806f6be4407fb838f0f1">NAME_OPTION_SOURCE_NAME</a>);
 <a name="l00680"></a>00680         }
 <a name="l00681"></a>00681         <span class="keywordflow">if</span> (!err) {
@@ -692,32 +692,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00688"></a>00688                 <span class="keyword">struct </span>inet_connection_sock *icsk = inet_csk((*sock)-&gt;sk);
 <a name="l00689"></a>00689 
 <a name="l00690"></a>00690                 (*sock)-&gt;sk-&gt;sk_user_data = name;
-<a name="l00691"></a>00691                 (*sock)-&gt;sk-&gt;sk_state_change = name_stream_state_change;
+<a name="l00691"></a>00691                 (*sock)-&gt;<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>-&gt;sk_state_change = <a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">name_stream_state_change</a>;
 <a name="l00692"></a>00692                 <span class="keywordflow">if</span> (!name_tcp6_af_ops_init) {
-<a name="l00693"></a>00693                         memcpy(&amp;name_tcp6_af_ops, icsk-&gt;icsk_af_ops,
+<a name="l00693"></a>00693                         memcpy(&amp;<a class="code" href="af__name_8c.html#a9d7eb814b3db9d73d14ff9bc3f1a7efc">name_tcp6_af_ops</a>, icsk-&gt;icsk_af_ops,
 <a name="l00694"></a>00694                                <span class="keyword">sizeof</span>(<span class="keyword">struct</span> inet_connection_sock_af_ops));
-<a name="l00695"></a>00695                         name_tcp6_af_ops.syn_recv_sock = name_v6_recv_syn;
+<a name="l00695"></a>00695                         <a class="code" href="af__name_8c.html#a9d7eb814b3db9d73d14ff9bc3f1a7efc">name_tcp6_af_ops</a>.syn_recv_sock = <a class="code" href="af__name_8c.html#a00476616fd9d75f46a40e02f6844e81a">name_v6_recv_syn</a>;
 <a name="l00696"></a>00696                         name_tcp6_af_ops_init = 1;
 <a name="l00697"></a>00697                 }
-<a name="l00698"></a>00698                 name-&gt;orig_syn_recv_sock = icsk-&gt;icsk_af_ops-&gt;syn_recv_sock;
-<a name="l00699"></a>00699                 icsk-&gt;icsk_af_ops = &amp;name_tcp6_af_ops;
+<a name="l00698"></a>00698                 name-&gt;<a class="code" href="structname__stream__sock.html#a617de33d5621dba8d4511e6d1c03a095">orig_syn_recv_sock</a> = icsk-&gt;icsk_af_ops-&gt;syn_recv_sock;
+<a name="l00699"></a>00699                 icsk-&gt;icsk_af_ops = &amp;<a class="code" href="af__name_8c.html#a9d7eb814b3db9d73d14ff9bc3f1a7efc">name_tcp6_af_ops</a>;
 <a name="l00700"></a>00700         }
 <a name="l00701"></a>00701         <span class="keywordflow">return</span> err;
 <a name="l00702"></a>00702 }
 <a name="l00703"></a>00703 
-<a name="l00707"></a>00707 <span class="keyword">static</span> <span class="keywordtype">int</span> name_create_v4_sock(<span class="keywordtype">int</span> type, <span class="keywordtype">int</span> protocol, <span class="keyword">struct</span> socket **sock,
+<a name="l00707"></a><a class="code" href="af__name_8c.html#a7ad9fdbbaec06c88dd908e3211f9b8b9">00707</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a7ad9fdbbaec06c88dd908e3211f9b8b9">name_create_v4_sock</a>(<span class="keywordtype">int</span> type, <span class="keywordtype">int</span> protocol, <span class="keyword">struct</span> socket **sock,
 <a name="l00708"></a>00708                                <span class="keyword">struct</span> <a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name)
 <a name="l00709"></a>00709 {
 <a name="l00710"></a>00710         <span class="keywordtype">int</span> err = sock_create_kern(PF_INET, type, protocol, sock);
 <a name="l00711"></a>00711 
 <a name="l00712"></a>00712         <span class="keywordflow">if</span> (!err) {
 <a name="l00713"></a>00713                 (*sock)-&gt;sk-&gt;sk_user_data = name;
-<a name="l00714"></a>00714                 (*sock)-&gt;sk-&gt;sk_state_change = name_stream_state_change;
+<a name="l00714"></a>00714                 (*sock)-&gt;<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>-&gt;sk_state_change = <a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">name_stream_state_change</a>;
 <a name="l00715"></a>00715         }
 <a name="l00716"></a>00716         <span class="keywordflow">return</span> err;
 <a name="l00717"></a>00717 }
 <a name="l00718"></a>00718 
-<a name="l00719"></a>00719 <span class="keyword">static</span> <span class="keywordtype">int</span> name_bind_to_fqdn(<span class="keyword">struct</span> <a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name, <span class="keyword">const</span> <span class="keywordtype">char</span> *fqdn,
+<a name="l00719"></a><a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">00719</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">name_bind_to_fqdn</a>(<span class="keyword">struct</span> <a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name, <span class="keyword">const</span> <span class="keywordtype">char</span> *fqdn,
 <a name="l00720"></a>00720                              <span class="keyword">const</span> __be32 *v4addr,
 <a name="l00721"></a>00721                              <span class="keyword">const</span> <span class="keyword">struct</span> in6_addr *v6addr)
 <a name="l00722"></a>00722 {
@@ -733,30 +733,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00732"></a>00732 <span class="comment">         * yet.  (The sockets will be created as necessary during connect() or</span>
 <a name="l00733"></a>00733 <span class="comment">         * listen().)</span>
 <a name="l00734"></a>00734 <span class="comment">         */</span>
-<a name="l00735"></a>00735         <span class="keywordflow">if</span> (name-&gt;sname.sname_port || v4addr) {
+<a name="l00735"></a>00735         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port || v4addr) {
 <a name="l00736"></a>00736                 <span class="keyword">struct </span>sockaddr_in sin;
 <a name="l00737"></a>00737 
-<a name="l00738"></a>00738                 <span class="keywordflow">if</span> (!name-&gt;ipv4_sock) {
-<a name="l00739"></a>00739                         err = name_create_v4_sock(SOCK_STREAM, 0,
-<a name="l00740"></a>00740                                                   &amp;name-&gt;ipv4_sock, name);
+<a name="l00738"></a>00738                 <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>) {
+<a name="l00739"></a>00739                         err = <a class="code" href="af__name_8c.html#a7ad9fdbbaec06c88dd908e3211f9b8b9">name_create_v4_sock</a>(SOCK_STREAM, 0,
+<a name="l00740"></a>00740                                                   &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>, name);
 <a name="l00741"></a>00741                         <span class="keywordflow">if</span> (err)
 <a name="l00742"></a>00742                                 <span class="keywordflow">goto</span> out;
 <a name="l00743"></a>00743                 }
 <a name="l00744"></a>00744                 memset(&amp;sin, 0, <span class="keyword">sizeof</span>(sin));
 <a name="l00745"></a>00745                 <span class="keywordflow">if</span> (v4addr)
 <a name="l00746"></a>00746                         memcpy(&amp;sin.sin_addr.s_addr, &amp;v4addr, <span class="keyword">sizeof</span>(v4addr));
-<a name="l00747"></a>00747                 sin.sin_port = name-&gt;sname.sname_port;
-<a name="l00748"></a>00748                 err = kernel_bind(name-&gt;ipv4_sock, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
+<a name="l00747"></a>00747                 sin.sin_port = name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port;
+<a name="l00748"></a>00748                 err = kernel_bind(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
 <a name="l00749"></a>00749                                   <span class="keyword">sizeof</span>(sin));
 <a name="l00750"></a>00750                 <span class="keywordflow">if</span> (err)
 <a name="l00751"></a>00751                         <span class="keywordflow">goto</span> out;
 <a name="l00752"></a>00752         }
-<a name="l00753"></a>00753         <span class="keywordflow">if</span> (name-&gt;sname.sname_port || v6addr) {
+<a name="l00753"></a>00753         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port || v6addr) {
 <a name="l00754"></a>00754                 <span class="keyword">struct </span>sockaddr_in6 sin;
 <a name="l00755"></a>00755 
-<a name="l00756"></a>00756                 <span class="keywordflow">if</span> (!name-&gt;ipv6_sock) {
-<a name="l00757"></a>00757                         err = name_create_v6_sock(SOCK_STREAM, 0,
-<a name="l00758"></a>00758                                                   &amp;name-&gt;ipv6_sock, name);
+<a name="l00756"></a>00756                 <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>) {
+<a name="l00757"></a>00757                         err = <a class="code" href="af__name_8c.html#a0067c3ae535b8bfa3b7874517115dd0d">name_create_v6_sock</a>(SOCK_STREAM, 0,
+<a name="l00758"></a>00758                                                   &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, name);
 <a name="l00759"></a>00759                         <span class="keywordflow">if</span> (err)
 <a name="l00760"></a>00760                                 <span class="keywordflow">goto</span> out;
 <a name="l00761"></a>00761                 }
@@ -770,38 +770,38 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00769"></a>00769                         <span class="keywordflow">if</span> (sin.sin6_addr.s6_addr[0] == 0xfe &amp;&amp;
 <a name="l00770"></a>00770                             sin.sin6_addr.s6_addr[1] == 0x80)
 <a name="l00771"></a>00771                         {
-<a name="l00772"></a>00772                                 err = match_v6_address_to_scope(&amp;sin);
+<a name="l00772"></a>00772                                 err = <a class="code" href="address_8c.html#a16f51d1d1829f7c23407fcbf17139691">match_v6_address_to_scope</a>(&amp;sin);
 <a name="l00773"></a>00773                                 <span class="keywordflow">if</span> (err)
 <a name="l00774"></a>00774                                         <span class="keywordflow">goto</span> out;
 <a name="l00775"></a>00775                         }
 <a name="l00776"></a>00776                 }
-<a name="l00777"></a>00777                 sin.sin6_port = name-&gt;sname.sname_port;
-<a name="l00778"></a>00778                 err = kernel_bind(name-&gt;ipv6_sock, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
+<a name="l00777"></a>00777                 sin.sin6_port = name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port;
+<a name="l00778"></a>00778                 err = kernel_bind(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
 <a name="l00779"></a>00779                                   <span class="keyword">sizeof</span>(sin));
 <a name="l00780"></a>00780         }
 <a name="l00781"></a>00781 out:
 <a name="l00782"></a>00782         <span class="keywordflow">return</span> err;
 <a name="l00783"></a>00783 }
 <a name="l00784"></a>00784 
-<a name="l00785"></a>00785 <span class="keyword">static</span> <span class="keywordtype">void</span> name_register_cb(<span class="keywordtype">int</span> result, <span class="keyword">const</span> <span class="keywordtype">char</span> *bound_name, <span class="keywordtype">void</span> *data)
+<a name="l00785"></a><a class="code" href="af__name_8c.html#a9ad7e4fbc663c190f51058fc7c2e7790">00785</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#a9ad7e4fbc663c190f51058fc7c2e7790">name_register_cb</a>(<span class="keywordtype">int</span> result, <span class="keyword">const</span> <span class="keywordtype">char</span> *bound_name, <span class="keywordtype">void</span> *data)
 <a name="l00786"></a>00786 {
 <a name="l00787"></a>00787         <span class="keyword">struct </span>socket *sock = data;
 <a name="l00788"></a>00788         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l00789"></a>00789         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l00789"></a>00789         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l00790"></a>00790 
 <a name="l00791"></a>00791         <span class="keywordflow">if</span> (!result)
-<a name="l00792"></a>00792                 result = name_bind_to_fqdn(name, bound_name, NULL, NULL);
-<a name="l00793"></a>00793         sk-&gt;sk_state &amp;= ~NAMEF_BINDING;
-<a name="l00794"></a>00794         name-&gt;async_error = -result;
+<a name="l00792"></a>00792                 result = <a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">name_bind_to_fqdn</a>(name, bound_name, NULL, NULL);
+<a name="l00793"></a>00793         sk-&gt;sk_state &amp;= ~<a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>;
+<a name="l00794"></a>00794         name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a> = -result;
 <a name="l00795"></a>00795 }
 <a name="l00796"></a>00796 
-<a name="l00802"></a>00802 <span class="keyword">static</span> <span class="keywordtype">int</span> name_parse_canonical_v4(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> *addr)
+<a name="l00802"></a><a class="code" href="af__name_8c.html#a5eb921099d79c0b32e69ff006853442a">00802</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a5eb921099d79c0b32e69ff006853442a">name_parse_canonical_v4</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> *addr)
 <a name="l00803"></a>00803 {
 <a name="l00804"></a>00804         <span class="keyword">const</span> <span class="keywordtype">char</span> *p;
 <a name="l00805"></a>00805         <span class="keywordtype">int</span> i, r;
 <a name="l00806"></a>00806         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> a1, a2, a3, a4;
 <a name="l00807"></a>00807 
-<a name="l00808"></a>00808         p = name_find_v4_canonical_suffix(name);
+<a name="l00808"></a>00808         p = <a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">name_find_v4_canonical_suffix</a>(name);
 <a name="l00809"></a>00809         <span class="keywordflow">if</span> (!p)
 <a name="l00810"></a>00810                 <span class="keywordflow">return</span> -EINVAL;
 <a name="l00811"></a>00811         <span class="comment">/* Skip past the 4 octets of the IP address */</span>
@@ -822,7 +822,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00826"></a>00826         <span class="keywordflow">return</span> 0;
 <a name="l00827"></a>00827 }
 <a name="l00828"></a>00828 
-<a name="l00829"></a>00829 <span class="keyword">static</span> <span class="keywordtype">int</span> name_parse_v6_label(<span class="keyword">const</span> <span class="keywordtype">char</span> *label, uint8_t addr[16],
+<a name="l00829"></a><a class="code" href="af__name_8c.html#a9373ee66c3cbdcba17df3fe1c0ebd5b6">00829</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a9373ee66c3cbdcba17df3fe1c0ebd5b6">name_parse_v6_label</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *label, uint8_t addr[16],
 <a name="l00830"></a>00830                                <span class="keywordtype">int</span> *bytesParsed, <span class="keyword">const</span> <span class="keywordtype">char</span> **endPtr)
 <a name="l00831"></a>00831 {
 <a name="l00832"></a>00832         <span class="keyword">const</span> <span class="keywordtype">char</span> *p = label;
@@ -879,13 +879,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00883"></a>00883                 <span class="keywordflow">return</span> -EINVAL;
 <a name="l00884"></a>00884 }
 <a name="l00885"></a>00885 
-<a name="l00891"></a>00891 <span class="keyword">static</span> <span class="keywordtype">int</span> name_parse_canonical_v6(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keyword">struct</span> in6_addr *v6addr)
+<a name="l00891"></a><a class="code" href="af__name_8c.html#ae8cf85dd3c12a1daa4e1ce16b2ee06d9">00891</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ae8cf85dd3c12a1daa4e1ce16b2ee06d9">name_parse_canonical_v6</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name, <span class="keyword">struct</span> in6_addr *v6addr)
 <a name="l00892"></a>00892 {
 <a name="l00893"></a>00893         <span class="keyword">const</span> <span class="keywordtype">char</span> *next, *p;
 <a name="l00894"></a>00894         uint8_t labelAddr[16];
 <a name="l00895"></a>00895         <span class="keywordtype">int</span> r, bytesParsed;
 <a name="l00896"></a>00896 
-<a name="l00897"></a>00897         p = name_find_v6_canonical_suffix(name);
+<a name="l00897"></a>00897         p = <a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">name_find_v6_canonical_suffix</a>(name);
 <a name="l00898"></a>00898         <span class="keywordflow">if</span> (!p)
 <a name="l00899"></a>00899                 <span class="keywordflow">return</span> -EINVAL;
 <a name="l00900"></a>00900         <span class="keywordflow">for</span> (--p; p &gt; name &amp;&amp; *p != <span class="charliteral">&#39;.&#39;</span>; --p)
@@ -896,7 +896,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00905"></a>00905 <span class="comment">         * address requires the fewest labels (1) possible to specify the</span>
 <a name="l00906"></a>00906 <span class="comment">         * address (see RFC2673.)</span>
 <a name="l00907"></a>00907 <span class="comment">         */</span>
-<a name="l00908"></a>00908         r = name_parse_v6_label(p, labelAddr, &amp;bytesParsed, &amp;next);
+<a name="l00908"></a>00908         r = <a class="code" href="af__name_8c.html#a9373ee66c3cbdcba17df3fe1c0ebd5b6">name_parse_v6_label</a>(p, labelAddr, &amp;bytesParsed, &amp;next);
 <a name="l00909"></a>00909         <span class="keywordflow">if</span> (!r) {
 <a name="l00910"></a>00910                 <span class="keywordflow">if</span> (bytesParsed != <span class="keyword">sizeof</span>(labelAddr))
 <a name="l00911"></a>00911                         r = -EINVAL;
@@ -906,17 +906,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00915"></a>00915         <span class="keywordflow">return</span> r;
 <a name="l00916"></a>00916 }
 <a name="l00917"></a>00917 
-<a name="l00918"></a>00918 <span class="keyword">static</span> <span class="keywordtype">int</span> name_register(<span class="keyword">struct</span> socket *sock, <span class="keyword">const</span> <span class="keywordtype">char</span> *fully_qualified_name,
+<a name="l00918"></a><a class="code" href="af__name_8c.html#af7bcfb1b057d29df2729a1aad286c6ec">00918</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#af7bcfb1b057d29df2729a1aad286c6ec">name_register</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">const</span> <span class="keywordtype">char</span> *fully_qualified_name,
 <a name="l00919"></a>00919                         __be16 port)
 <a name="l00920"></a>00920 {
 <a name="l00921"></a>00921         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l00922"></a>00922         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l00922"></a>00922         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l00923"></a>00923         <span class="keywordtype">int</span> err;
 <a name="l00924"></a>00924 
 <a name="l00925"></a>00925         printk(KERN_INFO <span class="stringliteral">&quot;name qualified as %s\n&quot;</span>, fully_qualified_name);
-<a name="l00926"></a>00926         strcpy(name-&gt;sname.sname_addr.name, fully_qualified_name);
-<a name="l00927"></a>00927         name-&gt;sname.sname_port = port;
-<a name="l00928"></a>00928         err = name_cache_add(fully_qualified_name, sock);
+<a name="l00926"></a>00926         strcpy(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name, fully_qualified_name);
+<a name="l00927"></a>00927         name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port = port;
+<a name="l00928"></a>00928         err = <a class="code" href="namecache_8c.html#aa6e1ff7767ba286a06b81fe430b0e76f">name_cache_add</a>(fully_qualified_name, sock);
 <a name="l00929"></a>00929         <span class="keywordflow">if</span> (err)
 <a name="l00930"></a>00930                 <span class="keywordflow">goto</span> out;
 <a name="l00931"></a>00931         <span class="comment">//assert(strlen(fully_qualified_name) &gt; 1);</span>
@@ -924,31 +924,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00933"></a>00933                 <span class="comment">/* FIXME: name doesn&#39;t exist in any domain.  Do I need to make</span>
 <a name="l00934"></a>00934 <span class="comment">                 * a canonical name out of it?</span>
 <a name="l00935"></a>00935 <span class="comment">                 */</span>
-<a name="l00936"></a>00936                 name_cache_delete(fully_qualified_name);
+<a name="l00936"></a>00936                 <a class="code" href="namecache_8c.html#aa1fb6667246cbfbc4f63436093f59535">name_cache_delete</a>(fully_qualified_name);
 <a name="l00937"></a>00937                 err = -EINVAL;
 <a name="l00938"></a>00938                 <span class="keywordflow">goto</span> out;
 <a name="l00939"></a>00939         }
-<a name="l00940"></a>00940         <span class="keywordflow">if</span> (name_is_local(fully_qualified_name)) {
+<a name="l00940"></a>00940         <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#a5768da3ffa0275fa10335132581d896a">name_is_local</a>(fully_qualified_name)) {
 <a name="l00941"></a>00941                 __be32 v4loopback = htonl(INADDR_LOOPBACK);
 <a name="l00942"></a>00942                 <span class="keyword">struct </span>in6_addr v6loopback = { { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 } } };
 <a name="l00943"></a>00943 
-<a name="l00944"></a>00944                 err = name_bind_to_fqdn(name, fully_qualified_name, &amp;v4loopback,
+<a name="l00944"></a>00944                 err = <a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">name_bind_to_fqdn</a>(name, fully_qualified_name, &amp;v4loopback,
 <a name="l00945"></a>00945                                         &amp;v6loopback);
 <a name="l00946"></a>00946         }
-<a name="l00947"></a>00947         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name_find_v4_canonical_suffix(fully_qualified_name) != NULL) {
+<a name="l00947"></a>00947         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">name_find_v4_canonical_suffix</a>(fully_qualified_name) != NULL) {
 <a name="l00948"></a>00948                 __be32 v4addr;
 <a name="l00949"></a>00949 
-<a name="l00950"></a>00950                 err = name_parse_canonical_v4(fully_qualified_name, &amp;v4addr);
+<a name="l00950"></a>00950                 err = <a class="code" href="af__name_8c.html#a5eb921099d79c0b32e69ff006853442a">name_parse_canonical_v4</a>(fully_qualified_name, &amp;v4addr);
 <a name="l00951"></a>00951                 <span class="keywordflow">if</span> (!err)
-<a name="l00952"></a>00952                         err = name_bind_to_fqdn(name, fully_qualified_name,
+<a name="l00952"></a>00952                         err = <a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">name_bind_to_fqdn</a>(name, fully_qualified_name,
 <a name="l00953"></a>00953                                                 &amp;v4addr, NULL);
 <a name="l00954"></a>00954         }
-<a name="l00955"></a>00955         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name_find_v6_canonical_suffix(fully_qualified_name) != NULL) {
+<a name="l00955"></a>00955         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">name_find_v6_canonical_suffix</a>(fully_qualified_name) != NULL) {
 <a name="l00956"></a>00956                 <span class="keyword">struct </span>in6_addr v6addr;
 <a name="l00957"></a>00957 
-<a name="l00958"></a>00958                 err = name_parse_canonical_v6(fully_qualified_name, &amp;v6addr);
+<a name="l00958"></a>00958                 err = <a class="code" href="af__name_8c.html#ae8cf85dd3c12a1daa4e1ce16b2ee06d9">name_parse_canonical_v6</a>(fully_qualified_name, &amp;v6addr);
 <a name="l00959"></a>00959                 <span class="keywordflow">if</span> (!err)
-<a name="l00960"></a>00960                         err = name_bind_to_fqdn(name, fully_qualified_name,
+<a name="l00960"></a>00960                         err = <a class="code" href="af__name_8c.html#ad3d8a1d4e1c89094faaee7e576dee5b7">name_bind_to_fqdn</a>(name, fully_qualified_name,
 <a name="l00961"></a>00961                                                 NULL, &amp;v6addr);
 <a name="l00962"></a>00962         }
 <a name="l00963"></a>00963         <span class="keywordflow">else</span> {
@@ -957,46 +957,46 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00966"></a>00966                 <span class="keywordtype">int</span> num_v6_addresses;
 <a name="l00967"></a>00967                 <span class="keywordtype">int</span> num_v4_addresses;
 <a name="l00968"></a>00968 
-<a name="l00969"></a>00969                 err = choose_addresses(&amp;num_v6_addresses, &amp;v6_addresses,
+<a name="l00969"></a>00969                 err = <a class="code" href="address_8c.html#a749ca3e8a89fd3bfb9ea9c4d40d53697">choose_addresses</a>(&amp;num_v6_addresses, &amp;v6_addresses,
 <a name="l00970"></a>00970                                        &amp;num_v4_addresses, &amp;v4_addresses);
 <a name="l00971"></a>00971                 <span class="keywordflow">if</span> (!err) {
-<a name="l00972"></a>00972                         err = name_send_registration(fully_qualified_name,
+<a name="l00972"></a>00972                         err = <a class="code" href="main_8c.html#ab952bacca3b7e5f0795ba6304a36cfd4">name_send_registration</a>(fully_qualified_name,
 <a name="l00973"></a>00973                                                      v6_addresses,
 <a name="l00974"></a>00974                                                      num_v6_addresses,
 <a name="l00975"></a>00975                                                      v4_addresses,
 <a name="l00976"></a>00976                                                      num_v4_addresses,
-<a name="l00977"></a>00977                                                      name_register_cb, sock);
+<a name="l00977"></a>00977                                                      <a class="code" href="af__name_8c.html#a9ad7e4fbc663c190f51058fc7c2e7790">name_register_cb</a>, sock);
 <a name="l00978"></a>00978                         kfree(v6_addresses);
 <a name="l00979"></a>00979                         kfree(v4_addresses);
 <a name="l00980"></a>00980                 }
 <a name="l00981"></a>00981         }
 <a name="l00982"></a>00982         <span class="keywordflow">if</span> (err)
-<a name="l00983"></a>00983                 name_cache_delete(fully_qualified_name);
+<a name="l00983"></a>00983                 <a class="code" href="namecache_8c.html#aa1fb6667246cbfbc4f63436093f59535">name_cache_delete</a>(fully_qualified_name);
 <a name="l00984"></a>00984 
 <a name="l00985"></a>00985 out:
 <a name="l00986"></a>00986         <span class="keywordflow">if</span> (err) {
-<a name="l00987"></a>00987                 name-&gt;async_error = -err;
-<a name="l00988"></a>00988                 sk-&gt;sk_state &amp;= ~NAMEF_BINDING;
+<a name="l00987"></a>00987                 name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a> = -err;
+<a name="l00988"></a>00988                 sk-&gt;sk_state &amp;= ~<a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>;
 <a name="l00989"></a>00989                 sk-&gt;sk_state_change(sk);
 <a name="l00990"></a>00990         }
 <a name="l00991"></a>00991         <span class="keywordflow">return</span> err;
 <a name="l00992"></a>00992 }
 <a name="l00993"></a>00993 
-<a name="l00994"></a>00994 <span class="keyword">static</span> <span class="keywordtype">void</span> name_qualify_cb(<span class="keyword">const</span> <span class="keywordtype">char</span> *fully_qualified_name, <span class="keywordtype">void</span> *data)
+<a name="l00994"></a><a class="code" href="af__name_8c.html#a2d725a6eb751e0f660eba52d2a76249b">00994</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#a2d725a6eb751e0f660eba52d2a76249b">name_qualify_cb</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *fully_qualified_name, <span class="keywordtype">void</span> *data)
 <a name="l00995"></a>00995 {
 <a name="l00996"></a>00996         <span class="keyword">struct </span>socket *sock = data;
 <a name="l00997"></a>00997         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l00998"></a>00998         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l00998"></a>00998         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l00999"></a>00999 
-<a name="l01000"></a>01000         name_register(sock, fully_qualified_name, name-&gt;sname.sname_port);
+<a name="l01000"></a>01000         <a class="code" href="af__name_8c.html#af7bcfb1b057d29df2729a1aad286c6ec">name_register</a>(sock, fully_qualified_name, name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port);
 <a name="l01001"></a>01001 }
 <a name="l01002"></a>01002 
-<a name="l01003"></a>01003 <span class="keyword">static</span> <span class="keywordtype">long</span> name_wait_for_bind(<span class="keyword">struct</span> sock *sk, <span class="keywordtype">long</span> timeo)
+<a name="l01003"></a><a class="code" href="af__name_8c.html#a25ca168e54f1f133c80c9018aa3acf80">01003</a> <span class="keyword">static</span> <span class="keywordtype">long</span> <a class="code" href="af__name_8c.html#a25ca168e54f1f133c80c9018aa3acf80">name_wait_for_bind</a>(<span class="keyword">struct</span> sock *<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>, <span class="keywordtype">long</span> timeo)
 <a name="l01004"></a>01004 {
 <a name="l01005"></a>01005         DEFINE_WAIT(wait);
 <a name="l01006"></a>01006 
 <a name="l01007"></a>01007         prepare_to_wait(sk-&gt;sk_sleep, &amp;wait, TASK_INTERRUPTIBLE);
-<a name="l01008"></a>01008         <span class="keywordflow">while</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; NAMEF_BINDING) {
+<a name="l01008"></a>01008         <span class="keywordflow">while</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>) {
 <a name="l01009"></a>01009                 release_sock(sk);
 <a name="l01010"></a>01010                 timeo = schedule_timeout(timeo);
 <a name="l01011"></a>01011                 lock_sock(sk);
@@ -1008,7 +1008,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01017"></a>01017         <span class="keywordflow">return</span> timeo;
 <a name="l01018"></a>01018 }
 <a name="l01019"></a>01019 
-<a name="l01020"></a>01020 <span class="keyword">static</span> <span class="keywordtype">int</span> name_qualify_and_register(<span class="keyword">struct</span> sockaddr_name *addr,
+<a name="l01020"></a><a class="code" href="af__name_8c.html#a7b361fea06308c8ad46651ac195033b0">01020</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a7b361fea06308c8ad46651ac195033b0">name_qualify_and_register</a>(<span class="keyword">struct</span> sockaddr_name *addr,
 <a name="l01021"></a>01021                                      <span class="keyword">struct</span> socket *sock)
 <a name="l01022"></a>01022 {
 <a name="l01023"></a>01023         <span class="keywordtype">int</span> err, len;
@@ -1019,32 +1019,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01028"></a>01028         len = strlen(addr-&gt;sname_addr.name);
 <a name="l01029"></a>01029         <span class="keywordflow">if</span> (addr-&gt;sname_addr.name[len - 1] == <span class="charliteral">&#39;.&#39;</span>) {
 <a name="l01030"></a>01030                 <span class="comment">/* Name is already fully qualified, register it directly */</span>
-<a name="l01031"></a>01031                 err = name_register(sock, addr-&gt;sname_addr.name,
+<a name="l01031"></a>01031                 err = <a class="code" href="af__name_8c.html#af7bcfb1b057d29df2729a1aad286c6ec">name_register</a>(sock, addr-&gt;sname_addr.name,
 <a name="l01032"></a>01032                                     addr-&gt;sname_port);
 <a name="l01033"></a>01033         }
 <a name="l01034"></a>01034         <span class="keywordflow">else</span> {
 <a name="l01035"></a>01035                 sk = sock-&gt;sk;
-<a name="l01036"></a>01036                 name = name_stream_sk(sk);
+<a name="l01036"></a>01036                 name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01037"></a>01037 
 <a name="l01038"></a>01038                 <span class="comment">/* Copy the port to the socket&#39;s source name, it&#39;ll be used</span>
 <a name="l01039"></a>01039 <span class="comment">                 * in name_qualify_cb.</span>
 <a name="l01040"></a>01040 <span class="comment">                 */</span>
-<a name="l01041"></a>01041                 name-&gt;sname.sname_port = addr-&gt;sname_port;
-<a name="l01042"></a>01042                 err = name_fully_qualify(addr-&gt;sname_addr.name,
-<a name="l01043"></a>01043                                          name_qualify_cb, sock);
+<a name="l01041"></a>01041                 name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_port = addr-&gt;sname_port;
+<a name="l01042"></a>01042                 err = <a class="code" href="main_8c.html#ac90990b1e38414ac068ce97f0c469e4e">name_fully_qualify</a>(addr-&gt;sname_addr.name,
+<a name="l01043"></a>01043                                          <a class="code" href="af__name_8c.html#a2d725a6eb751e0f660eba52d2a76249b">name_qualify_cb</a>, sock);
 <a name="l01044"></a>01044                 <span class="keywordflow">if</span> (err)
 <a name="l01045"></a>01045                         <span class="keywordflow">goto</span> out;
 <a name="l01046"></a>01046 
 <a name="l01047"></a>01047                 timeo = sock_sndtimeo(sk, 0);
-<a name="l01048"></a>01048                 <span class="keywordflow">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; NAMEF_BINDING) {
-<a name="l01049"></a>01049                         <span class="keywordflow">if</span> (!timeo || !name_wait_for_bind(sk, timeo))
+<a name="l01048"></a>01048                 <span class="keywordflow">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>) {
+<a name="l01049"></a>01049                         <span class="keywordflow">if</span> (!timeo || !<a class="code" href="af__name_8c.html#a25ca168e54f1f133c80c9018aa3acf80">name_wait_for_bind</a>(sk, timeo))
 <a name="l01050"></a>01050                                 <span class="keywordflow">goto</span> out;
 <a name="l01051"></a>01051                         err = sock_intr_errno(timeo);
 <a name="l01052"></a>01052                         <span class="keywordflow">if</span> (signal_pending(current))
 <a name="l01053"></a>01053                                 <span class="keywordflow">goto</span> out;
 <a name="l01054"></a>01054                 }
-<a name="l01055"></a>01055                 <span class="keywordflow">if</span> (name-&gt;async_error)
-<a name="l01056"></a>01056                         err = name-&gt;async_error;
+<a name="l01055"></a>01055                 <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a>)
+<a name="l01056"></a>01056                         err = name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a>;
 <a name="l01057"></a>01057                 <span class="keywordflow">else</span>
 <a name="l01058"></a>01058                         err = 0;
 <a name="l01059"></a>01059         }
@@ -1053,7 +1053,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01062"></a>01062         <span class="keywordflow">return</span> err;
 <a name="l01063"></a>01063 }
 <a name="l01064"></a>01064 <span class="keyword">static</span> <span class="keywordtype">int</span>
-<a name="l01065"></a>01065 name_stream_bind(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr, <span class="keywordtype">int</span> addr_len)
+<a name="l01065"></a><a class="code" href="af__name_8c.html#a3a2adf5361993cef9bbe48178469714f">01065</a> <a class="code" href="af__name_8c.html#a3a2adf5361993cef9bbe48178469714f">name_stream_bind</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr, <span class="keywordtype">int</span> addr_len)
 <a name="l01066"></a>01066 {
 <a name="l01067"></a>01067         <span class="keyword">struct </span>sockaddr_name *addr = (<span class="keyword">struct </span>sockaddr_name *)uaddr;
 <a name="l01068"></a>01068         <span class="keyword">struct </span>sock *sk;
@@ -1065,7 +1065,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01074"></a>01074         printk(KERN_INFO <span class="stringliteral">&quot;requesting bind to %s\n&quot;</span>, addr-&gt;sname_addr.name);
 <a name="l01075"></a>01075 
 <a name="l01076"></a>01076         sk = sock-&gt;sk;
-<a name="l01077"></a>01077         name = name_stream_sk(sk);
+<a name="l01077"></a>01077         name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01078"></a>01078         lock_sock(sk);
 <a name="l01079"></a>01079 
 <a name="l01080"></a>01080         <span class="keywordflow">switch</span> (sock-&gt;state) {
@@ -1076,29 +1076,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01085"></a>01085                 err = -EISCONN;
 <a name="l01086"></a>01086                 <span class="keywordflow">goto</span> out;
 <a name="l01087"></a>01087         <span class="keywordflow">case</span> SS_UNCONNECTED:
-<a name="l01088"></a>01088                 sk-&gt;sk_state |= NAMEF_BINDING;
+<a name="l01088"></a>01088                 sk-&gt;sk_state |= <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a04a36ce6599bdf70cfc914629893b516">NAMEF_BINDING</a>;
 <a name="l01089"></a>01089                 <span class="keywordflow">break</span>;
 <a name="l01090"></a>01090         };
 <a name="l01091"></a>01091 
-<a name="l01092"></a>01092         <span class="keywordflow">if</span> (name-&gt;sname.sname_addr.name[0]) {
+<a name="l01092"></a>01092         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name[0]) {
 <a name="l01093"></a>01093                 <span class="comment">/* This socket is already bound. */</span>
 <a name="l01094"></a>01094                 err = -EINVAL;
 <a name="l01095"></a>01095                 <span class="keywordflow">goto</span> out;
 <a name="l01096"></a>01096         }
 <a name="l01097"></a>01097 
-<a name="l01098"></a>01098         err = name_qualify_and_register(addr, sock);
+<a name="l01098"></a>01098         err = <a class="code" href="af__name_8c.html#a7b361fea06308c8ad46651ac195033b0">name_qualify_and_register</a>(addr, sock);
 <a name="l01099"></a>01099 
 <a name="l01100"></a>01100 out:
 <a name="l01101"></a>01101         release_sock(sk);
 <a name="l01102"></a>01102         <span class="keywordflow">return</span> err;
 <a name="l01103"></a>01103 }
 <a name="l01104"></a>01104 
-<a name="l01105"></a>01105 <span class="keyword">static</span> <span class="keywordtype">long</span> name_wait_for_connect(<span class="keyword">struct</span> sock *sk, <span class="keywordtype">long</span> timeo)
+<a name="l01105"></a><a class="code" href="af__name_8c.html#a6e4904435cdc354faa139c1e8d114ec2">01105</a> <span class="keyword">static</span> <span class="keywordtype">long</span> <a class="code" href="af__name_8c.html#a6e4904435cdc354faa139c1e8d114ec2">name_wait_for_connect</a>(<span class="keyword">struct</span> sock *<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>, <span class="keywordtype">long</span> timeo)
 <a name="l01106"></a>01106 {
 <a name="l01107"></a>01107         DEFINE_WAIT(wait);
 <a name="l01108"></a>01108 
 <a name="l01109"></a>01109         prepare_to_wait(sk-&gt;sk_sleep, &amp;wait, TASK_INTERRUPTIBLE);
-<a name="l01110"></a>01110         <span class="keywordflow">while</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (NAMEF_RESOLVING | NAMEF_CONNECTING)) {
+<a name="l01110"></a>01110         <span class="keywordflow">while</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (<a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a1fe9d494d7abe8b96b154fa5d160e4e6">NAMEF_RESOLVING</a> | <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7af9e2e6dedfdd6a7433c6c23c8e3b5835">NAMEF_CONNECTING</a>)) {
 <a name="l01111"></a>01111                 release_sock(sk);
 <a name="l01112"></a>01112                 timeo = schedule_timeout(timeo);
 <a name="l01113"></a>01113                 lock_sock(sk);
@@ -1110,10 +1110,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01119"></a>01119         <span class="keywordflow">return</span> timeo;
 <a name="l01120"></a>01120 }
 <a name="l01121"></a>01121 
-<a name="l01122"></a>01122 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_connect_to_v6_address(<span class="keyword">struct</span> sock *sk, uint16_t rdlength,
+<a name="l01122"></a><a class="code" href="af__name_8c.html#aa226ff0e8cb10ce4e4d700b96d0b50b7">01122</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#aa226ff0e8cb10ce4e4d700b96d0b50b7">name_stream_connect_to_v6_address</a>(<span class="keyword">struct</span> sock *<a class="code" href="structname__stream__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>, uint16_t rdlength,
 <a name="l01123"></a>01123                                              <span class="keyword">const</span> u_char *rdata)
 <a name="l01124"></a>01124 {
-<a name="l01125"></a>01125         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01125"></a>01125         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01126"></a>01126         <span class="keyword">struct </span>sockaddr_in6 sin6;
 <a name="l01127"></a>01127         <span class="keyword">struct </span>in6_addr *addr;
 <a name="l01128"></a>01128         <span class="keywordtype">char</span> address[46], *p;
@@ -1122,7 +1122,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01131"></a>01131         <span class="keywordflow">if</span> (rdlength != <span class="keyword">sizeof</span>(<span class="keyword">struct</span> in6_addr)) {
 <a name="l01132"></a>01132                 printk(KERN_WARNING
 <a name="l01133"></a>01133                        <span class="stringliteral">&quot;address record %d has invalid length %d\n&quot;</span>,
-<a name="l01134"></a>01134                        name-&gt;dname_answer_index, rdlength);
+<a name="l01134"></a>01134                        name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a>, rdlength);
 <a name="l01135"></a>01135                 <span class="keywordflow">return</span> -EHOSTUNREACH;
 <a name="l01136"></a>01136         }
 <a name="l01137"></a>01137         addr = (<span class="keyword">struct </span>in6_addr *)rdata;
@@ -1148,15 +1148,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01157"></a>01157         }
 <a name="l01158"></a>01158         sprintf(p, <span class="stringliteral">&quot;%x&quot;</span>, ntohs(addr-&gt;s6_addr16[7]));
 <a name="l01159"></a>01159         printk(KERN_INFO <span class="stringliteral">&quot;connect to IPv6 address %s:%d\n&quot;</span>, address,
-<a name="l01160"></a>01160                ntohs(name-&gt;dname.sname_port));
-<a name="l01161"></a>01161         err = sock_create_kern(PF_INET6, SOCK_STREAM, 0, &amp;name-&gt;ipv6_sock);
+<a name="l01160"></a>01160                ntohs(name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_port));
+<a name="l01161"></a>01161         err = sock_create_kern(PF_INET6, SOCK_STREAM, 0, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>);
 <a name="l01162"></a>01162         <span class="keywordflow">if</span> (err)
 <a name="l01163"></a>01163                 <span class="keywordflow">goto</span> out;
-<a name="l01164"></a>01164         name-&gt;ipv6_sock-&gt;sk-&gt;sk_user_data = name;
-<a name="l01165"></a>01165         name-&gt;ipv6_sock-&gt;sk-&gt;sk_state_change = name_stream_state_change;
+<a name="l01164"></a>01164         name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk-&gt;sk_user_data = name;
+<a name="l01165"></a>01165         name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk-&gt;sk_state_change = <a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">name_stream_state_change</a>;
 <a name="l01166"></a>01166         memset(&amp;sin6, 0, <span class="keyword">sizeof</span>(sin6));
 <a name="l01167"></a>01167         sin6.sin6_family = AF_INET6;
-<a name="l01168"></a>01168         sin6.sin6_port = name-&gt;dname.sname_port;
+<a name="l01168"></a>01168         sin6.sin6_port = name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_port;
 <a name="l01169"></a>01169         memcpy(&amp;sin6.sin6_addr, addr, <span class="keyword">sizeof</span>(*addr));
 <a name="l01170"></a>01170         <span class="comment">/* If the destination is a link-local address, choose the scope id</span>
 <a name="l01171"></a>01171 <span class="comment">         * that defines the interface with which to attempt the connection.</span>
@@ -1166,7 +1166,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01175"></a>01175         <span class="keywordflow">if</span> (sin6.sin6_addr.s6_addr[0] == 0xfe &amp;&amp;
 <a name="l01176"></a>01176             sin6.sin6_addr.s6_addr[1] == 0x80)
 <a name="l01177"></a>01177         {
-<a name="l01178"></a>01178                 err = choose_scope_for_v6_address(&amp;sin6);
+<a name="l01178"></a>01178                 err = <a class="code" href="address_8c.html#a747de89e52fd69f30633dadae20e2c45">choose_scope_for_v6_address</a>(&amp;sin6);
 <a name="l01179"></a>01179                 <span class="keywordflow">if</span> (err) {
 <a name="l01180"></a>01180                         printk(KERN_WARNING <span class="stringliteral">&quot;choose_scope_for_v6_address failed: %d\n&quot;</span>,
 <a name="l01181"></a>01181                                err);
@@ -1177,20 +1177,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01186"></a>01186                                sin6.sin6_scope_id);
 <a name="l01187"></a>01187         }
 <a name="l01188"></a>01188 
-<a name="l01189"></a>01189         <span class="keywordflow">if</span> (name-&gt;sname.sname_addr.name[0]) {
-<a name="l01190"></a>01190                 err = set_name_option(name-&gt;ipv6_sock,
-<a name="l01191"></a>01191                                       name-&gt;sname.sname_addr.name,
+<a name="l01189"></a>01189         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name[0]) {
+<a name="l01190"></a>01190                 err = <a class="code" href="af__name_8c.html#ae8e372e7f41189cca5149d620716334f">set_name_option</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>,
+<a name="l01191"></a>01191                                       name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>.sname_addr.name,
 <a name="l01192"></a>01192                                       <a class="code" href="af__name_8c.html#aa8c3331a282a806f6be4407fb838f0f1">NAME_OPTION_SOURCE_NAME</a>);
 <a name="l01193"></a>01193                 <span class="keywordflow">if</span> (err)
 <a name="l01194"></a>01194                         <span class="keywordflow">goto</span> out;
 <a name="l01195"></a>01195         }
 <a name="l01196"></a>01196 
-<a name="l01197"></a>01197         err = set_name_option(name-&gt;ipv6_sock, name-&gt;dname.sname_addr.name,
-<a name="l01198"></a>01198                               NAME_OPTION_DEST_NAME);
+<a name="l01197"></a>01197         err = <a class="code" href="af__name_8c.html#ae8e372e7f41189cca5149d620716334f">set_name_option</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name,
+<a name="l01198"></a>01198                               <a class="code" href="af__name_8c.html#a27e27a3ec80a8830a34cfc4313b261ad">NAME_OPTION_DEST_NAME</a>);
 <a name="l01199"></a>01199         <span class="keywordflow">if</span> (err)
 <a name="l01200"></a>01200                 <span class="keywordflow">goto</span> out;
 <a name="l01201"></a>01201 
-<a name="l01202"></a>01202         err = kernel_connect(name-&gt;ipv6_sock, (<span class="keyword">struct</span> sockaddr *)&amp;sin6,
+<a name="l01202"></a>01202         err = kernel_connect(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, (<span class="keyword">struct</span> sockaddr *)&amp;sin6,
 <a name="l01203"></a>01203                              <span class="keyword">sizeof</span>(sin6), O_NONBLOCK);
 <a name="l01204"></a>01204         <span class="comment">/* The expected error is EINPROGRESS, as the socket connection kicks</span>
 <a name="l01205"></a>01205 <span class="comment">         * off.  Return success in this case.</span>
@@ -1201,10 +1201,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01210"></a>01210         <span class="keywordflow">return</span> err;
 <a name="l01211"></a>01211 }
 <a name="l01212"></a>01212 
-<a name="l01213"></a>01213 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_connect_to_v4_address(<span class="keyword">struct</span> sock *sk, uint16_t rdlength,
+<a name="l01213"></a><a class="code" href="af__name_8c.html#ab7ad141173fdb0bbb0e319a69a96d3d1">01213</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ab7ad141173fdb0bbb0e319a69a96d3d1">name_stream_connect_to_v4_address</a>(<span class="keyword">struct</span> sock *sk, uint16_t rdlength,
 <a name="l01214"></a>01214                                              <span class="keyword">const</span> u_char *rdata)
 <a name="l01215"></a>01215 {
-<a name="l01216"></a>01216         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01216"></a>01216         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01217"></a>01217         <span class="keywordtype">int</span> err;
 <a name="l01218"></a>01218         <span class="keyword">struct </span>sockaddr_in sin;
 <a name="l01219"></a>01219         uint32_t addr;
@@ -1214,7 +1214,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01223"></a>01223         <span class="keywordflow">if</span> (rdlength != <span class="keyword">sizeof</span>(uint32_t)) {
 <a name="l01224"></a>01224                 printk(KERN_WARNING
 <a name="l01225"></a>01225                        <span class="stringliteral">&quot;address record %d has invalid length %d\n&quot;</span>,
-<a name="l01226"></a>01226                        name-&gt;dname_answer_index, rdlength);
+<a name="l01226"></a>01226                        name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a>, rdlength);
 <a name="l01227"></a>01227                 <span class="keywordflow">return</span> -EHOSTUNREACH;
 <a name="l01228"></a>01228         }
 <a name="l01229"></a>01229         addr = *(uint32_t *)rdata;
@@ -1231,17 +1231,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01240"></a>01240                         *p++ = <span class="charliteral">&#39;.&#39;</span>;
 <a name="l01241"></a>01241         }
 <a name="l01242"></a>01242         printk(KERN_INFO <span class="stringliteral">&quot;connect to IPv4 address %s:%d\n&quot;</span>, address,
-<a name="l01243"></a>01243                ntohs(name-&gt;dname.sname_port));
-<a name="l01244"></a>01244         err = sock_create_kern(PF_INET, SOCK_STREAM, 0, &amp;name-&gt;ipv4_sock);
+<a name="l01243"></a>01243                ntohs(name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_port));
+<a name="l01244"></a>01244         err = sock_create_kern(PF_INET, SOCK_STREAM, 0, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>);
 <a name="l01245"></a>01245         <span class="keywordflow">if</span> (err)
 <a name="l01246"></a>01246                 <span class="keywordflow">goto</span> out;
-<a name="l01247"></a>01247         name-&gt;ipv4_sock-&gt;sk-&gt;sk_user_data = name;
-<a name="l01248"></a>01248         name-&gt;ipv4_sock-&gt;sk-&gt;sk_state_change = name_stream_state_change;
+<a name="l01247"></a>01247         name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk-&gt;sk_user_data = name;
+<a name="l01248"></a>01248         name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk-&gt;sk_state_change = <a class="code" href="af__name_8c.html#abb1d86c18940b6e3b02bbbeb4f1eb662">name_stream_state_change</a>;
 <a name="l01249"></a>01249         memset(&amp;sin, 0, <span class="keyword">sizeof</span>(sin));
 <a name="l01250"></a>01250         sin.sin_family = AF_INET;
-<a name="l01251"></a>01251         sin.sin_port = name-&gt;dname.sname_port;
+<a name="l01251"></a>01251         sin.sin_port = name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_port;
 <a name="l01252"></a>01252         sin.sin_addr.s_addr = *(uint32_t *)rdata;
-<a name="l01253"></a>01253         err = kernel_connect(name-&gt;ipv4_sock, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
+<a name="l01253"></a>01253         err = kernel_connect(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>, (<span class="keyword">struct</span> sockaddr *)&amp;sin,
 <a name="l01254"></a>01254                              <span class="keyword">sizeof</span>(sin), O_NONBLOCK);
 <a name="l01255"></a>01255         <span class="comment">/* The expected error is EINPROGRESS, as the socket connection kicks</span>
 <a name="l01256"></a>01256 <span class="comment">         * off.  Return success in this case.</span>
@@ -1252,30 +1252,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01261"></a>01261         <span class="keywordflow">return</span> err;
 <a name="l01262"></a>01262 }
 <a name="l01263"></a>01263 
-<a name="l01264"></a>01264 <span class="keyword">static</span> <span class="keywordtype">void</span> name_stream_connect_to_resolved_name(<span class="keyword">struct</span> sock *sk)
+<a name="l01264"></a><a class="code" href="af__name_8c.html#afff5c5578fe9835676f40108dd189e1d">01264</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#afff5c5578fe9835676f40108dd189e1d">name_stream_connect_to_resolved_name</a>(<span class="keyword">struct</span> sock *sk)
 <a name="l01265"></a>01265 {
-<a name="l01266"></a>01266         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01266"></a>01266         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01267"></a>01267         uint16_t rdlength;
 <a name="l01268"></a>01268         <span class="keyword">const</span> u_char *rdata;
 <a name="l01269"></a>01269         <span class="keywordtype">int</span> err;
 <a name="l01270"></a>01270 
-<a name="l01271"></a>01271         <span class="keywordflow">if</span> (!find_answer_of_type(name-&gt;dname_answer, name-&gt;dname_answer_len,
-<a name="l01272"></a>01272                                  T_CNAME, 0, &amp;rdlength, &amp;rdata)) {
-<a name="l01273"></a>01273                 <span class="keywordtype">char</span> *fqdn = rfc1035_decode_name(rdata, rdlength);
+<a name="l01271"></a>01271         <span class="keywordflow">if</span> (!<a class="code" href="dns_8c.html#a593122bc343447440beb7ec60bd9f7b3">find_answer_of_type</a>(name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>, name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a>,
+<a name="l01272"></a>01272                                  <a class="code" href="nameser_8h.html#a3b1f450c75d14e4a17f4d157641999e5">T_CNAME</a>, 0, &amp;rdlength, &amp;rdata)) {
+<a name="l01273"></a>01273                 <span class="keywordtype">char</span> *fqdn = <a class="code" href="af__name_8c.html#ac074fda8f283c687545be2e53de79e49">rfc1035_decode_name</a>(rdata, rdlength);
 <a name="l01274"></a>01274 
 <a name="l01275"></a>01275                 <span class="comment">/* The response contains a CNAME.  Use this as the destination</span>
 <a name="l01276"></a>01276 <span class="comment">                 * name, rather than name the application provided.</span>
 <a name="l01277"></a>01277 <span class="comment">                 */</span>
 <a name="l01278"></a>01278                 <span class="keywordflow">if</span> (fqdn) {
 <a name="l01279"></a>01279                         printk(KERN_INFO <span class="stringliteral">&quot;connecting to %s\n&quot;</span>, fqdn);
-<a name="l01280"></a>01280                         strcpy(name-&gt;dname.sname_addr.name, fqdn);
+<a name="l01280"></a>01280                         strcpy(name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name, fqdn);
 <a name="l01281"></a>01281                         kfree(fqdn);
 <a name="l01282"></a>01282                 }
 <a name="l01283"></a>01283         }
-<a name="l01284"></a>01284         <span class="keywordflow">if</span> (!find_answer_of_type(name-&gt;dname_answer, name-&gt;dname_answer_len,
-<a name="l01285"></a>01285                                  T_AAAA, name-&gt;dname_answer_index, &amp;rdlength,
+<a name="l01284"></a>01284         <span class="keywordflow">if</span> (!<a class="code" href="dns_8c.html#a593122bc343447440beb7ec60bd9f7b3">find_answer_of_type</a>(name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>, name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a>,
+<a name="l01285"></a>01285                                  <a class="code" href="nameser_8h.html#a9988cc1cc24b640d7fc9d8f602104405">T_AAAA</a>, name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a>, &amp;rdlength,
 <a name="l01286"></a>01286                                  &amp;rdata)) {
-<a name="l01287"></a>01287                 err = name_stream_connect_to_v6_address(sk, rdlength,
+<a name="l01287"></a>01287                 err = <a class="code" href="af__name_8c.html#aa226ff0e8cb10ce4e4d700b96d0b50b7">name_stream_connect_to_v6_address</a>(sk, rdlength,
 <a name="l01288"></a>01288                                                             rdata);
 <a name="l01289"></a>01289                 <span class="keywordflow">if</span> (err) {
 <a name="l01290"></a>01290                         <span class="comment">/* FIXME: get next address rather than closing the</span>
@@ -1285,11 +1285,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01294"></a>01294                         sk-&gt;sk_state_change(sk);
 <a name="l01295"></a>01295                 }
 <a name="l01296"></a>01296         }
-<a name="l01297"></a>01297         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!find_answer_of_type(name-&gt;dname_answer,
-<a name="l01298"></a>01298                                       name-&gt;dname_answer_len,
-<a name="l01299"></a>01299                                       T_A, name-&gt;dname_answer_index, &amp;rdlength,
+<a name="l01297"></a>01297         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!<a class="code" href="dns_8c.html#a593122bc343447440beb7ec60bd9f7b3">find_answer_of_type</a>(name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>,
+<a name="l01298"></a>01298                                       name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a>,
+<a name="l01299"></a>01299                                       <a class="code" href="nameser_8h.html#a11241ed27971fdd50a08f46de115cc89">T_A</a>, name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a>, &amp;rdlength,
 <a name="l01300"></a>01300                                       &amp;rdata)) {
-<a name="l01301"></a>01301                 err = name_stream_connect_to_v4_address(sk, rdlength,
+<a name="l01301"></a>01301                 err = <a class="code" href="af__name_8c.html#ab7ad141173fdb0bbb0e319a69a96d3d1">name_stream_connect_to_v4_address</a>(sk, rdlength,
 <a name="l01302"></a>01302                                                             rdata);
 <a name="l01303"></a>01303                 <span class="keywordflow">if</span> (err) {
 <a name="l01304"></a>01304                         <span class="comment">/* FIXME: get next address rather than closing the</span>
@@ -1305,10 +1305,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01314"></a>01314                 sk-&gt;sk_state_change(sk);
 <a name="l01315"></a>01315                 err = -EHOSTUNREACH;
 <a name="l01316"></a>01316         }
-<a name="l01317"></a>01317         name-&gt;async_error = err;
+<a name="l01317"></a>01317         name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a> = err;
 <a name="l01318"></a>01318 }
 <a name="l01319"></a>01319 
-<a name="l01320"></a>01320 <span class="keyword">static</span> <span class="keywordtype">void</span> name_stream_query_resolve(<span class="keyword">const</span> u_char *response, <span class="keywordtype">int</span> len,
+<a name="l01320"></a><a class="code" href="af__name_8c.html#a78360fdbbdbb75194fedc8378992cee8">01320</a> <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#a78360fdbbdbb75194fedc8378992cee8">name_stream_query_resolve</a>(<span class="keyword">const</span> u_char *response, <span class="keywordtype">int</span> len,
 <a name="l01321"></a>01321                                       <span class="keywordtype">void</span> *data)
 <a name="l01322"></a>01322 {
 <a name="l01323"></a>01323         <span class="keyword">struct </span>socket *sock = data;
@@ -1316,10 +1316,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01325"></a>01325 
 <a name="l01326"></a>01326         <span class="keywordflow">if</span> (len &gt; 0)
 <a name="l01327"></a>01327         {
-<a name="l01328"></a>01328                 <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01328"></a>01328                 <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01329"></a>01329 
-<a name="l01330"></a>01330                 name-&gt;dname_answer = kmalloc(len, GFP_ATOMIC);
-<a name="l01331"></a>01331                 <span class="keywordflow">if</span> (!name-&gt;dname_answer)
+<a name="l01330"></a>01330                 name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a> = kmalloc(len, GFP_ATOMIC);
+<a name="l01331"></a>01331                 <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>)
 <a name="l01332"></a>01332                 {
 <a name="l01333"></a>01333                         <span class="comment">/* Allocation failure, close request */</span>
 <a name="l01334"></a>01334                         sk-&gt;sk_state = TCP_CLOSE;
@@ -1327,12 +1327,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01336"></a>01336                 }
 <a name="l01337"></a>01337                 <span class="keywordflow">else</span>
 <a name="l01338"></a>01338                 {
-<a name="l01339"></a>01339                         name-&gt;dname_answer_len = len;
-<a name="l01340"></a>01340                         name-&gt;dname_answer_index = 0;
-<a name="l01341"></a>01341                         memcpy(name-&gt;dname_answer, response, len);
-<a name="l01342"></a>01342                         sk-&gt;sk_state = NAME_CONNECTING;
+<a name="l01339"></a>01339                         name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a> = len;
+<a name="l01340"></a>01340                         name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a> = 0;
+<a name="l01341"></a>01341                         memcpy(name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a>, response, len);
+<a name="l01342"></a>01342                         sk-&gt;sk_state = <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba5888c13423de57b9bf30c2188e694e65">NAME_CONNECTING</a>;
 <a name="l01343"></a>01343                         sk-&gt;sk_state_change(sk);
-<a name="l01344"></a>01344                         name_stream_connect_to_resolved_name(sk);
+<a name="l01344"></a>01344                         <a class="code" href="af__name_8c.html#afff5c5578fe9835676f40108dd189e1d">name_stream_connect_to_resolved_name</a>(sk);
 <a name="l01345"></a>01345                 }
 <a name="l01346"></a>01346         }
 <a name="l01347"></a>01347         <span class="keywordflow">else</span>
@@ -1343,7 +1343,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01352"></a>01352         }
 <a name="l01353"></a>01353 }
 <a name="l01354"></a>01354 
-<a name="l01355"></a>01355 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_connect(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr,
+<a name="l01355"></a><a class="code" href="af__name_8c.html#a739a9be9b64d10189c9e88f6d28491ee">01355</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a739a9be9b64d10189c9e88f6d28491ee">name_stream_connect</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr,
 <a name="l01356"></a>01356                                <span class="keywordtype">int</span> addr_len, <span class="keywordtype">int</span> flags)
 <a name="l01357"></a>01357 {
 <a name="l01358"></a>01358         <span class="keyword">struct </span>sockaddr_name *sname = (<span class="keyword">struct </span>sockaddr_name *)uaddr;
@@ -1361,7 +1361,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01370"></a>01370                sname-&gt;sname_addr.name, ntohs(sname-&gt;sname_port));
 <a name="l01371"></a>01371 
 <a name="l01372"></a>01372         sk = sock-&gt;sk;
-<a name="l01373"></a>01373         name = name_stream_sk(sk);
+<a name="l01373"></a>01373         name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01374"></a>01374         lock_sock(sk);
 <a name="l01375"></a>01375 
 <a name="l01376"></a>01376         <span class="keywordflow">switch</span> (sock-&gt;state) {
@@ -1379,39 +1379,39 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01388"></a>01388                 err = -EISCONN;
 <a name="l01389"></a>01389 
 <a name="l01390"></a>01390                 sock-&gt;state = SS_CONNECTING;
-<a name="l01391"></a>01391                 sk-&gt;sk_state = NAME_RESOLVING;
-<a name="l01392"></a>01392                 memcpy(&amp;name-&gt;dname, uaddr, addr_len);
-<a name="l01393"></a>01393                 <span class="keywordflow">if</span> (name_is_local(name-&gt;dname.sname_addr.name)) {
+<a name="l01391"></a>01391                 sk-&gt;sk_state = <a class="code" href="af__name_8c.html#a06fc87d81c62e9abb8790b6e5713c55ba66c66f9dd0387b93b47bf4566f3d2ab7">NAME_RESOLVING</a>;
+<a name="l01392"></a>01392                 memcpy(&amp;name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>, uaddr, addr_len);
+<a name="l01393"></a>01393                 <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#a5768da3ffa0275fa10335132581d896a">name_is_local</a>(name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name)) {
 <a name="l01394"></a>01394                         __u8 loopback[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
 <a name="l01395"></a>01395                         <span class="keyword">struct </span>in6_addr in6;
 <a name="l01396"></a>01396 
 <a name="l01397"></a>01397                         memcpy(&amp;in6.s6_addr, &amp;loopback, <span class="keyword">sizeof</span>(in6.s6_addr));
-<a name="l01398"></a>01398                         err = name_stream_connect_to_v6_address(sk, <span class="keyword">sizeof</span>(in6),
+<a name="l01398"></a>01398                         err = <a class="code" href="af__name_8c.html#aa226ff0e8cb10ce4e4d700b96d0b50b7">name_stream_connect_to_v6_address</a>(sk, <span class="keyword">sizeof</span>(in6),
 <a name="l01399"></a>01399                                                                 (<span class="keyword">const</span> u_char *)&amp;in6);
 <a name="l01400"></a>01400                 }
-<a name="l01401"></a>01401                 <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name_find_v4_canonical_suffix(
-<a name="l01402"></a>01402                         name-&gt;dname.sname_addr.name) != NULL) {
+<a name="l01401"></a>01401                 <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#ae9d30538439c0da5b53cfdf6a87d0065">name_find_v4_canonical_suffix</a>(
+<a name="l01402"></a>01402                         name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name) != NULL) {
 <a name="l01403"></a>01403                         __be32 v4;
 <a name="l01404"></a>01404 
-<a name="l01405"></a>01405                         err = name_parse_canonical_v4(
-<a name="l01406"></a>01406                                 name-&gt;dname.sname_addr.name, &amp;v4);
+<a name="l01405"></a>01405                         err = <a class="code" href="af__name_8c.html#a5eb921099d79c0b32e69ff006853442a">name_parse_canonical_v4</a>(
+<a name="l01406"></a>01406                                 name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name, &amp;v4);
 <a name="l01407"></a>01407                         <span class="keywordflow">if</span> (!err)
-<a name="l01408"></a>01408                                 err = name_stream_connect_to_v4_address(sk,
+<a name="l01408"></a>01408                                 err = <a class="code" href="af__name_8c.html#ab7ad141173fdb0bbb0e319a69a96d3d1">name_stream_connect_to_v4_address</a>(sk,
 <a name="l01409"></a>01409                                         <span class="keyword">sizeof</span>(v4), (<span class="keyword">const</span> u_char *)&amp;v4);
 <a name="l01410"></a>01410                 }
-<a name="l01411"></a>01411                 <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name_find_v6_canonical_suffix(
-<a name="l01412"></a>01412                         name-&gt;dname.sname_addr.name) != NULL) {
+<a name="l01411"></a>01411                 <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="af__name_8c.html#a816a98f8cf2b06df30fe991ec8bfcffe">name_find_v6_canonical_suffix</a>(
+<a name="l01412"></a>01412                         name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name) != NULL) {
 <a name="l01413"></a>01413                         <span class="keyword">struct </span>in6_addr in6;
 <a name="l01414"></a>01414 
-<a name="l01415"></a>01415                         err = name_parse_canonical_v6(
-<a name="l01416"></a>01416                                 name-&gt;dname.sname_addr.name, &amp;in6);
+<a name="l01415"></a>01415                         err = <a class="code" href="af__name_8c.html#ae8cf85dd3c12a1daa4e1ce16b2ee06d9">name_parse_canonical_v6</a>(
+<a name="l01416"></a>01416                                 name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>.sname_addr.name, &amp;in6);
 <a name="l01417"></a>01417                         <span class="keywordflow">if</span> (!err)
-<a name="l01418"></a>01418                                 err = name_stream_connect_to_v6_address(sk,
+<a name="l01418"></a>01418                                 err = <a class="code" href="af__name_8c.html#aa226ff0e8cb10ce4e4d700b96d0b50b7">name_stream_connect_to_v6_address</a>(sk,
 <a name="l01419"></a>01419                                         <span class="keyword">sizeof</span>(in6), in6.s6_addr);
 <a name="l01420"></a>01420                 }
 <a name="l01421"></a>01421                 <span class="keywordflow">else</span>
-<a name="l01422"></a>01422                         err = name_send_query(sname-&gt;sname_addr.name,
-<a name="l01423"></a>01423                                               name_stream_query_resolve, sock);
+<a name="l01422"></a>01422                         err = <a class="code" href="main_8c.html#af9ebf7c5c4b9e21647f9fad73789d1c4">name_send_query</a>(sname-&gt;sname_addr.name,
+<a name="l01423"></a>01423                                               <a class="code" href="af__name_8c.html#a78360fdbbdbb75194fedc8378992cee8">name_stream_query_resolve</a>, sock);
 <a name="l01424"></a>01424                 <span class="keywordflow">if</span> (err)
 <a name="l01425"></a>01425                         <span class="keywordflow">goto</span> out;
 <a name="l01426"></a>01426 
@@ -1424,8 +1424,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01433"></a>01433         }
 <a name="l01434"></a>01434 
 <a name="l01435"></a>01435         timeo = sock_sndtimeo(sk, flags &amp; MSG_DONTWAIT);
-<a name="l01436"></a>01436         <span class="keywordflow">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (NAMEF_RESOLVING | NAMEF_CONNECTING)) {
-<a name="l01437"></a>01437                 <span class="keywordflow">if</span> (!timeo || !name_wait_for_connect(sk, timeo)) {
+<a name="l01436"></a>01436         <span class="keywordflow">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (<a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7a1fe9d494d7abe8b96b154fa5d160e4e6">NAMEF_RESOLVING</a> | <a class="code" href="af__name_8c.html#adf764cbdea00d65edcd07bb9953ad2b7af9e2e6dedfdd6a7433c6c23c8e3b5835">NAMEF_CONNECTING</a>)) {
+<a name="l01437"></a>01437                 <span class="keywordflow">if</span> (!timeo || !<a class="code" href="af__name_8c.html#a6e4904435cdc354faa139c1e8d114ec2">name_wait_for_connect</a>(sk, timeo)) {
 <a name="l01438"></a>01438                         <span class="comment">/* err set above */</span>
 <a name="l01439"></a>01439                         <span class="keywordflow">goto</span> out;
 <a name="l01440"></a>01440                 }
@@ -1436,8 +1436,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01445"></a>01445 
 <a name="l01446"></a>01446         <span class="keywordflow">if</span> ((1 &lt;&lt; sk-&gt;sk_state) &amp; (TCPF_CLOSE)) {
 <a name="l01447"></a>01447                 sock-&gt;state = SOCK_DEAD;
-<a name="l01448"></a>01448                 <span class="keywordflow">if</span> (name-&gt;async_error)
-<a name="l01449"></a>01449                         err = name-&gt;async_error;
+<a name="l01448"></a>01448                 <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a>)
+<a name="l01449"></a>01449                         err = name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a>;
 <a name="l01450"></a>01450                 <span class="keywordflow">else</span>
 <a name="l01451"></a>01451                         err = -EHOSTUNREACH;
 <a name="l01452"></a>01452         }
@@ -1451,7 +1451,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01460"></a>01460         <span class="keywordflow">return</span> err;
 <a name="l01461"></a>01461 }
 <a name="l01462"></a>01462 
-<a name="l01463"></a>01463 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_wait_for_accept(<span class="keyword">struct</span> socket *sock, <span class="keywordtype">long</span> timeo)
+<a name="l01463"></a><a class="code" href="af__name_8c.html#a8f62129c805bae85d7cd3ead2bbf07f2">01463</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a8f62129c805bae85d7cd3ead2bbf07f2">name_stream_wait_for_accept</a>(<span class="keyword">struct</span> socket *sock, <span class="keywordtype">long</span> timeo)
 <a name="l01464"></a>01464 {
 <a name="l01465"></a>01465         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
 <a name="l01466"></a>01466         DEFINE_WAIT(wait);
@@ -1469,10 +1469,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01478"></a>01478         <span class="keywordflow">return</span> timeo;
 <a name="l01479"></a>01479 }
 <a name="l01480"></a>01480 
-<a name="l01481"></a>01481 <span class="keyword">static</span> <span class="keyword">struct </span>sock *name_alloc_stream_socket(<span class="keyword">struct</span> net *net,
+<a name="l01481"></a>01481 <span class="keyword">static</span> <span class="keyword">struct </span>sock *<a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">name_alloc_stream_socket</a>(<span class="keyword">struct</span> net *net,
 <a name="l01482"></a>01482                                              <span class="keyword">struct</span> socket *sock);
 <a name="l01483"></a>01483 
-<a name="l01484"></a>01484 <span class="keyword">static</span> <span class="keyword">struct </span>socket *create_stream_sock_from_sk(<span class="keywordtype">int</span> pf, <span class="keyword">struct</span> sock *sk)
+<a name="l01484"></a><a class="code" href="af__name_8c.html#aff593868dd03676fc243a35da118b218">01484</a> <span class="keyword">static</span> <span class="keyword">struct </span>socket *<a class="code" href="af__name_8c.html#aff593868dd03676fc243a35da118b218">create_stream_sock_from_sk</a>(<span class="keywordtype">int</span> pf, <span class="keyword">struct</span> sock *sk)
 <a name="l01485"></a>01485 {
 <a name="l01486"></a>01486         <span class="keywordtype">int</span> err;
 <a name="l01487"></a>01487         <span class="keyword">struct </span>socket *sock = NULL;
@@ -1486,7 +1486,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01495"></a>01495         <span class="keywordflow">return</span> sock;
 <a name="l01496"></a>01496 }
 <a name="l01497"></a>01497 
-<a name="l01498"></a>01498 <span class="keyword">static</span> <span class="keywordtype">int</span> get_name_from_v6_sock(<span class="keyword">struct</span> sockaddr_name *name,
+<a name="l01498"></a><a class="code" href="af__name_8c.html#aa5d6559dacb6c8f18c2a601e1fc201e6">01498</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#aa5d6559dacb6c8f18c2a601e1fc201e6">get_name_from_v6_sock</a>(<span class="keyword">struct</span> sockaddr_name *name,
 <a name="l01499"></a>01499                                  <span class="keyword">struct</span> socket *sock)
 <a name="l01500"></a>01500 {
 <a name="l01501"></a>01501         <span class="keyword">struct </span>sockaddr_in6 addr;
@@ -1521,7 +1521,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01530"></a>01530         <span class="keywordflow">return</span> err;
 <a name="l01531"></a>01531 }
 <a name="l01532"></a>01532 
-<a name="l01533"></a>01533 <span class="keyword">static</span> <span class="keywordtype">int</span> get_name_from_v4_sock(<span class="keyword">struct</span> sockaddr_name *name,
+<a name="l01533"></a><a class="code" href="af__name_8c.html#adac8a5605cd537f1a3ed7757ab9a3361">01533</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#adac8a5605cd537f1a3ed7757ab9a3361">get_name_from_v4_sock</a>(<span class="keyword">struct</span> sockaddr_name *name,
 <a name="l01534"></a>01534                                  <span class="keyword">struct</span> socket *sock)
 <a name="l01535"></a>01535 {
 <a name="l01536"></a>01536         <span class="comment">/* FIXME: what&#39;s the real domain? */</span>
@@ -1557,13 +1557,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01566"></a>01566         <span class="keywordflow">return</span> err;
 <a name="l01567"></a>01567 }
 <a name="l01568"></a>01568 
-<a name="l01569"></a>01569 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_accept(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> socket *newsock,
+<a name="l01569"></a><a class="code" href="af__name_8c.html#ac5febd9441e16dc5726ccef2996d6726">01569</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#ac5febd9441e16dc5726ccef2996d6726">name_stream_accept</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> socket *newsock,
 <a name="l01570"></a>01570                               <span class="keywordtype">int</span> flags)
 <a name="l01571"></a>01571 {
 <a name="l01572"></a>01572         <span class="keyword">struct </span>sock *sk = sock-&gt;sk, *v6_sk, *v4_sk;
 <a name="l01573"></a>01573         <span class="keyword">struct </span>sock *new_v6_sk = NULL, *new_v4_sk = NULL, *incoming_sock;
 <a name="l01574"></a>01574         <span class="keyword">struct </span>inet_connection_sock *v6_icsk, *v4_icsk;
-<a name="l01575"></a>01575         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk), *new_name;
+<a name="l01575"></a>01575         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk), *new_name;
 <a name="l01576"></a>01576         <span class="keywordtype">int</span> err;
 <a name="l01577"></a>01577 
 <a name="l01578"></a>01578         lock_sock(sk);
@@ -1576,19 +1576,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01585"></a>01585 <span class="comment">         * by both, in ipv4/af_inet.c.</span>
 <a name="l01586"></a>01586 <span class="comment">         */</span>
 <a name="l01587"></a>01587         err = -EINVAL;
-<a name="l01588"></a>01588         <span class="keywordflow">if</span> (!name-&gt;ipv6_sock || !name-&gt;ipv6_sock-&gt;sk-&gt;sk_prot-&gt;accept)
+<a name="l01588"></a>01588         <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a> || !name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk-&gt;sk_prot-&gt;accept)
 <a name="l01589"></a>01589                 <span class="keywordflow">goto</span> out_err;
-<a name="l01590"></a>01590         <span class="keywordflow">if</span> (!name-&gt;ipv4_sock || !name-&gt;ipv4_sock-&gt;sk-&gt;sk_prot-&gt;accept)
+<a name="l01590"></a>01590         <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a> || !name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk-&gt;sk_prot-&gt;accept)
 <a name="l01591"></a>01591                 <span class="keywordflow">goto</span> out_err;
 <a name="l01592"></a>01592 
 <a name="l01593"></a>01593         err = -EAGAIN;
-<a name="l01594"></a>01594         new_v6_sk = name-&gt;ipv6_sock-&gt;sk-&gt;sk_prot-&gt;accept(name-&gt;ipv6_sock-&gt;sk,
+<a name="l01594"></a>01594         new_v6_sk = name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk-&gt;sk_prot-&gt;accept(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk,
 <a name="l01595"></a>01595                                                          O_NONBLOCK, &amp;err);
 <a name="l01596"></a>01596         <span class="keywordflow">if</span> (unlikely(new_v6_sk))
 <a name="l01597"></a>01597                 <span class="keywordflow">goto</span> handle_incoming;
 <a name="l01598"></a>01598         <span class="keywordflow">if</span> (err != -EAGAIN)
 <a name="l01599"></a>01599                 <span class="keywordflow">goto</span> out_err;
-<a name="l01600"></a>01600         new_v4_sk = name-&gt;ipv4_sock-&gt;sk-&gt;sk_prot-&gt;accept(name-&gt;ipv4_sock-&gt;sk,
+<a name="l01600"></a>01600         new_v4_sk = name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk-&gt;sk_prot-&gt;accept(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk,
 <a name="l01601"></a>01601                                                          O_NONBLOCK, &amp;err);
 <a name="l01602"></a>01602         <span class="keywordflow">if</span> (unlikely(new_v4_sk))
 <a name="l01603"></a>01603                 <span class="keywordflow">goto</span> handle_incoming;
@@ -1597,9 +1597,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01606"></a>01606 
 <a name="l01607"></a>01607         sk-&gt;sk_state = TCP_LISTEN;
 <a name="l01608"></a>01608 
-<a name="l01609"></a>01609         v6_sk = name-&gt;ipv6_sock-&gt;sk;
+<a name="l01609"></a>01609         v6_sk = name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>-&gt;sk;
 <a name="l01610"></a>01610         v6_icsk = inet_csk(v6_sk);
-<a name="l01611"></a>01611         v4_sk = name-&gt;ipv4_sock-&gt;sk;
+<a name="l01611"></a>01611         v4_sk = name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>-&gt;sk;
 <a name="l01612"></a>01612         v4_icsk = inet_csk(v4_sk);
 <a name="l01613"></a>01613 
 <a name="l01614"></a>01614         <span class="keywordflow">if</span> (reqsk_queue_empty(&amp;v6_icsk-&gt;icsk_accept_queue) &amp;&amp;
@@ -1610,7 +1610,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01619"></a>01619                 <span class="keywordflow">if</span> (!timeo)
 <a name="l01620"></a>01620                         <span class="keywordflow">goto</span> out_wait_err;
 <a name="l01621"></a>01621                 release_sock(sk);
-<a name="l01622"></a>01622                 err = name_stream_wait_for_accept(sock, timeo);
+<a name="l01622"></a>01622                 err = <a class="code" href="af__name_8c.html#a8f62129c805bae85d7cd3ead2bbf07f2">name_stream_wait_for_accept</a>(sock, timeo);
 <a name="l01623"></a>01623                 <span class="keywordflow">if</span> (err)
 <a name="l01624"></a>01624                         <span class="keywordflow">goto</span> out_wait_err;
 <a name="l01625"></a>01625         }
@@ -1625,17 +1625,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01634"></a>01634 handle_incoming:
 <a name="l01635"></a>01635         <span class="keywordflow">if</span> (new_v4_sk) {
 <a name="l01636"></a>01636                 err = -ENOMEM;
-<a name="l01637"></a>01637                 incoming_sock = name_alloc_stream_socket(&amp;init_net, newsock);
+<a name="l01637"></a>01637                 incoming_sock = <a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">name_alloc_stream_socket</a>(&amp;init_net, newsock);
 <a name="l01638"></a>01638                 <span class="keywordflow">if</span> (!incoming_sock)
 <a name="l01639"></a>01639                         <span class="keywordflow">goto</span> out_err;
-<a name="l01640"></a>01640                 new_name = name_stream_sk(incoming_sock);
-<a name="l01641"></a>01641                 new_name-&gt;ipv4_sock = create_stream_sock_from_sk(PF_INET,
+<a name="l01640"></a>01640                 new_name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(incoming_sock);
+<a name="l01641"></a>01641                 new_name-&gt;ipv4_sock = <a class="code" href="af__name_8c.html#aff593868dd03676fc243a35da118b218">create_stream_sock_from_sk</a>(PF_INET,
 <a name="l01642"></a>01642                                                                  new_v4_sk);
 <a name="l01643"></a>01643                 <span class="keywordflow">if</span> (!new_name-&gt;ipv4_sock) {
 <a name="l01644"></a>01644                         sock_put(incoming_sock);
 <a name="l01645"></a>01645                         <span class="keywordflow">goto</span> out_err;
 <a name="l01646"></a>01646                 }
-<a name="l01647"></a>01647                 get_name_from_v4_sock(&amp;new_name-&gt;dname, new_name-&gt;ipv4_sock);
+<a name="l01647"></a>01647                 <a class="code" href="af__name_8c.html#adac8a5605cd537f1a3ed7757ab9a3361">get_name_from_v4_sock</a>(&amp;new_name-&gt;dname, new_name-&gt;ipv4_sock);
 <a name="l01648"></a>01648         }
 <a name="l01649"></a>01649         <span class="keywordflow">else</span> {
 <a name="l01650"></a>01650                 <span class="keyword">const</span> <span class="keyword">struct </span>inet_sock *inet = inet_sk(new_v6_sk);
@@ -1643,33 +1643,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01652"></a>01652                 <span class="keyword">const</span> <span class="keyword">struct </span>in6_addr *saddr = &amp;np-&gt;rcv_saddr;
 <a name="l01653"></a>01653                 <span class="keyword">const</span> __u16 port = inet-&gt;dport;
 <a name="l01654"></a>01654                 u32 bucket;
-<a name="l01655"></a>01655                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *entry, *found = NULL;
+<a name="l01655"></a>01655                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *<a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>, *found = NULL;
 <a name="l01656"></a>01656                 <span class="keyword">struct </span>hlist_node *node;
 <a name="l01657"></a>01657                 <span class="keywordtype">int</span> get_name_from_addr = 1;
 <a name="l01658"></a>01658 
 <a name="l01659"></a>01659                 err = -ENOMEM;
-<a name="l01660"></a>01660                 incoming_sock = name_alloc_stream_socket(&amp;init_net, newsock);
+<a name="l01660"></a>01660                 incoming_sock = <a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">name_alloc_stream_socket</a>(&amp;init_net, newsock);
 <a name="l01661"></a>01661                 <span class="keywordflow">if</span> (!incoming_sock)
 <a name="l01662"></a>01662                         <span class="keywordflow">goto</span> out_err;
-<a name="l01663"></a>01663                 new_name = name_stream_sk(incoming_sock);
-<a name="l01664"></a>01664                 new_name-&gt;ipv6_sock = create_stream_sock_from_sk(PF_INET6,
+<a name="l01663"></a>01663                 new_name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(incoming_sock);
+<a name="l01664"></a>01664                 new_name-&gt;ipv6_sock = <a class="code" href="af__name_8c.html#aff593868dd03676fc243a35da118b218">create_stream_sock_from_sk</a>(PF_INET6,
 <a name="l01665"></a>01665                                                                  new_v6_sk);
 <a name="l01666"></a>01666                 <span class="keywordflow">if</span> (!new_name-&gt;ipv6_sock) {
 <a name="l01667"></a>01667                         sock_put(incoming_sock);
 <a name="l01668"></a>01668                         <span class="keywordflow">goto</span> out_err;
 <a name="l01669"></a>01669                 }
-<a name="l01670"></a>01670                 bucket = inet6_sk_ehashfn(new_v6_sk) &amp; (NAME_SYN_BUCKETS - 1);
+<a name="l01670"></a>01670                 bucket = inet6_sk_ehashfn(new_v6_sk) &amp; (<a class="code" href="af__name_8c.html#ab0d1446d191ef9a97f571715861aa15e">NAME_SYN_BUCKETS</a> - 1);
 <a name="l01671"></a>01671                 printk(KERN_INFO <span class="stringliteral">&quot;accepted a connection from port %d, bucket %d\n&quot;</span>,
 <a name="l01672"></a>01672                        port, bucket);
 <a name="l01673"></a>01673                 <span class="comment">/* FIXME: lock each bucket rather than the whole table. */</span>
 <a name="l01674"></a>01674                 spin_lock_irq(&amp;name_stream_syn_lock);
 <a name="l01675"></a>01675                 hlist_for_each_entry(entry,
 <a name="l01676"></a>01676                                      node,
-<a name="l01677"></a>01677                                      &amp;name_stream_syns[bucket],
+<a name="l01677"></a>01677                                      &amp;<a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">name_stream_syns</a>[bucket],
 <a name="l01678"></a>01678                                      entry)
 <a name="l01679"></a>01679                 {
-<a name="l01680"></a>01680                         <span class="keywordflow">if</span> (!memcmp(saddr, &amp;entry-&gt;peer_addr, <span class="keyword">sizeof</span>(saddr))
-<a name="l01681"></a>01681                             &amp;&amp; port == entry-&gt;peer_port)
+<a name="l01680"></a>01680                         <span class="keywordflow">if</span> (!memcmp(saddr, &amp;entry-&gt;<a class="code" href="structsyn__entry.html#a3ccd28993a276a6ccab115e1e713381a">peer_addr</a>, <span class="keyword">sizeof</span>(saddr))
+<a name="l01681"></a>01681                             &amp;&amp; port == entry-&gt;<a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">peer_port</a>)
 <a name="l01682"></a>01682                         {
 <a name="l01683"></a>01683                                 found = entry;
 <a name="l01684"></a>01684                                 <span class="keywordflow">break</span>;
@@ -1678,18 +1678,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01687"></a>01687                 <span class="keywordflow">if</span> (found)
 <a name="l01688"></a>01688                 {
 <a name="l01689"></a>01689                         strcpy(new_name-&gt;dname.sname_addr.name,
-<a name="l01690"></a>01690                                found-&gt;name.name);
-<a name="l01691"></a>01691                         new_name-&gt;dname.sname_port = found-&gt;peer_port;
+<a name="l01690"></a>01690                                found-&gt;<a class="code" href="structsyn__entry.html#a36d221f23aec51d6ea455bc9dcd56172">name</a>.name);
+<a name="l01691"></a>01691                         new_name-&gt;dname.sname_port = found-&gt;<a class="code" href="structsyn__entry.html#ab94f02e066b6201ec112c1fa3b2d3bd4">peer_port</a>;
 <a name="l01692"></a>01692                         get_name_from_addr = 0;
-<a name="l01693"></a>01693                         hlist_del(&amp;found-&gt;entry);
+<a name="l01693"></a>01693                         hlist_del(&amp;found-&gt;<a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>);
 <a name="l01694"></a>01694                         kfree(found);
 <a name="l01695"></a>01695                 }
 <a name="l01696"></a>01696                 spin_unlock_irq(&amp;name_stream_syn_lock);
 <a name="l01697"></a>01697                 <span class="keywordflow">if</span> (get_name_from_addr)
-<a name="l01698"></a>01698                         get_name_from_v6_sock(&amp;new_name-&gt;dname,
+<a name="l01698"></a>01698                         <a class="code" href="af__name_8c.html#aa5d6559dacb6c8f18c2a601e1fc201e6">get_name_from_v6_sock</a>(&amp;new_name-&gt;dname,
 <a name="l01699"></a>01699                                               new_name-&gt;ipv6_sock);
 <a name="l01700"></a>01700         }
-<a name="l01701"></a>01701         memcpy(&amp;new_name-&gt;sname, &amp;name-&gt;sname, <span class="keyword">sizeof</span>(name-&gt;sname));
+<a name="l01701"></a>01701         memcpy(&amp;new_name-&gt;sname, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>, <span class="keyword">sizeof</span>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>));
 <a name="l01702"></a>01702         printk(KERN_INFO <span class="stringliteral">&quot;connection accepted from %s\n&quot;</span>,
 <a name="l01703"></a>01703                new_name-&gt;dname.sname_addr.name);
 <a name="l01704"></a>01704         sock_graft(incoming_sock, newsock);
@@ -1706,29 +1706,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01715"></a>01715         <span class="keywordflow">return</span> err;
 <a name="l01716"></a>01716 }
 <a name="l01717"></a>01717 
-<a name="l01718"></a>01718 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_getname(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr,
+<a name="l01718"></a><a class="code" href="af__name_8c.html#abab7b660e2f3915dd5eb6202db056a4a">01718</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#abab7b660e2f3915dd5eb6202db056a4a">name_stream_getname</a>(<span class="keyword">struct</span> socket *sock, <span class="keyword">struct</span> sockaddr *uaddr,
 <a name="l01719"></a>01719                                <span class="keywordtype">int</span> *uaddr_len, <span class="keywordtype">int</span> peer)
 <a name="l01720"></a>01720 {
 <a name="l01721"></a>01721         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l01722"></a>01722         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01722"></a>01722         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01723"></a>01723         <span class="keyword">struct </span>sockaddr_name *sname = (<span class="keyword">struct </span>sockaddr_name *)uaddr;
 <a name="l01724"></a>01724 
 <a name="l01725"></a>01725         <span class="keywordflow">if</span> (peer) {
 <a name="l01726"></a>01726                 <span class="keywordflow">if</span> (sock-&gt;state != SS_CONNECTED)
 <a name="l01727"></a>01727                         <span class="keywordflow">return</span> -ENOTCONN;
-<a name="l01728"></a>01728                 memcpy(sname, &amp;name-&gt;dname, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> sockaddr_name));
+<a name="l01728"></a>01728                 memcpy(sname, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> sockaddr_name));
 <a name="l01729"></a>01729         }
 <a name="l01730"></a>01730         <span class="keywordflow">else</span> {
-<a name="l01731"></a>01731                 memcpy(sname, &amp;name-&gt;sname, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> sockaddr_name));
+<a name="l01731"></a>01731                 memcpy(sname, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>, <span class="keyword">sizeof</span>(<span class="keyword">struct</span> sockaddr_name));
 <a name="l01732"></a>01732         }
 <a name="l01733"></a>01733         *uaddr_len = <span class="keyword">sizeof</span>(<span class="keyword">struct </span>sockaddr_name);
 <a name="l01734"></a>01734         <span class="keywordflow">return</span> 0;
 <a name="l01735"></a>01735 }
 <a name="l01736"></a>01736 
-<a name="l01737"></a>01737 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_listen(<span class="keyword">struct</span> socket *sock, <span class="keywordtype">int</span> backlog)
+<a name="l01737"></a><a class="code" href="af__name_8c.html#a7fc4a8969ccbb8be2c1b5cdfdca296de">01737</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a7fc4a8969ccbb8be2c1b5cdfdca296de">name_stream_listen</a>(<span class="keyword">struct</span> socket *sock, <span class="keywordtype">int</span> backlog)
 <a name="l01738"></a>01738 {
 <a name="l01739"></a>01739         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l01740"></a>01740         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01740"></a>01740         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01741"></a>01741         <span class="keywordtype">int</span> err = -EINVAL;
 <a name="l01742"></a>01742 
 <a name="l01743"></a>01743         lock_sock(sk);
@@ -1738,58 +1738,58 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01747"></a>01747         <span class="comment">/* FIXME: what does it mean to listen on more than one socket?  And</span>
 <a name="l01748"></a>01748 <span class="comment">         * what does backlog mean?</span>
 <a name="l01749"></a>01749 <span class="comment">         */</span>
-<a name="l01750"></a>01750         <span class="keywordflow">if</span> (!name-&gt;ipv6_sock) {
-<a name="l01751"></a>01751                 err = name_create_v6_sock(SOCK_STREAM, 0, &amp;name-&gt;ipv6_sock,
+<a name="l01750"></a>01750         <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>) {
+<a name="l01751"></a>01751                 err = <a class="code" href="af__name_8c.html#a0067c3ae535b8bfa3b7874517115dd0d">name_create_v6_sock</a>(SOCK_STREAM, 0, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>,
 <a name="l01752"></a>01752                                           name);
 <a name="l01753"></a>01753                 <span class="keywordflow">if</span> (err)
 <a name="l01754"></a>01754                         <span class="keywordflow">goto</span> out;
 <a name="l01755"></a>01755         }
-<a name="l01756"></a>01756         <span class="keywordflow">if</span> (!name-&gt;ipv4_sock) {
-<a name="l01757"></a>01757                 err = name_create_v4_sock(SOCK_STREAM, 0, &amp;name-&gt;ipv4_sock,
+<a name="l01756"></a>01756         <span class="keywordflow">if</span> (!name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>) {
+<a name="l01757"></a>01757                 err = <a class="code" href="af__name_8c.html#a7ad9fdbbaec06c88dd908e3211f9b8b9">name_create_v4_sock</a>(SOCK_STREAM, 0, &amp;name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>,
 <a name="l01758"></a>01758                                           name);
 <a name="l01759"></a>01759                 <span class="keywordflow">if</span> (err)
 <a name="l01760"></a>01760                         <span class="keywordflow">goto</span> out;
 <a name="l01761"></a>01761         }
-<a name="l01762"></a>01762         err = kernel_listen(name-&gt;ipv6_sock, backlog);
+<a name="l01762"></a>01762         err = kernel_listen(name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>, backlog);
 <a name="l01763"></a>01763         <span class="keywordflow">if</span> (!err)
-<a name="l01764"></a>01764                 err = kernel_listen(name-&gt;ipv4_sock, backlog);
+<a name="l01764"></a>01764                 err = kernel_listen(name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>, backlog);
 <a name="l01765"></a>01765 
 <a name="l01766"></a>01766 out:
 <a name="l01767"></a>01767         release_sock(sk);
 <a name="l01768"></a>01768         <span class="keywordflow">return</span> err;
 <a name="l01769"></a>01769 }
 <a name="l01770"></a>01770 
-<a name="l01771"></a>01771 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_sendmsg(<span class="keyword">struct</span> kiocb *iocb, <span class="keyword">struct</span> socket *sock,
+<a name="l01771"></a><a class="code" href="af__name_8c.html#a062c0d4299e2e48b9d2dbc49dfa175eb">01771</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a062c0d4299e2e48b9d2dbc49dfa175eb">name_stream_sendmsg</a>(<span class="keyword">struct</span> kiocb *iocb, <span class="keyword">struct</span> socket *sock,
 <a name="l01772"></a>01772                                <span class="keyword">struct</span> msghdr *msg, <span class="keywordtype">size_t</span> len)
 <a name="l01773"></a>01773 {
 <a name="l01774"></a>01774         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l01775"></a>01775         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01775"></a>01775         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01776"></a>01776         <span class="keyword">struct </span>socket *connected_sock;
 <a name="l01777"></a>01777 
 <a name="l01778"></a>01778         <span class="keywordflow">if</span> (sock-&gt;state != SS_CONNECTED)
 <a name="l01779"></a>01779                 <span class="keywordflow">return</span> -ENOTCONN;
-<a name="l01780"></a>01780         <span class="keywordflow">if</span> (name-&gt;ipv6_sock)
-<a name="l01781"></a>01781                 connected_sock = name-&gt;ipv6_sock;
-<a name="l01782"></a>01782         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name-&gt;ipv4_sock)
-<a name="l01783"></a>01783                 connected_sock = name-&gt;ipv4_sock;
+<a name="l01780"></a>01780         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>)
+<a name="l01781"></a>01781                 connected_sock = name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>;
+<a name="l01782"></a>01782         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>)
+<a name="l01783"></a>01783                 connected_sock = name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>;
 <a name="l01784"></a>01784         <span class="keywordflow">else</span>
 <a name="l01785"></a>01785                 <span class="keywordflow">return</span> -ENOTCONN;
 <a name="l01786"></a>01786         <span class="keywordflow">return</span> connected_sock-&gt;ops-&gt;sendmsg(iocb, connected_sock, msg, len);
 <a name="l01787"></a>01787 }
 <a name="l01788"></a>01788 
-<a name="l01789"></a>01789 <span class="keyword">static</span> <span class="keywordtype">int</span> name_stream_recvmsg(<span class="keyword">struct</span> kiocb *iocb, <span class="keyword">struct</span> socket *sock,
+<a name="l01789"></a><a class="code" href="af__name_8c.html#a33e29c06d74da0b5d4ef2fb6ac686432">01789</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a33e29c06d74da0b5d4ef2fb6ac686432">name_stream_recvmsg</a>(<span class="keyword">struct</span> kiocb *iocb, <span class="keyword">struct</span> socket *sock,
 <a name="l01790"></a>01790                                <span class="keyword">struct</span> msghdr *msg, <span class="keywordtype">size_t</span> len, <span class="keywordtype">int</span> flags)
 <a name="l01791"></a>01791 {
 <a name="l01792"></a>01792         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
-<a name="l01793"></a>01793         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = name_stream_sk(sk);
+<a name="l01793"></a>01793         <span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a> *name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
 <a name="l01794"></a>01794         <span class="keyword">struct </span>socket *connected_sock;
 <a name="l01795"></a>01795 
 <a name="l01796"></a>01796         <span class="keywordflow">if</span> (sock-&gt;state != SS_CONNECTED)
 <a name="l01797"></a>01797                 <span class="keywordflow">return</span> -ENOTCONN;
-<a name="l01798"></a>01798         <span class="keywordflow">if</span> (name-&gt;ipv6_sock)
-<a name="l01799"></a>01799                 connected_sock = name-&gt;ipv6_sock;
-<a name="l01800"></a>01800         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name-&gt;ipv4_sock)
-<a name="l01801"></a>01801                 connected_sock = name-&gt;ipv4_sock;
+<a name="l01798"></a>01798         <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>)
+<a name="l01799"></a>01799                 connected_sock = name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a>;
+<a name="l01800"></a>01800         <span class="keywordflow">else</span> <span class="keywordflow">if</span> (name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>)
+<a name="l01801"></a>01801                 connected_sock = name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a>;
 <a name="l01802"></a>01802         <span class="keywordflow">else</span>
 <a name="l01803"></a>01803                 <span class="keywordflow">return</span> -ENOTCONN;
 <a name="l01804"></a>01804         <span class="keywordflow">return</span> connected_sock-&gt;ops-&gt;recvmsg(iocb, connected_sock, msg, len,
@@ -1803,37 +1803,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01812"></a>01812 }
 <a name="l01813"></a>01813 <span class="preprocessor">#endif</span>
 <a name="l01814"></a>01814 <span class="preprocessor"></span>
-<a name="l01818"></a>01818 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct </span>proto_ops name_stream_ops = {
+<a name="l01818"></a><a class="code" href="af__name_8c.html#a32395c3c742b00bc5ea09ab3149dc13b">01818</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct </span>proto_ops <a class="code" href="af__name_8c.html#a32395c3c742b00bc5ea09ab3149dc13b">name_stream_ops</a> = {
 <a name="l01819"></a>01819         .family = PF_NAME,
 <a name="l01820"></a>01820         .owner = THIS_MODULE,
-<a name="l01821"></a>01821         .release = name_stream_release,
-<a name="l01822"></a>01822         .bind = name_stream_bind,
-<a name="l01823"></a>01823         .connect = name_stream_connect,
+<a name="l01821"></a>01821         .release = <a class="code" href="af__name_8c.html#a562b6dd09744c1ddb2d1a8378d30addc">name_stream_release</a>,
+<a name="l01822"></a>01822         .bind = <a class="code" href="af__name_8c.html#a3a2adf5361993cef9bbe48178469714f">name_stream_bind</a>,
+<a name="l01823"></a>01823         .connect = <a class="code" href="af__name_8c.html#a739a9be9b64d10189c9e88f6d28491ee">name_stream_connect</a>,
 <a name="l01824"></a>01824         .socketpair = sock_no_socketpair,
-<a name="l01825"></a>01825         .accept = name_stream_accept,
-<a name="l01826"></a>01826         .getname = name_stream_getname,
+<a name="l01825"></a>01825         .accept = <a class="code" href="af__name_8c.html#ac5febd9441e16dc5726ccef2996d6726">name_stream_accept</a>,
+<a name="l01826"></a>01826         .getname = <a class="code" href="af__name_8c.html#abab7b660e2f3915dd5eb6202db056a4a">name_stream_getname</a>,
 <a name="l01827"></a>01827         .poll = sock_no_poll,
 <a name="l01828"></a>01828         .ioctl = sock_no_ioctl,
 <a name="l01829"></a>01829 <span class="preprocessor">#ifdef CONFIG_COMPAT</span>
 <a name="l01830"></a>01830 <span class="preprocessor"></span>        .compat_ioctl = name_compat_ioctl,
 <a name="l01831"></a>01831 <span class="preprocessor">#endif</span>
-<a name="l01832"></a>01832 <span class="preprocessor"></span>        .listen = name_stream_listen,
+<a name="l01832"></a>01832 <span class="preprocessor"></span>        .listen = <a class="code" href="af__name_8c.html#a7fc4a8969ccbb8be2c1b5cdfdca296de">name_stream_listen</a>,
 <a name="l01833"></a>01833         .shutdown = sock_no_shutdown,
 <a name="l01834"></a>01834         .setsockopt = sock_no_setsockopt,
 <a name="l01835"></a>01835         .getsockopt = sock_no_getsockopt,
-<a name="l01836"></a>01836         .sendmsg = name_stream_sendmsg,
-<a name="l01837"></a>01837         .recvmsg = name_stream_recvmsg,
+<a name="l01836"></a>01836         .sendmsg = <a class="code" href="af__name_8c.html#a062c0d4299e2e48b9d2dbc49dfa175eb">name_stream_sendmsg</a>,
+<a name="l01837"></a>01837         .recvmsg = <a class="code" href="af__name_8c.html#a33e29c06d74da0b5d4ef2fb6ac686432">name_stream_recvmsg</a>,
 <a name="l01838"></a>01838         .mmap = sock_no_mmap,
 <a name="l01839"></a>01839         .sendpage = sock_no_sendpage,
 <a name="l01840"></a>01840 };
 <a name="l01841"></a>01841 
-<a name="l01842"></a>01842 <span class="keyword">static</span> <span class="keyword">struct </span>proto name_stream_proto = {
+<a name="l01842"></a><a class="code" href="af__name_8c.html#abd5db91ebd796a3f8758726976c1b8f8">01842</a> <span class="keyword">static</span> <span class="keyword">struct </span>proto <a class="code" href="af__name_8c.html#abd5db91ebd796a3f8758726976c1b8f8">name_stream_proto</a> = {
 <a name="l01843"></a>01843         .name = <span class="stringliteral">&quot;NAME_STREAM&quot;</span>,
 <a name="l01844"></a>01844         .owner = THIS_MODULE,
 <a name="l01845"></a>01845         .obj_size = <span class="keyword">sizeof</span>(<span class="keyword">struct </span><a class="code" href="structname__stream__sock.html">name_stream_sock</a>),
 <a name="l01846"></a>01846 };
 <a name="l01847"></a>01847 
-<a name="l01848"></a>01848 <span class="keyword">static</span> <span class="keyword">struct </span>sock *name_alloc_stream_socket(<span class="keyword">struct</span> net *net,
+<a name="l01848"></a><a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">01848</a> <span class="keyword">static</span> <span class="keyword">struct </span>sock *<a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">name_alloc_stream_socket</a>(<span class="keyword">struct</span> net *net,
 <a name="l01849"></a>01849                                              <span class="keyword">struct</span> socket *sock)
 <a name="l01850"></a>01850 {
 <a name="l01851"></a>01851         <span class="keyword">struct </span>sock *sk = sk_alloc(net, AF_NAME, GFP_ATOMIC,
@@ -1846,20 +1846,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01858"></a>01858         sock-&gt;ops = &amp;name_stream_ops;
 <a name="l01859"></a>01859         sock_init_data(sock, sk);
 <a name="l01860"></a>01860 
-<a name="l01861"></a>01861         name = name_stream_sk(sk);
-<a name="l01862"></a>01862         memset(&amp;name-&gt;sname, 0, <span class="keyword">sizeof</span>(name-&gt;sname));
-<a name="l01863"></a>01863         memset(&amp;name-&gt;dname, 0, <span class="keyword">sizeof</span>(name-&gt;dname));
-<a name="l01864"></a>01864         name-&gt;dname_answer = NULL;
-<a name="l01865"></a>01865         name-&gt;dname_answer_len = 0;
-<a name="l01866"></a>01866         name-&gt;dname_answer_index = 0;
-<a name="l01867"></a>01867         name-&gt;async_error = 0;
-<a name="l01868"></a>01868         name-&gt;ipv4_sock = NULL;
-<a name="l01869"></a>01869         name-&gt;ipv6_sock = NULL;
+<a name="l01861"></a>01861         name = <a class="code" href="namestack__priv_8h.html#a5e5b37b81978789054ddc587e3af21e6">name_stream_sk</a>(sk);
+<a name="l01862"></a>01862         memset(&amp;name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>, 0, <span class="keyword">sizeof</span>(name-&gt;<a class="code" href="structname__stream__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>));
+<a name="l01863"></a>01863         memset(&amp;name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>, 0, <span class="keyword">sizeof</span>(name-&gt;<a class="code" href="structname__stream__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>));
+<a name="l01864"></a>01864         name-&gt;<a class="code" href="structname__stream__sock.html#ac682cf966acbf9ac5c863b23836f3d64">dname_answer</a> = NULL;
+<a name="l01865"></a>01865         name-&gt;<a class="code" href="structname__stream__sock.html#a0648751bc39917a193484d09ad98c29c">dname_answer_len</a> = 0;
+<a name="l01866"></a>01866         name-&gt;<a class="code" href="structname__stream__sock.html#af8484d80662b1453f3b3ca843c0faae1">dname_answer_index</a> = 0;
+<a name="l01867"></a>01867         name-&gt;<a class="code" href="structname__stream__sock.html#a86b605946c115304f8915cefd10ff1a4">async_error</a> = 0;
+<a name="l01868"></a>01868         name-&gt;<a class="code" href="structname__stream__sock.html#a0f86b16277804a367376ebe71b387443">ipv4_sock</a> = NULL;
+<a name="l01869"></a>01869         name-&gt;<a class="code" href="structname__stream__sock.html#a5204561912ef925b04df27d6f1447e50">ipv6_sock</a> = NULL;
 <a name="l01870"></a>01870 out:
 <a name="l01871"></a>01871         <span class="keywordflow">return</span> sk;
 <a name="l01872"></a>01872 }
 <a name="l01873"></a>01873 
-<a name="l01874"></a>01874 <span class="keyword">static</span> <span class="keywordtype">int</span> name_dgram_release(<span class="keyword">struct</span> socket *sock)
+<a name="l01874"></a><a class="code" href="af__name_8c.html#a3c0b3349b460f2ec95d0812fc85f84cf">01874</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a3c0b3349b460f2ec95d0812fc85f84cf">name_dgram_release</a>(<span class="keyword">struct</span> socket *sock)
 <a name="l01875"></a>01875 {
 <a name="l01876"></a>01876         <span class="keyword">struct </span>sock *sk = sock-&gt;sk;
 <a name="l01877"></a>01877 
@@ -1877,10 +1877,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01889"></a>01889         <span class="keywordflow">return</span> 0;
 <a name="l01890"></a>01890 }
 <a name="l01891"></a>01891 
-<a name="l01892"></a>01892 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct </span>proto_ops name_dgram_ops = {
+<a name="l01892"></a><a class="code" href="af__name_8c.html#a9643b7a33ed6cf1d3b2c29de63b48743">01892</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">struct </span>proto_ops <a class="code" href="af__name_8c.html#a9643b7a33ed6cf1d3b2c29de63b48743">name_dgram_ops</a> = {
 <a name="l01893"></a>01893         .family = PF_NAME,
 <a name="l01894"></a>01894         .owner = THIS_MODULE,
-<a name="l01895"></a>01895         .release = name_dgram_release,
+<a name="l01895"></a>01895         .release = <a class="code" href="af__name_8c.html#a3c0b3349b460f2ec95d0812fc85f84cf">name_dgram_release</a>,
 <a name="l01896"></a>01896         .bind = sock_no_bind,
 <a name="l01897"></a>01897         .connect = sock_no_connect,
 <a name="l01898"></a>01898         .socketpair = sock_no_socketpair,
@@ -1903,23 +1903,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01915"></a>01915 
 <a name="l01916"></a><a class="code" href="structname__dgram__sock.html">01916</a> <span class="keyword">struct </span><a class="code" href="structname__dgram__sock.html">name_dgram_sock</a>
 <a name="l01917"></a>01917 {
-<a name="l01918"></a>01918         <span class="keyword">struct </span>sock sk;
-<a name="l01919"></a>01919         <span class="keyword">struct </span>sockaddr_name sname;
-<a name="l01920"></a>01920         <span class="keyword">struct </span>sockaddr_name dname;
+<a name="l01918"></a><a class="code" href="structname__dgram__sock.html#affb13b113b4c9b8463775286be26fb94">01918</a>         <span class="keyword">struct </span>sock <a class="code" href="structname__dgram__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>;
+<a name="l01919"></a><a class="code" href="structname__dgram__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">01919</a>         <span class="keyword">struct </span>sockaddr_name <a class="code" href="structname__dgram__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>;
+<a name="l01920"></a><a class="code" href="structname__dgram__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">01920</a>         <span class="keyword">struct </span>sockaddr_name <a class="code" href="structname__dgram__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>;
 <a name="l01921"></a>01921 };
 <a name="l01922"></a>01922 
-<a name="l01923"></a>01923 <span class="keyword">static</span> <span class="keyword">struct </span>proto name_dgram_proto = {
+<a name="l01923"></a><a class="code" href="af__name_8c.html#a1a37bdc64eebba463b450ca5aed48d00">01923</a> <span class="keyword">static</span> <span class="keyword">struct </span>proto <a class="code" href="af__name_8c.html#a1a37bdc64eebba463b450ca5aed48d00">name_dgram_proto</a> = {
 <a name="l01924"></a>01924         .name = <span class="stringliteral">&quot;NAME_DGRAM&quot;</span>,
 <a name="l01925"></a>01925         .owner = THIS_MODULE,
 <a name="l01926"></a>01926         .obj_size = <span class="keyword">sizeof</span>(<span class="keyword">struct </span><a class="code" href="structname__dgram__sock.html">name_dgram_sock</a>),
 <a name="l01927"></a>01927 };
 <a name="l01928"></a>01928 
-<a name="l01929"></a>01929 <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">struct </span><a class="code" href="structname__dgram__sock.html">name_dgram_sock</a> *name_dgram_sk(<span class="keyword">const</span> <span class="keyword">struct</span> sock *sk)
+<a name="l01929"></a><a class="code" href="af__name_8c.html#a182d40f4f6b6bc0950c072f382ff3cbc">01929</a> <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">struct </span><a class="code" href="structname__dgram__sock.html">name_dgram_sock</a> *<a class="code" href="af__name_8c.html#a182d40f4f6b6bc0950c072f382ff3cbc">name_dgram_sk</a>(<span class="keyword">const</span> <span class="keyword">struct</span> sock *<a class="code" href="structname__dgram__sock.html#affb13b113b4c9b8463775286be26fb94">sk</a>)
 <a name="l01930"></a>01930 {
 <a name="l01931"></a>01931         <span class="keywordflow">return</span> (<span class="keyword">struct</span> <a class="code" href="structname__dgram__sock.html">name_dgram_sock</a> *)sk;
 <a name="l01932"></a>01932 }
 <a name="l01933"></a>01933 
-<a name="l01934"></a>01934 <span class="keyword">static</span> <span class="keyword">struct </span>sock *name_alloc_dgram_socket(<span class="keyword">struct</span> net *net,
+<a name="l01934"></a><a class="code" href="af__name_8c.html#ad345857bbeb8ead274d9de55396eaaed">01934</a> <span class="keyword">static</span> <span class="keyword">struct </span>sock *<a class="code" href="af__name_8c.html#ad345857bbeb8ead274d9de55396eaaed">name_alloc_dgram_socket</a>(<span class="keyword">struct</span> net *net,
 <a name="l01935"></a>01935                                             <span class="keyword">struct</span> socket *sock)
 <a name="l01936"></a>01936 {
 <a name="l01937"></a>01937         <span class="keyword">struct </span>sock *sk = sk_alloc(net, AF_NAME, GFP_ATOMIC, &amp;name_dgram_proto);
@@ -1931,14 +1931,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01943"></a>01943         sock-&gt;ops = &amp;name_dgram_ops;
 <a name="l01944"></a>01944         sock_init_data(sock, sk);
 <a name="l01945"></a>01945 
-<a name="l01946"></a>01946         name = name_dgram_sk(sk);
-<a name="l01947"></a>01947         memset(&amp;name-&gt;sname, 0, <span class="keyword">sizeof</span>(name-&gt;sname));
-<a name="l01948"></a>01948         memset(&amp;name-&gt;dname, 0, <span class="keyword">sizeof</span>(name-&gt;dname));
+<a name="l01946"></a>01946         name = <a class="code" href="af__name_8c.html#a182d40f4f6b6bc0950c072f382ff3cbc">name_dgram_sk</a>(sk);
+<a name="l01947"></a>01947         memset(&amp;name-&gt;<a class="code" href="structname__dgram__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>, 0, <span class="keyword">sizeof</span>(name-&gt;<a class="code" href="structname__dgram__sock.html#a41b50a1b1bd6fec65f32620e3c1aeca5">sname</a>));
+<a name="l01948"></a>01948         memset(&amp;name-&gt;<a class="code" href="structname__dgram__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>, 0, <span class="keyword">sizeof</span>(name-&gt;<a class="code" href="structname__dgram__sock.html#a6a53d15a023f45b1f5aee568ee63ef45">dname</a>));
 <a name="l01949"></a>01949 out:
 <a name="l01950"></a>01950         <span class="keywordflow">return</span> sk;
 <a name="l01951"></a>01951 }
 <a name="l01952"></a>01952 
-<a name="l01953"></a>01953 <span class="keyword">static</span> <span class="keywordtype">int</span> name_create(<span class="keyword">struct</span> net *net, <span class="keyword">struct</span> socket *sock, <span class="keywordtype">int</span> protocol)
+<a name="l01953"></a><a class="code" href="af__name_8c.html#a71d196bdc6ab2865e692c66fea68f55c">01953</a> <span class="keyword">static</span> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#a71d196bdc6ab2865e692c66fea68f55c">name_create</a>(<span class="keyword">struct</span> net *net, <span class="keyword">struct</span> socket *sock, <span class="keywordtype">int</span> protocol)
 <a name="l01954"></a>01954 {
 <a name="l01955"></a>01955         <span class="keyword">struct </span>sock *sk;
 <a name="l01956"></a>01956         <span class="keywordtype">int</span> rc;
@@ -1951,12 +1951,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01963"></a>01963         {
 <a name="l01964"></a>01964         <span class="keywordflow">case</span> SOCK_STREAM:
 <a name="l01965"></a>01965                 rc = -ENOMEM;
-<a name="l01966"></a>01966                 <span class="keywordflow">if</span> ((sk = name_alloc_stream_socket(net, sock)))
+<a name="l01966"></a>01966                 <span class="keywordflow">if</span> ((sk = <a class="code" href="af__name_8c.html#ab579d4cb791b276bcd7e6f425fa9cc24">name_alloc_stream_socket</a>(net, sock)))
 <a name="l01967"></a>01967                         rc = 0;
 <a name="l01968"></a>01968                 <span class="keywordflow">break</span>;
 <a name="l01969"></a>01969         <span class="keywordflow">case</span> SOCK_DGRAM:
 <a name="l01970"></a>01970                 rc = -ENOMEM;
-<a name="l01971"></a>01971                 <span class="keywordflow">if</span> ((sk = name_alloc_dgram_socket(net, sock)))
+<a name="l01971"></a>01971                 <span class="keywordflow">if</span> ((sk = <a class="code" href="af__name_8c.html#ad345857bbeb8ead274d9de55396eaaed">name_alloc_dgram_socket</a>(net, sock)))
 <a name="l01972"></a>01972                         rc = 0;
 <a name="l01973"></a>01973                 <span class="keywordflow">break</span>;
 <a name="l01974"></a>01974         <span class="keywordflow">default</span>:
@@ -1966,13 +1966,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l01978"></a>01978         <span class="keywordflow">return</span> rc;
 <a name="l01979"></a>01979 }
 <a name="l01980"></a>01980 
-<a name="l01981"></a>01981 <span class="keyword">static</span> <span class="keyword">struct </span>net_proto_family name_family_ops = {
+<a name="l01981"></a><a class="code" href="af__name_8c.html#a88cf0f8330d7acf8d3347af2baf75c0d">01981</a> <span class="keyword">static</span> <span class="keyword">struct </span>net_proto_family <a class="code" href="af__name_8c.html#a88cf0f8330d7acf8d3347af2baf75c0d">name_family_ops</a> = {
 <a name="l01982"></a>01982         .family = PF_NAME,
-<a name="l01983"></a>01983         .create = name_create,
+<a name="l01983"></a>01983         .create = <a class="code" href="af__name_8c.html#a71d196bdc6ab2865e692c66fea68f55c">name_create</a>,
 <a name="l01984"></a>01984         .owner = THIS_MODULE,
 <a name="l01985"></a>01985 };
 <a name="l01986"></a>01986 
-<a name="l01987"></a>01987 <span class="keywordtype">int</span> name_af_init(<span class="keywordtype">void</span>)
+<a name="l01987"></a><a class="code" href="namestack__priv_8h.html#aba97cdc2d426374e9a939e5cd64f3c6d">01987</a> <span class="keywordtype">int</span> <a class="code" href="af__name_8c.html#aba97cdc2d426374e9a939e5cd64f3c6d">name_af_init</a>(<span class="keywordtype">void</span>)
 <a name="l01988"></a>01988 {
 <a name="l01989"></a>01989         <span class="keywordtype">int</span> rc;
 <a name="l01990"></a>01990 
@@ -1989,22 +1989,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l02001"></a>02001         <span class="keywordflow">return</span> rc;
 <a name="l02002"></a>02002 }
 <a name="l02003"></a>02003 
-<a name="l02004"></a>02004 <span class="keywordtype">void</span> name_af_exit(<span class="keywordtype">void</span>)
+<a name="l02004"></a><a class="code" href="namestack__priv_8h.html#ac37ce9d7d05a92ecd217351dfc571834">02004</a> <span class="keywordtype">void</span> <a class="code" href="af__name_8c.html#ac37ce9d7d05a92ecd217351dfc571834">name_af_exit</a>(<span class="keywordtype">void</span>)
 <a name="l02005"></a>02005 {
 <a name="l02006"></a>02006         <span class="keywordtype">int</span> i;
 <a name="l02007"></a>02007 
 <a name="l02008"></a>02008         proto_unregister(&amp;name_stream_proto);
 <a name="l02009"></a>02009         proto_unregister(&amp;name_dgram_proto);
 <a name="l02010"></a>02010         sock_unregister(name_family_ops.family);
-<a name="l02011"></a>02011         <span class="keywordflow">for</span> (i = 0; i &lt; NAME_SYN_BUCKETS; i++)
+<a name="l02011"></a>02011         <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code" href="af__name_8c.html#ab0d1446d191ef9a97f571715861aa15e">NAME_SYN_BUCKETS</a>; i++)
 <a name="l02012"></a>02012         {
-<a name="l02013"></a>02013                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *entry;
+<a name="l02013"></a>02013                 <span class="keyword">struct </span><a class="code" href="structsyn__entry.html">syn_entry</a> *<a class="code" href="structsyn__entry.html#a06295c601f813cf596272e58551bcc18">entry</a>;
 <a name="l02014"></a>02014                 <span class="keyword">struct </span>hlist_node *node, *next;
 <a name="l02015"></a>02015 
 <a name="l02016"></a>02016                 hlist_for_each_entry_safe(entry,
 <a name="l02017"></a>02017                                           node,
 <a name="l02018"></a>02018                                           next,
-<a name="l02019"></a>02019                                           &amp;name_stream_syns[i],
+<a name="l02019"></a>02019                                           &amp;<a class="code" href="af__name_8c.html#ae94ef5341ac94d4f6390192311709d6b">name_stream_syns</a>[i],
 <a name="l02020"></a>02020                                           entry)
 <a name="l02021"></a>02021                 {
 <a name="l02022"></a>02022                         hlist_del(node);
@@ -2013,15 +2013,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l02025"></a>02025         }
 <a name="l02026"></a>02026 }
 <a name="l02027"></a>02027 
-<a name="l02028"></a>02028 EXPORT_SYMBOL(name_af_init);
-<a name="l02029"></a>02029 EXPORT_SYMBOL(name_af_exit);
+<a name="l02028"></a>02028 <a class="code" href="af__name_8c.html#a638bb3dff0c45739bbba5adb6bd3d250">EXPORT_SYMBOL</a>(<a class="code" href="af__name_8c.html#aba97cdc2d426374e9a939e5cd64f3c6d">name_af_init</a>);
+<a name="l02029"></a>02029 <a class="code" href="af__name_8c.html#a638bb3dff0c45739bbba5adb6bd3d250">EXPORT_SYMBOL</a>(<a class="code" href="af__name_8c.html#ac37ce9d7d05a92ecd217351dfc571834">name_af_exit</a>);
 </pre></div></div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Defines</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -2030,7 +2030,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Jan 18 20:34:38 2011 for Name-based sockets - module by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Jan 18 21:11:49 2011 for Name-based sockets - module by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

@@ -41,17 +41,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="globals.html"><span>Globals</span></a></li>
     </ul>
   </div>
-<h1>dns.c</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#include &quot;dns.h&quot;</span>
+<h1>dns.c</h1><a href="dns_8c.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#include &quot;<a class="code" href="dns_8h.html">dns.h</a>&quot;</span>
 <a name="l00002"></a>00002 <span class="preprocessor">#ifdef __KERNEL__</span>
 <a name="l00003"></a>00003 <span class="preprocessor"></span><span class="preprocessor">#include &lt;linux/in.h&gt;</span>
-<a name="l00004"></a>00004 <span class="preprocessor">#include &quot;nameser.h&quot;</span>
+<a name="l00004"></a>00004 <span class="preprocessor">#include &quot;<a class="code" href="nameser_8h.html">nameser.h</a>&quot;</span>
 <a name="l00005"></a>00005 <span class="preprocessor">#else</span>
 <a name="l00006"></a>00006 <span class="preprocessor"></span><span class="preprocessor">#include &lt;string.h&gt;</span> <span class="comment">/* NULL */</span>
-<a name="l00007"></a>00007 <span class="preprocessor">#define BIND_8_COMPAT</span>
+<a name="l00007"></a><a class="code" href="dns_8c.html#a28418a4f6dcbd94de5a1680897a9eba0">00007</a> <span class="preprocessor">#define BIND_8_COMPAT</span>
 <a name="l00008"></a>00008 <span class="preprocessor"></span><span class="preprocessor">#include &lt;arpa/nameser.h&gt;</span>
 <a name="l00009"></a>00009 <span class="preprocessor">#endif </span><span class="comment">/* __KERNEL__ */</span>
 <a name="l00010"></a>00010 
-<a name="l00011"></a>00011 uint16_t advance_name(<span class="keyword">const</span> u_char *ptr, <span class="keyword">const</span> u_char *start, uint16_t len)
+<a name="l00011"></a><a class="code" href="dns_8h.html#ae4bfc05150ebb58e07281be1996f04ff">00011</a> uint16_t <a class="code" href="dns_8c.html#ae4bfc05150ebb58e07281be1996f04ff">advance_name</a>(<span class="keyword">const</span> u_char *ptr, <span class="keyword">const</span> u_char *start, uint16_t len)
 <a name="l00012"></a>00012 {
 <a name="l00013"></a>00013         <span class="keywordtype">int</span> has_pointer = 0;
 <a name="l00014"></a>00014         <span class="keyword">const</span> u_char *original_ptr = ptr;
@@ -81,7 +81,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00038"></a>00038         <span class="keywordflow">return</span> ptr - original_ptr;
 <a name="l00039"></a>00039 }
 <a name="l00040"></a>00040 
-<a name="l00041"></a>00041 <span class="keywordtype">int</span> parse_rr(<span class="keyword">const</span> u_char *ptr, <span class="keyword">const</span> u_char *start, uint16_t len,
+<a name="l00041"></a><a class="code" href="dns_8h.html#a73e7d221ee0d7a7b3911d47dff001c42">00041</a> <span class="keywordtype">int</span> <a class="code" href="dns_8c.html#a73e7d221ee0d7a7b3911d47dff001c42">parse_rr</a>(<span class="keyword">const</span> u_char *ptr, <span class="keyword">const</span> u_char *start, uint16_t len,
 <a name="l00042"></a>00042                          uint16_t *ptype, uint16_t *pclass, uint32_t *pttl,
 <a name="l00043"></a>00043                          uint16_t *prdlength, <span class="keyword">const</span> u_char **prdata)
 <a name="l00044"></a>00044 {
@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00046"></a>00046         <span class="keywordtype">int</span> overrun = 0;
 <a name="l00047"></a>00047         uint16_t rdlength;
 <a name="l00048"></a>00048 
-<a name="l00049"></a>00049         ptr += advance_name(ptr, start, len);
+<a name="l00049"></a>00049         ptr += <a class="code" href="dns_8c.html#ae4bfc05150ebb58e07281be1996f04ff">advance_name</a>(ptr, start, len);
 <a name="l00050"></a>00050 
 <a name="l00051"></a>00051         <span class="keywordflow">if</span> (ptr - original_ptr + <span class="keyword">sizeof</span>(uint16_t) &gt; len)
 <a name="l00052"></a>00052         {
@@ -139,7 +139,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00096"></a>00096         <span class="keywordflow">return</span> overrun;
 <a name="l00097"></a>00097 }
 <a name="l00098"></a>00098 
-<a name="l00099"></a>00099 <span class="keywordtype">int</span> find_answer_of_type(<span class="keyword">const</span> u_char *ptr, uint16_t len, uint16_t t,
+<a name="l00099"></a><a class="code" href="dns_8h.html#a593122bc343447440beb7ec60bd9f7b3">00099</a> <span class="keywordtype">int</span> <a class="code" href="dns_8c.html#a593122bc343447440beb7ec60bd9f7b3">find_answer_of_type</a>(<span class="keyword">const</span> u_char *ptr, uint16_t len, uint16_t t,
 <a name="l00100"></a>00100                         uint16_t n, uint16_t *prdlength, <span class="keyword">const</span> u_char **prdata)
 <a name="l00101"></a>00101 {
 <a name="l00102"></a>00102         <span class="keyword">const</span> u_char *original_ptr = ptr;
@@ -152,13 +152,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00109"></a>00109                 overrun = 1;
 <a name="l00110"></a>00110                 <span class="keywordflow">goto</span> out;
 <a name="l00111"></a>00111         }
-<a name="l00112"></a>00112         qdcount = ntohs(header-&gt;qdcount);
-<a name="l00113"></a>00113         ancount = ntohs(header-&gt;ancount);
+<a name="l00112"></a>00112         qdcount = ntohs(header-&gt;<a class="code" href="struct_h_e_a_d_e_r.html#ada386612d32a9d73c1d31061b0a15428">qdcount</a>);
+<a name="l00113"></a>00113         ancount = ntohs(header-&gt;<a class="code" href="struct_h_e_a_d_e_r.html#a3c62308acfb5816632406223323b53d1">ancount</a>);
 <a name="l00114"></a>00114         <span class="comment">/* Advance past questions */</span>
 <a name="l00115"></a>00115         ptr += <span class="keyword">sizeof</span>(<a class="code" href="struct_h_e_a_d_e_r.html">HEADER</a>);
 <a name="l00116"></a>00116         <span class="keywordflow">for</span> (i = 0; i &lt; qdcount; i++)
 <a name="l00117"></a>00117         {
-<a name="l00118"></a>00118                 ptr += advance_name(ptr, original_ptr, len);
+<a name="l00118"></a>00118                 ptr += <a class="code" href="dns_8c.html#ae4bfc05150ebb58e07281be1996f04ff">advance_name</a>(ptr, original_ptr, len);
 <a name="l00119"></a>00119                 <span class="keywordflow">if</span> (ptr - original_ptr + <span class="keyword">sizeof</span>(uint16_t) &gt; len)
 <a name="l00120"></a>00120                 {
 <a name="l00121"></a>00121                         overrun = 1;
@@ -178,7 +178,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00135"></a>00135                 uint16_t type, rdlength;
 <a name="l00136"></a>00136                 <span class="keyword">const</span> u_char *rdata;
 <a name="l00137"></a>00137 
-<a name="l00138"></a>00138                 overrun = parse_rr(ptr, original_ptr, len, &amp;type, NULL, NULL,
+<a name="l00138"></a>00138                 overrun = <a class="code" href="dns_8c.html#a73e7d221ee0d7a7b3911d47dff001c42">parse_rr</a>(ptr, original_ptr, len, &amp;type, NULL, NULL,
 <a name="l00139"></a>00139                                    &amp;rdlength, &amp;rdata);
 <a name="l00140"></a>00140                 <span class="keywordflow">if</span> (!overrun)
 <a name="l00141"></a>00141                 {
@@ -215,7 +215,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&nbsp;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&nbsp;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&nbsp;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&nbsp;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&nbsp;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&nbsp;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&nbsp;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&nbsp;</span>Defines</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -224,7 +224,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Jan 18 20:34:38 2011 for Name-based sockets - module by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Jan 18 21:11:49 2011 for Name-based sockets - module by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>
