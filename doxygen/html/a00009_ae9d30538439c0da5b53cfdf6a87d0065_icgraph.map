@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#a66986f06bcd9bef3f0acf5856bfff71f" title="name_is_canonical" alt="" coords="281,5,412,35"/>
+<area shape="rect" href="$a00009.html#a5eb921099d79c0b32e69ff006853442a" title="name_parse_canonical_v4" alt="" coords="259,109,435,139"/>
+<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="508,71,612,100"/>
+<area shape="rect" href="$a00009.html#a739a9be9b64d10189c9e88f6d28491ee" title="name_stream_connect" alt="" coords="484,148,636,177"/>
+<area shape="rect" href="$a00009.html#a562b6dd09744c1ddb2d1a8378d30addc" title="name_stream_release" alt="" coords="485,5,635,35"/>
+<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="853,72,1029,101"/>
+<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="685,97,805,127"/>
+<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="1079,72,1209,101"/>
+</map>

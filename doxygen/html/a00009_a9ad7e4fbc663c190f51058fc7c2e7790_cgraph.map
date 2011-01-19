@@ -1,0 +1,18 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ad3d8a1d4e1c89094faaee7e576dee5b7" title="name_bind_to_fqdn" alt="" coords="180,59,313,88"/>
+<area shape="rect" href="$a00015.html#a5e5b37b81978789054ddc587e3af21e6" title="name_stream_sk" alt="" coords="187,112,307,141"/>
+<area shape="rect" href="$a00008.html#a16f51d1d1829f7c23407fcbf17139691" title="match_v6_address_to_scope" alt="" coords="363,5,555,35"/>
+<area shape="rect" href="$a00009.html#a7ad9fdbbaec06c88dd908e3211f9b8b9" title="name_create_v4_sock" alt="" coords="383,59,535,88"/>
+<area shape="rect" href="$a00009.html#a0067c3ae535b8bfa3b7874517115dd0d" title="name_create_v6_sock" alt="" coords="383,112,535,141"/>
+<area shape="rect" href="$a00009.html#abb1d86c18940b6e3b02bbbeb4f1eb662" title="name_stream_state_change" alt="" coords="604,59,788,88"/>
+<area shape="rect" href="$a00009.html#a00476616fd9d75f46a40e02f6844e81a" title="name_v6_recv_syn" alt="" coords="629,112,763,141"/>
+<area shape="rect" href="$a00009.html#ae8e372e7f41189cca5149d620716334f" title="set_name_option" alt="" coords="636,192,756,221"/>
+<area shape="rect" href="$a00009.html#ad429fdf3c1a016828a502ff8eea46821" title="name_option_matches" alt="" coords="865,59,1017,88"/>
+<area shape="rect" href="$a00009.html#a972a50214997bd814cd05f97d81a81f7" title="name_stream_store_syn" alt="" coords="860,112,1023,141"/>
+<area shape="rect" href="$a00009.html#ab2674d7b86ff762416ddb3dc835c4880" title="name_option_to_str" alt="" coords="1093,85,1229,115"/>
+<area shape="rect" href="$a00009.html#ac074fda8f283c687545be2e53de79e49" title="rfc1035_decode_name" alt="" coords="1277,85,1429,115"/>
+<area shape="rect" href="$a00009.html#a92dcdbf16767c4bf91dea33ec0b26bab" title="ipv6_update_options" alt="" coords="872,165,1011,195"/>
+<area shape="rect" href="$a00009.html#a7b0682716a3329de6d42caba391f374d" title="namestack_ipv6_renew_options" alt="" coords="839,219,1044,248"/>
+<area shape="rect" href="$a00009.html#a91562471c07791fae97674a650dc13dd" title="rfc1035_encode_name" alt="" coords="865,272,1017,301"/>
+<area shape="rect" href="$a00009.html#a51a93e25a456b14fc961232360eea4c9" title="ipv6_renew_option" alt="" coords="1097,219,1225,248"/>
+</map>

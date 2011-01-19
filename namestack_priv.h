@@ -1,3 +1,8 @@
+/** @file module/namestack_priv.h
+ *  @brief AF_NAME behavior.
+ *  @author Juan Lang
+ *  @date 2011-01-18
+ */
 #ifndef NAMESTACK_PRIV_H
 #define NAMESTACK_PRIV_H
 
@@ -6,12 +11,16 @@
 #include <net/sock.h>
 #include <linux/inname.h>
 
+/** 
+ * Name-stream socket struct
+ * Contains sub-sockets for ipv4 & ipv6
+ */
 struct name_stream_sock
 {
 	struct sock sk;
 	struct sockaddr_name sname;
 	struct sockaddr_name dname;
-	u_char *dname_answer;
+  u_char *dname_answer; /// written to by name_stream_query_resolve()
 	int dname_answer_len;
 	uint16_t dname_answer_index;
 	int async_error;

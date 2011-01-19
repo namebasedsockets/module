@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ae8cf85dd3c12a1daa4e1ce16b2ee06d9" title="name_parse_canonical_v6" alt="" coords="203,32,379,61"/>
+<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="452,5,556,35"/>
+<area shape="rect" href="$a00009.html#a739a9be9b64d10189c9e88f6d28491ee" title="name_stream_connect" alt="" coords="428,59,580,88"/>
+<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="797,7,973,36"/>
+<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="629,32,749,61"/>
+<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="1023,7,1153,36"/>
+</map>

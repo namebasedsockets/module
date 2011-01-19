@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00012.html#aeb93f5ca5ca3fac7e71bdb3d0e5ba2d7" title="namestack_send_message_tracked" alt="" coords="185,32,415,61"/>
+<area shape="rect" href="$a00012.html#adabcf9d49221610d8e0bca7b03e58548" title="pending_queue_push" alt="" coords="464,32,608,61"/>
+<area shape="rect" href="$a00012.html#a01273c71c63c8f997c8770ee2d233565" title="lock_pending_queue" alt="" coords="664,5,803,35"/>
+<area shape="rect" href="$a00012.html#a9642d34f5a8fcbcd35319c7b4a3cd284" title="unlock_pending_queue" alt="" coords="657,59,809,88"/>
+</map>

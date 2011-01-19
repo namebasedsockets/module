@@ -1,0 +1,17 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ab2674d7b86ff762416ddb3dc835c4880" title="name_option_to_str" alt="" coords="271,59,407,88"/>
+<area shape="rect" href="$a00009.html#afff5c5578fe9835676f40108dd189e1d" title="name_stream_connect_to_resolved_name" alt="" coords="205,112,472,141"/>
+<area shape="rect" href="$a00009.html#ad429fdf3c1a016828a502ff8eea46821" title="name_option_matches" alt="" coords="539,5,691,35"/>
+<area shape="rect" href="$a00009.html#a972a50214997bd814cd05f97d81a81f7" title="name_stream_store_syn" alt="" coords="533,59,696,88"/>
+<area shape="rect" href="$a00009.html#a00476616fd9d75f46a40e02f6844e81a" title="name_v6_recv_syn" alt="" coords="768,32,901,61"/>
+<area shape="rect" href="$a00009.html#a0067c3ae535b8bfa3b7874517115dd0d" title="name_create_v6_sock" alt="" coords="960,32,1112,61"/>
+<area shape="rect" href="$a00009.html#ad3d8a1d4e1c89094faaee7e576dee5b7" title="name_bind_to_fqdn" alt="" coords="1163,5,1296,35"/>
+<area shape="rect" href="$a00009.html#a7fc4a8969ccbb8be2c1b5cdfdca296de" title="name_stream_listen" alt="" coords="1160,59,1299,88"/>
+<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="1520,7,1624,36"/>
+<area shape="rect" href="$a00009.html#a9ad7e4fbc663c190f51058fc7c2e7790" title="name_register_cb" alt="" coords="1348,32,1471,61"/>
+<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="1840,7,2016,36"/>
+<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="1672,32,1792,61"/>
+<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="2065,7,2196,36"/>
+<area shape="rect" href="$a00009.html#a78360fdbbdbb75194fedc8378992cee8" title="name_stream_query_resolve" alt="" coords="521,112,708,141"/>
+<area shape="rect" href="$a00009.html#a739a9be9b64d10189c9e88f6d28491ee" title="name_stream_connect" alt="" coords="759,112,911,141"/>
+</map>

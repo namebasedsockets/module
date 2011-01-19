@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ad3d8a1d4e1c89094faaee7e576dee5b7" title="name_bind_to_fqdn" alt="" coords="247,5,380,35"/>
+<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="603,5,707,35"/>
+<area shape="rect" href="$a00009.html#a9ad7e4fbc663c190f51058fc7c2e7790" title="name_register_cb" alt="" coords="431,31,553,60"/>
+<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="923,5,1099,35"/>
+<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="755,31,875,60"/>
+<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="1148,5,1279,35"/>
+</map>

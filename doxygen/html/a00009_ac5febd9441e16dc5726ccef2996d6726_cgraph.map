@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#aff593868dd03676fc243a35da118b218" title="create_stream_sock_from_sk" alt="" coords="204,5,396,35"/>
+<area shape="rect" href="$a00009.html#adac8a5605cd537f1a3ed7757ab9a3361" title="get_name_from_v4_sock" alt="" coords="216,59,384,88"/>
+<area shape="rect" href="$a00009.html#aa5d6559dacb6c8f18c2a601e1fc201e6" title="get_name_from_v6_sock" alt="" coords="216,112,384,141"/>
+<area shape="rect" href="$a00009.html#ab579d4cb791b276bcd7e6f425fa9cc24" title="name_alloc_stream_socket" alt="" coords="211,165,389,195"/>
+<area shape="rect" href="$a00015.html#a5e5b37b81978789054ddc587e3af21e6" title="name_stream_sk" alt="" coords="449,192,569,221"/>
+<area shape="rect" href="$a00009.html#a8f62129c805bae85d7cd3ead2bbf07f2" title="name_stream_wait_for_accept" alt="" coords="201,269,399,299"/>
+</map>

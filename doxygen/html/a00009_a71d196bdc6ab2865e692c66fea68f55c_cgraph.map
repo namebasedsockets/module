@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ad345857bbeb8ead274d9de55396eaaed" title="name_alloc_dgram_socket" alt="" coords="152,5,328,35"/>
+<area shape="rect" href="$a00009.html#ab579d4cb791b276bcd7e6f425fa9cc24" title="name_alloc_stream_socket" alt="" coords="151,59,329,88"/>
+<area shape="rect" href="$a00009.html#a182d40f4f6b6bc0950c072f382ff3cbc" title="name_dgram_sk" alt="" coords="381,5,499,35"/>
+<area shape="rect" href="$a00015.html#a5e5b37b81978789054ddc587e3af21e6" title="name_stream_sk" alt="" coords="380,59,500,88"/>
+</map>
