@@ -15,7 +15,6 @@
  * Name-stream socket struct
  * Contains sub-sockets for ipv4 & ipv6
  */
-<<<<<<< HEAD
 struct name_stream_sock {
   struct sock sk;
   struct sockaddr_name sname;
