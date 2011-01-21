@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$a00012.html#ab5653041c631649649d96a230171aed4" title="handle_name_reply" alt="" coords="160,59,293,88"/>
-<area shape="rect" href="$a00012.html#a172f6049cd5399ec0bc24e100b4f7b35" title="handle_qualify_reply" alt="" coords="157,112,296,141"/>
-<area shape="rect" href="$a00012.html#aea9720b3f7120a0fc8e7b125b4513205" title="handle_register" alt="" coords="172,5,281,35"/>
-<area shape="rect" href="$a00012.html#acd0a97b7236ee141ed82564cd98fc027" title="handle_register_reply" alt="" coords="155,165,299,195"/>
-<area shape="rect" href="$a00012.html#a7c9e241b27d9bb9cbfcbf78e83e8c4d8" title="namestack_send_message" alt="" coords="365,59,544,88"/>
-<area shape="rect" href="$a00012.html#a064ca134e775e6a7bcd58898058d29a0" title="pending_queue_find_and_remove" alt="" coords="348,112,561,141"/>
-</map>

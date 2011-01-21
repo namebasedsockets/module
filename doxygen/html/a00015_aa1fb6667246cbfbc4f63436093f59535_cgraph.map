@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$a00013.html#a7848b669f978c36fa35e1470743eb0e4" title="__name_cache_find" alt="" coords="195,5,331,35"/>
-<area shape="rect" href="$a00013.html#a8ae772304606167f46e81d0ac73eb6ce" title="lock_name_cache" alt="" coords="200,59,325,88"/>
-<area shape="rect" href="$a00013.html#a146c3e6f807bb836d9bf21ad8be0e207" title="name_hash" alt="" coords="219,112,307,141"/>
-<area shape="rect" href="$a00013.html#a2de07759137fa58e1f81ea7102a401ac" title="unlock_name_cache" alt="" coords="193,165,332,195"/>
-<area shape="rect" href="$a00015.html#a5e5b37b81978789054ddc587e3af21e6" title="name_stream_sk" alt="" coords="383,5,503,35"/>
-</map>

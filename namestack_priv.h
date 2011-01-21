@@ -30,22 +30,6 @@ struct name_stream_sock {
   struct sock *(*orig_syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
 				     struct request_sock *req,
 				     struct dst_entry *dst);
-=======
-struct name_stream_sock
-{
-	struct sock sk;
-	struct sockaddr_name sname;
-	struct sockaddr_name dname;
-  u_char *dname_answer; /// written to by name_stream_query_resolve()
-	int dname_answer_len;
-	uint16_t dname_answer_index;
-	int async_error;
-	struct socket *ipv4_sock;
-	struct socket *ipv6_sock;
-	struct sock *(*orig_syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
-					   struct request_sock *req,
-					   struct dst_entry *dst);
->>>>>>> doxygen
 };
 
 static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)

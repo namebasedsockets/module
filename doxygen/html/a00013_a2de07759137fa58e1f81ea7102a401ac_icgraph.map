@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$a00015.html#aa6e1ff7767ba286a06b81fe430b0e76f" title="name_cache_add" alt="" coords="203,5,325,35"/>
-<area shape="rect" href="$a00015.html#aa1fb6667246cbfbc4f63436093f59535" title="name_cache_delete" alt="" coords="196,59,332,88"/>
-<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="404,5,508,35"/>
-<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="747,7,923,36"/>
-<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="579,32,699,61"/>
-<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="972,7,1103,36"/>
-<area shape="rect" href="$a00009.html#a562b6dd09744c1ddb2d1a8378d30addc" title="name_stream_release" alt="" coords="381,59,531,88"/>
-</map>
