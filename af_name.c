@@ -338,89 +338,101 @@ static void rfc1035_encode_name(char *dst, const char *name)
 	*dst = 0;
 }
 
+
+/**
+ * Adds a name-extensionheader
+ */
 static int set_name_option(struct socket *sock, const char *name, __u8 opt_type)
 {
-	struct sock *sk = sock->sk;
-	struct ipv6_pinfo *np = inet6_sk(sk);
-	struct ipv6_txoptions *opt;
-	char *name_opt_buf;
-	struct ipv6_opt_hdr *opt_hdr;
-	struct name_opt_hdr *name_opt_hdr;
-	int err, name_opt_len;
+        struct sock *sk = sock->sk;
+        struct ipv6_pinfo *np = inet6_sk(sk);
+        struct ipv6_txoptions *opt;
+        char *name_opt_buf;
+        struct ipv6_opt_hdr *opt_hdr;
+        struct name_opt_hdr *name_opt_hdr;
+        int err, name_opt_len;
 
- 	if (np->opt && np->opt->dst1opt) {
- 		name_opt_len = ipv6_optlen(np->opt->dst1opt);
- 		name_opt_len += sizeof(struct name_opt_hdr) + strlen(name) + 1;
- 		err = -ENOMEM;
- 		name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
- 		if (!name_opt_buf)
- 			goto out;
- 		memset(name_opt_buf, 0, name_opt_len);
- 		memcpy(name_opt_buf, np->opt->dst1opt,
- 		       ipv6_optlen(np->opt->dst1opt));
+        /// If the extensionheader is already allocated
+         if (np->opt && np->opt->dst1opt) {
+                 name_opt_len = ipv6_optlen(np->opt->dst1opt); // Read current length of the options
+                 name_opt_len += sizeof(struct name_opt_hdr) + strlen(name) + 1; // Add space for the name option
+                 err = -ENOMEM;
+                 name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC); // Allocate memory for the new buffer
+                 if (!name_opt_buf)
+                         goto out;
+                 memset(name_opt_buf, 0, name_opt_len); 
+                 memcpy(name_opt_buf, np->opt->dst1opt,
+                        ipv6_optlen(np->opt->dst1opt)); // Copy the old buffer into the new one 
  
- 		opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
- 		name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
- 		name_opt_hdr = (struct name_opt_hdr *)((char *)name_opt_hdr +
- 			sizeof(struct name_opt_hdr) + name_opt_hdr->len);
- 		name_opt_hdr->type = opt_type;
- 		/* Happily the RFC1035-encoded name has the same length as the
- 		 * C string.
- 		 */
- 		name_opt_hdr->len = strlen(name) + 1;
- 		rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
- 		opt_hdr->nexthdr = 0;
- 		opt_hdr->hdrlen = (name_opt_len + 1) >> 3;
- 	}
- 	else {
- 		struct ipv6_opt_hdr tmp_opt_hdr;
+                 opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
+                 name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
+                 name_opt_hdr = (struct name_opt_hdr *)((char *)name_opt_hdr +
+                         sizeof(struct name_opt_hdr) + name_opt_hdr->len); // find where in the buffer to put the name option 
+                 name_opt_hdr->type = opt_type;
+                 /* Happily the RFC1035-encoded name has the same length as the
+                  * C string.
+                  */
+                 name_opt_hdr->len = strlen(name) + 1;
+                 rfc1035_encode_name((char *)(name_opt_hdr + 1), name); // Actually put the name option into the buffer 
+                 opt_hdr->nexthdr = 0;
+                 opt_hdr->hdrlen = (name_opt_len + 1) >> 3;
+         }
+         /// Else, if the extensionheader is not yet allocated, create it
+         else {
+                 struct ipv6_opt_hdr tmp_opt_hdr;
  
- 		/* Use to calculate the required length */
- 		tmp_opt_hdr.nexthdr = 0;
- 		/* FIXME: this is the reverse of ipv6_optlen, used to calculate
- 		 * name_opt_len.  Are you sure it's correct?  Is there a nice
- 		 * macro/calculation somewhere?
- 		 */
- 		tmp_opt_hdr.hdrlen =
- 			(sizeof(struct name_opt_hdr) + strlen(name) + 1) >> 3;
- 		name_opt_len = ipv6_optlen(&tmp_opt_hdr);
- 		err = -ENOMEM;
- 		name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
- 		if (!name_opt_buf)
- 			goto out;
+                 /* Use to calculate the required length */
+                 tmp_opt_hdr.nexthdr = 0;
+                 /* FIXME: this is the reverse of ipv6_optlen, used to calculate
+                  * name_opt_len.  Are you sure it's correct?  Is there a nice
+                  * macro/calculation somewhere?
+                  */
+                 tmp_opt_hdr.hdrlen =
+                         (sizeof(struct name_opt_hdr) + strlen(name) + 1) >> 3;
+                 name_opt_len = ipv6_optlen(&tmp_opt_hdr);
+                 err = -ENOMEM;
+                 // Now that we have the required length, allocate it!
+                 name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
+                 if (!name_opt_buf) 
+                         goto out;
  
- 		memset(name_opt_buf, 0, name_opt_len);
- 		opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
- 		name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
- 		name_opt_hdr->type = opt_type;
- 		/* Happily the RFC1035-encoded name has the same length as the
- 		 * C string.
- 		 */
- 		name_opt_hdr->len = strlen(name) + 1;
- 		rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
- 		opt_hdr->nexthdr = 0;
- 		opt_hdr->hdrlen =
- 			(sizeof(struct name_opt_hdr) + name_opt_hdr->len) >> 3;
- 	}
-	/* Rather than calling kernel_setsockopt, set the option directly to
-	 * avoid a permissions check on the calling process.
-	 */
-	opt = namestack_ipv6_renew_options(sk, np->opt, IPV6_DSTOPTS,
-				 (struct ipv6_opt_hdr *)name_opt_buf,
-				 name_opt_len);
-	if (IS_ERR(opt)) {
-		err = PTR_ERR(opt);
-		goto out;
-	}
-	err = 0;
-	opt = ipv6_update_options(sk, opt);
-	if (opt)
-		sock_kfree_s(sk, opt, opt->tot_len);
+                 memset(name_opt_buf, 0, name_opt_len);
+                 // opt_hdr = name_opt_buf (allocated space for our extension)
+                 opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
+                 // name_opt_hdr is one pointer size into the buffer
+                 name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
+                 name_opt_hdr->type = opt_type;
+                 /* Happily the RFC1035-encoded name has the same length as the
+                  * C string.
+                  */
+                 name_opt_hdr->len = strlen(name) + 1;
+                 rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
+                 opt_hdr->nexthdr = 0;
+                 opt_hdr->hdrlen =
+                         (sizeof(struct name_opt_hdr) + name_opt_hdr->len) >> 3;
+         }
+         
+        /* Rather than calling kernel_setsockopt, set the option directly to
+         * avoid a permissions check on the calling process.
+         */
+        opt = namestack_ipv6_renew_options(sk, np->opt, IPV6_DSTOPTS,
+                                 (struct ipv6_opt_hdr *)name_opt_buf,
+                                 name_opt_len);
+        if (IS_ERR(opt)) {
+                err = PTR_ERR(opt);
+                goto out;
+        }
+        err = 0;
+        
+        opt = ipv6_update_options(sk, opt);
+        if (opt)
+                sock_kfree_s(sk, opt, opt->tot_len);
 out:
-	if (name_opt_buf)
-		kfree(name_opt_buf);
-	return err;
+        if (name_opt_buf)
+                kfree(name_opt_buf);
+        return err;
 }
+
 
 #if defined(CONFIG_NAMESTACK_MODULE)
 /**
