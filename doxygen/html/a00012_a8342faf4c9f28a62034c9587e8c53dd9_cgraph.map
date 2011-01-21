@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#aba97cdc2d426374e9a939e5cd64f3c6d" title="name_af_init" alt="" coords="175,5,271,35"/>
+<area shape="rect" href="$a00013.html#a29317552ae54d25f0c09131c2494625b" title="name_cache_init" alt="" coords="163,59,283,88"/>
+<area shape="rect" href="$a00012.html#a6cb1ad019f04f1b011374c160c16e1a1" title="nos_rcv_skb" alt="" coords="175,112,271,141"/>
+<area shape="rect" href="$a00012.html#aad7c42ddf9f6588ad36b5359ddd76075" title="nos_rcv_msg" alt="" coords="332,112,431,141"/>
+<area shape="rect" href="$a00012.html#ab5653041c631649649d96a230171aed4" title="handle_name_reply" alt="" coords="485,85,619,115"/>
+<area shape="rect" href="$a00012.html#a172f6049cd5399ec0bc24e100b4f7b35" title="handle_qualify_reply" alt="" coords="483,139,621,168"/>
+<area shape="rect" href="$a00012.html#aea9720b3f7120a0fc8e7b125b4513205" title="handle_register" alt="" coords="497,32,607,61"/>
+<area shape="rect" href="$a00012.html#acd0a97b7236ee141ed82564cd98fc027" title="handle_register_reply" alt="" coords="480,192,624,221"/>
+<area shape="rect" href="$a00012.html#a7c9e241b27d9bb9cbfcbf78e83e8c4d8" title="namestack_send_message" alt="" coords="691,85,869,115"/>
+<area shape="rect" href="$a00012.html#a064ca134e775e6a7bcd58898058d29a0" title="pending_queue_find_and_remove" alt="" coords="673,139,887,168"/>
+</map>

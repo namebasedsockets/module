@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00013.html#aa1fb6667246cbfbc4f63436093f59535" title="name_cache_delete" alt="" coords="219,112,355,141"/>
+<area shape="rect" href="$a00015.html#a5e5b37b81978789054ddc587e3af21e6" title="name_stream_sk" alt="" coords="673,112,793,141"/>
+<area shape="rect" href="$a00012.html#a8bda9733b25a90bc533e4503c32830ad" title="name_delete_registration" alt="" coords="204,269,369,299"/>
+<area shape="rect" href="$a00009.html#a66986f06bcd9bef3f0acf5856bfff71f" title="name_is_canonical" alt="" coords="221,323,352,352"/>
+<area shape="rect" href="$a00009.html#a5768da3ffa0275fa10335132581d896a" title="name_is_local" alt="" coords="235,376,339,405"/>
+<area shape="rect" href="$a00013.html#a7848b669f978c36fa35e1470743eb0e4" title="__name_cache_find" alt="" coords="453,5,589,35"/>
+<area shape="rect" href="$a00013.html#a8ae772304606167f46e81d0ac73eb6ce" title="lock_name_cache" alt="" coords="459,59,584,88"/>
+<area shape="rect" href="$a00013.html#a146c3e6f807bb836d9bf21ad8be0e207" title="name_hash" alt="" coords="477,112,565,141"/>
+<area shape="rect" href="$a00013.html#a2de07759137fa58e1f81ea7102a401ac" title="unlock_name_cache" alt="" coords="452,165,591,195"/>
+<area shape="rect" href="$a00012.html#a7c9e241b27d9bb9cbfcbf78e83e8c4d8" title="namestack_send_message" alt="" coords="432,269,611,299"/>
+<area shape="rect" href="$a00009.html#ae9d30538439c0da5b53cfdf6a87d0065" title="name_find_v4_canonical_suffix" alt="" coords="420,323,623,352"/>
+<area shape="rect" href="$a00009.html#a816a98f8cf2b06df30fe991ec8bfcffe" title="name_find_v6_canonical_suffix" alt="" coords="420,376,623,405"/>
+</map>

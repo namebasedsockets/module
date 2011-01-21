@@ -8,11 +8,17 @@
 #include <arpa/nameser.h>
 #endif /* __KERNEL__ */
 
+/**
+ * \param ptr is a pointer to the current item we are ... (skipping?)
+ * \param start is a pointer to the beginning of the buffer we are examinating
+ * \param len is ...
+ */
 uint16_t advance_name(const u_char *ptr, const u_char *start, uint16_t len)
 {
 	int has_pointer = 0;
 	const u_char *original_ptr = ptr;
 
+	/// while we are within the bounds of our buffer
 	for (; ptr - start < len; )
 	{
 		if ((*ptr & 0xc0) == 0xc0)
@@ -96,6 +102,12 @@ out:
 	return overrun;
 }
 
+/**
+ * \param ptr points to the answers we have gotten
+ * \param len 
+ * \param t The RR-type we are looking for (e.g. AAAA or A)
+ *
+ */
 int find_answer_of_type(const u_char *ptr, uint16_t len, uint16_t t,
 			uint16_t n, uint16_t *prdlength, const u_char **prdata)
 {

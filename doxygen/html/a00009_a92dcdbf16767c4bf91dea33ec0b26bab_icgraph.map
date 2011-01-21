@@ -1,0 +1,15 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00009.html#ae8e372e7f41189cca5149d620716334f" title="set_name_option" alt="" coords="195,85,315,115"/>
+<area shape="rect" href="$a00009.html#a0067c3ae535b8bfa3b7874517115dd0d" title="name_create_v6_sock" alt="" coords="409,59,561,88"/>
+<area shape="rect" href="$a00009.html#aa226ff0e8cb10ce4e4d700b96d0b50b7" title="name_stream_connect_to_v6_address" alt="" coords="363,112,608,141"/>
+<area shape="rect" href="$a00009.html#ad3d8a1d4e1c89094faaee7e576dee5b7" title="name_bind_to_fqdn" alt="" coords="723,5,856,35"/>
+<area shape="rect" href="$a00009.html#a7fc4a8969ccbb8be2c1b5cdfdca296de" title="name_stream_listen" alt="" coords="720,59,859,88"/>
+<area shape="rect" href="$a00009.html#af7bcfb1b057d29df2729a1aad286c6ec" title="name_register" alt="" coords="1233,45,1337,75"/>
+<area shape="rect" href="$a00009.html#a9ad7e4fbc663c190f51058fc7c2e7790" title="name_register_cb" alt="" coords="1004,57,1127,87"/>
+<area shape="rect" href="$a00009.html#a7b361fea06308c8ad46651ac195033b0" title="name_qualify_and_register" alt="" coords="1579,47,1755,76"/>
+<area shape="rect" href="$a00009.html#a2d725a6eb751e0f660eba52d2a76249b" title="name_qualify_cb" alt="" coords="1411,72,1531,101"/>
+<area shape="rect" href="$a00009.html#a3a2adf5361993cef9bbe48178469714f" title="name_stream_bind" alt="" coords="1804,47,1935,76"/>
+<area shape="rect" href="$a00009.html#a739a9be9b64d10189c9e88f6d28491ee" title="name_stream_connect" alt="" coords="1209,124,1361,153"/>
+<area shape="rect" href="$a00009.html#afff5c5578fe9835676f40108dd189e1d" title="name_stream_connect_to_resolved_name" alt="" coords="656,163,923,192"/>
+<area shape="rect" href="$a00009.html#a78360fdbbdbb75194fedc8378992cee8" title="name_stream_query_resolve" alt="" coords="972,163,1159,192"/>
+</map>

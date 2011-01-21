@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00012.html#ab5653041c631649649d96a230171aed4" title="handle_name_reply" alt="" coords="275,5,408,35"/>
+<area shape="rect" href="$a00012.html#a172f6049cd5399ec0bc24e100b4f7b35" title="handle_qualify_reply" alt="" coords="272,59,411,88"/>
+<area shape="rect" href="$a00012.html#acd0a97b7236ee141ed82564cd98fc027" title="handle_register_reply" alt="" coords="269,112,413,141"/>
+<area shape="rect" href="$a00012.html#aad7c42ddf9f6588ad36b5359ddd76075" title="nos_rcv_msg" alt="" coords="463,59,561,88"/>
+<area shape="rect" href="$a00012.html#a6cb1ad019f04f1b011374c160c16e1a1" title="nos_rcv_skb" alt="" coords="611,59,707,88"/>
+<area shape="rect" href="$a00012.html#a8342faf4c9f28a62034c9587e8c53dd9" title="namestack_init" alt="" coords="755,59,864,88"/>
+</map>

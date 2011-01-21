@@ -15,6 +15,6 @@ enum {
     NAME_STACK_REGISTER_QUERY,
     NAME_STACK_REGISTER_REPLY,
     NAME_STACK_REGISTER_DELETE
-};
+} name_stack_message_types;
 
 #endif

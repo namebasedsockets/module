@@ -33,13 +33,15 @@ static inline void unlock_pending_queue(void)
 	spin_unlock(&pending_queue_lock);
 }
 
-/* Logically inserts a new node into the pending queue.  Must *not* be called
+/**
+ * Logically inserts a new node into the pending queue.  Must *not* be called
  * from an interrupt handler.
  * Literally it instead looks for a node with a reference count of 0 first, and
  * reclaims it if it finds one.  Otherwise it allocates a new node to insert
  * into the pending queue.  This mechanism allows pending_queue_find_and_remove
  * to avoid taking the queue lock, which is important since it's called from
  * an irq handler.
+ * 
  */
 static int pending_queue_push(struct sk_buff *sk, __u32 seq,
 			      void *cb, void *data)
@@ -132,6 +134,10 @@ namestack_send_message(int pid, int type, const void *payload, int size)
 	return netlink_unicast(nls, skb, pid, MSG_DONTWAIT);
 }
 
+/**
+ * This function deals with messages sent by do_qualify() (in the daemon)
+ */
+
 static int
 handle_register(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 {
@@ -144,6 +150,12 @@ handle_register(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 	daemon_pid = NETLINK_CREDS(skb)->pid;
 	return namestack_send_message(daemon_pid, NAME_STACK_REGISTER, NULL, 0);
 }
+
+/**
+ * This function handles messages sent by do_??() in the daemon
+ * 
+ */
+
 
 static int
 handle_name_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
@@ -166,7 +178,12 @@ handle_name_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 			if (NLMSG_PAYLOAD(nlh, 0) >= len + sizeof(len))
 			{
 				query_resolv_cb cb = node->cb;
-
+				/** 
+				   cb = name_stream_query_resolve( response, length, data) 
+				   response = nlmsg_data + integer
+				   len = first int of the nlmsg_data
+				   data = sock				    
+				*/
 				cb(NLMSG_DATA(nlh) + sizeof(len), len,
 				   node->data);
 			}
@@ -185,7 +202,12 @@ handle_name_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 		NAME_STACK_NAME_REPLY, NULL, 0);
 }
 
+/// Maximum length of a name (including nulltermination?)
 #define MAX_NAME_LEN 256
+
+/**
+ * handles messages from do_register() in the daemon.
+ */
 
 static int
 handle_register_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
@@ -228,6 +250,10 @@ handle_register_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 	return namestack_send_message(NETLINK_CREDS(skb)->pid,
 		NAME_STACK_NAME_REPLY, NULL, 0);
 }
+
+/**
+ * This function picks out a node from the pending_queue and executes it (cb) with a zero:ed array and node->data (only two args?!)
+ */
 
 static int
 handle_qualify_reply(const struct sk_buff *skb, const struct nlmsghdr *nlh)
@@ -344,6 +370,12 @@ static void __exit namestack_exit(void)
 	printk(KERN_INFO "name-oriented stack module unloading\n");
 }
 
+/**
+ * Send a message to the daemon (using net-link).
+ * \param pid is the PID of the daemon
+ * \param type is either one of NAME_STACK_* messages defined in name_stack_message_types
+ * \param cb is the function to be executed by the daemon
+ */
 static int
 namestack_send_message_tracked(int pid, int type, const void *payload, int size,
 			       void *cb, void *data)
@@ -361,11 +393,14 @@ namestack_send_message_tracked(int pid, int type, const void *payload, int size,
 	nlh = __nlmsg_put(skb, pid, seq, type, (len - sizeof(*nlh)), 0);
 	nlh->nlmsg_flags = 0;
 	memcpy(NLMSG_DATA(nlh), payload, size);
+
+	// Enqueue the waiting function
 	err = pending_queue_push(skb, seq, cb, data);
 	if (err) {
 		printk(KERN_ERR "Allocation failure, can't send message\n");
 		goto out;
 	}
+	// Send the message to the daemon
 	err = netlink_unicast(nls, skb, pid, MSG_DONTWAIT);
 	if (err > 0) {
 		/* A positive return value indicates how many bytes were sent

@@ -1,3 +1,11 @@
+/** @file module/af_name.c
+ *  @brief AF_NAME behavior.
+ *  @author Juan Lang
+ *  @author Javier Ubillos
+ *  @author Mattias Ekström
+ *  @date 2011-01-18
+ */
+
 #include <linux/ctype.h>
 #include <linux/types.h>
 #include <linux/socket.h>
@@ -16,12 +24,14 @@
 #include "nameser.h"
 #include "namestack_priv.h"
 
+/** Enum for namestack states, these should _not_ overlap with TCP states */
 enum {
 	NAME_RESOLVING = TCP_MAX_STATES, /* Don't overlap with TCP states */
 	NAME_BINDING,
 	NAME_CONNECTING,
 };
 
+/** Bit-mask enum for namestack states, these should _not_ overlap with TCP states */
 enum {
 	NAMEF_RESOLVING   = (1 << NAME_RESOLVING),
 	NAMEF_BINDING     = (1 << NAME_BINDING),
@@ -79,7 +89,8 @@ static int name_is_local(const char *name)
 	return !strcasecmp(p + 1, "localhost.");
 }
 
-/* If name ends in the IPv4 canonical suffix .in-addr.arpa., returns a
+/**
+ * If name ends in the IPv4 canonical suffix .in-addr.arpa., returns a
  * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
  */
 static const char *name_find_v4_canonical_suffix(const char *name)
@@ -95,7 +106,8 @@ static const char *name_find_v4_canonical_suffix(const char *name)
 	return NULL;
 }
 
-/* If name ends in the IPv6 canonical suffix .ip6.arpa., returns a
+/**
+ * If name ends in the IPv6 canonical suffix .ip6.arpa., returns a
  * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
  */
 static const char *name_find_v6_canonical_suffix(const char *name)
@@ -159,7 +171,9 @@ out:
 	return 0;
 }
 
-/* Stolen from net/ipv6/ipv6_sockglue.c */
+/** 
+ * Stolen from net/ipv6/ipv6_sockglue.c 
+ */
 static
 struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
 					   struct ipv6_txoptions *opt)
@@ -186,7 +200,8 @@ struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
 	return opt;
 }
 
-/* Stolen from net/ipv6/exthdrs.c.  That one takes an ipv6_opt_hdr from user-
+/**
+ * Stolen from net/ipv6/exthdrs.c.  That one takes an ipv6_opt_hdr from user-
  * space, but this doesn't, so the copy_from_user is removed.
  */
 static int ipv6_renew_option(void *ohdr,
@@ -211,7 +226,8 @@ static int ipv6_renew_option(void *ohdr,
 	return 0;
 }
 
-/* Identical to ipv6_renew_options in net/ipv6/exthdrs.c, but calls the
+/**
+ * Identical to ipv6_renew_options in net/ipv6/exthdrs.c, but calls the
  * modified ipv6_renew_option (above).
  */
 struct ipv6_txoptions *
@@ -293,7 +309,7 @@ struct name_opt_hdr
 	/* Followed by the actual name */
 };
 
-/* FIXME: Change name options to the "real" values once they're known.  Must
+/** FIXME: Change name options to the "real" values once they're known.  Must
  * <= 63.
  */
 #define NAME_OPTION_SOURCE_NAME 17
@@ -407,7 +423,9 @@ out:
 }
 
 #if defined(CONFIG_NAMESTACK_MODULE)
-/* Stolen from net/ipv6/exthdrs.c */
+/**
+ * Stolen from net/ipv6/exthdrs.c 
+ */
 int ipv6_find_tlv(struct sk_buff *skb, int offset, int type)
 {
 	const unsigned char *nh = skb_network_header(skb);
@@ -487,6 +505,9 @@ static inline char *name_option_to_str(struct sk_buff *skb, u16 offset)
 	return rfc1035_decode_name(name_ptr, name_hdr->len);
 }
 
+/**
+ * Check if a name matches the name in an option
+ */
 static int name_option_matches(struct sk_buff *skb, u16 offset,
 			       const char *name)
 {
@@ -510,7 +531,8 @@ struct syn_entry
 	struct hlist_node entry;
 };
 
-/* NAME_SYN_BUCKETS must be a power of 2, or the "& (NAME_SYN_BUCKETS - 1)"
+/* *
+ * NAME_SYN_BUCKETS must be a power of 2, or the "& (NAME_SYN_BUCKETS - 1)"
  * below must be changed to "% NAME_SYN_BUCKETS".
  */
 #define NAME_SYN_BUCKETS 16
@@ -644,6 +666,9 @@ static struct sock *name_v6_recv_syn(struct sock *sk, struct sk_buff *skb,
 static struct inet_connection_sock_af_ops name_tcp6_af_ops;
 static int name_tcp6_af_ops_init;
 
+/** 
+ * Create an IPv6 sub-socket
+ */
 static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 			       struct name_stream_sock *name)
 {
@@ -676,6 +701,9 @@ static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 	return err;
 }
 
+/**
+ * Create an IPv4 sub-sock
+ */
 static int name_create_v4_sock(int type, int protocol, struct socket **sock,
 			       struct name_stream_sock *name)
 {
@@ -766,7 +794,8 @@ static void name_register_cb(int result, const char *bound_name, void *data)
 	name->async_error = -result;
 }
 
-/* Parses the canonical name into the IPv4 address it represents, in host
+/**
+ * Parses the canonical name into the IPv4 address it represents, in host
  * byte order.
  * Returns -EINVAL if the name is not an IPv4 address, and 0 otherwise.
  */
@@ -854,7 +883,8 @@ static int name_parse_v6_label(const char *label, uint8_t addr[16],
 		return -EINVAL;
 }
 
-/* Parses the canonical name into the IPv6 address it represents, in host
+/**
+ * Parses the canonical name into the IPv6 address it represents, in host
  * byte order.
  * Returns -EINVAL if the name is not an IPv6 address, and 0 otherwise.
  */
@@ -1072,6 +1102,10 @@ out:
 	return err;
 }
 
+/**
+ * Wait for either a signal OR the timeo(ut) to expire
+ * \param timeo is the timeout
+ */
 static long name_wait_for_connect(struct sock *sk, long timeo)
 {
 	DEFINE_WAIT(wait);
@@ -1088,6 +1122,11 @@ static long name_wait_for_connect(struct sock *sk, long timeo)
 	finish_wait(sk->sk_sleep, &wait);
 	return timeo;
 }
+
+/**
+ * \param rdlength _must_ be equal to sizeof(struct in6_addr)
+ * \param rdata one single ipv6 address
+ */
 
 static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 					     const u_char *rdata)
@@ -1287,6 +1326,9 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 	name->async_error = err;
 }
 
+/**
+ * The daemon uses this function(pointer) to register the result of a resolution
+ */
 static void name_stream_query_resolve(const u_char *response, int len,
 				      void *data)
 {
@@ -1322,6 +1364,20 @@ static void name_stream_query_resolve(const u_char *response, int len,
 	}
 }
 
+/**
+ * This function handles connections. It sends SYN on the resolved addresses
+ * Resolutions are done by the daemon.
+ * The call sequence is:
+ * * name_stream_connect
+ * * name_stream_connect_to_v4_address() OR name_stream_connect_to_v6_address()
+ * (here's a long one)
+ *      name_send_query( source address, name_stream_query_resolve, socket ) 
+ *      namestack_send_message_tracked( daemon_pid, NAME_STACK_NAME_QUERY, sourcename, strlen, (pointer to) namestream_query_resolv(), socket)
+ *      this sends a message to the daemon to resolve name (?), AND
+ *      enqueues a call to namestream_query_reslove() awaiting the response
+ *      and THEN calls name_stream_connect_to_v4_address() OR name_stream_connect_to_v6_address()
+ *      
+ */
 static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			       int addr_len, int flags)
 {
@@ -1343,6 +1399,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 	name = name_stream_sk(sk);
 	lock_sock(sk);
 
+	/// Verify that we are in an unconnected state
 	switch (sock->state) {
 	default:
 		err = -EINVAL;
@@ -1358,8 +1415,9 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		err = -EISCONN;
 
 		sock->state = SS_CONNECTING;
-		sk->sk_state = NAME_RESOLVING;
+		sk->sk_state = NAME_RESOLVING; 
 		memcpy(&name->dname, uaddr, addr_len);
+		/// If the name is a local name, connect to v6-loopback
 		if (name_is_local(name->dname.sname_addr.name)) {
 			__u8 loopback[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
 			struct in6_addr in6;
@@ -1368,6 +1426,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			err = name_stream_connect_to_v6_address(sk, sizeof(in6),
 								(const u_char *)&in6);
 		}
+		/// If the name ends in in-addr.arpa it is an ipv4-address
 		else if (name_find_v4_canonical_suffix(
 			name->dname.sname_addr.name) != NULL) {
 			__be32 v4;
@@ -1378,6 +1437,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 				err = name_stream_connect_to_v4_address(sk,
 					sizeof(v4), (const u_char *)&v4);
 		}
+		/// If the name ends in ip6.arpa it is an ipv6-address
 		else if (name_find_v6_canonical_suffix(
 			name->dname.sname_addr.name) != NULL) {
 			struct in6_addr in6;
@@ -1388,6 +1448,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 				err = name_stream_connect_to_v6_address(sk,
 					sizeof(in6), in6.s6_addr);
 		}
+		/// If the addr-type is not given by the name resolve (daemon it and findout.
 		else
 			err = name_send_query(sname->sname_addr.name,
 					      name_stream_query_resolve, sock);
@@ -1402,8 +1463,13 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		break;
 	}
 
+
+
 	timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
+
 	if ((1 << sk->sk_state) & (NAMEF_RESOLVING | NAMEF_CONNECTING)) {
+	  /// If either timeo = 0 OR name_wait_for_connect returns non-zero
+	  /// name_wait_for_connect waits for a signal OR the timeout to expire...
 		if (!timeo || !name_wait_for_connect(sk, timeo)) {
 			/* err set above */
 			goto out;
@@ -1782,6 +1848,9 @@ static int name_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned lon
 }
 #endif
 
+/**
+ * Proto_ops for name_stream
+ */
 static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,

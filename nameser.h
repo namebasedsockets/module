@@ -34,7 +34,7 @@
 #ifndef __NAMESER_H__
 #define	__NAMESER_H__
 
-/*%
+/**
  * Structure for query header.  The order of the fields is machine- and
  * compiler-dependent, depending on the byte/bit order and the layout
  * of bit fields.  We use bit fields only in int variables, as this
@@ -44,42 +44,42 @@
 typedef struct {
 	unsigned	id :16;		/*%< query identification number */
 #ifdef __BIG_ENDIAN
-			/* fields in third byte */
-	unsigned	qr: 1;		/*%< response flag */
-	unsigned	opcode: 4;	/*%< purpose of message */
-	unsigned	aa: 1;		/*%< authoritive answer */
-	unsigned	tc: 1;		/*%< truncated message */
-	unsigned	rd: 1;		/*%< recursion desired */
-			/* fields in fourth byte */
-	unsigned	ra: 1;		/*%< recursion available */
-	unsigned	unused :1;	/*%< unused bits (MBZ as of 4.9.3a3) */
-	unsigned	ad: 1;		/*%< authentic data from named */
-	unsigned	cd: 1;		/*%< checking disabled by resolver */
-	unsigned	rcode :4;	/*%< response code */
+			/**  fields in third byte */
+	unsigned	qr: 1;		/** %< response flag */
+	unsigned	opcode: 4;	/** %< purpose of message */
+	unsigned	aa: 1;		/** %< authoritive answer */
+	unsigned	tc: 1;		/** %< truncated message */
+	unsigned	rd: 1;		/** %< recursion desired */
+			/**  fields in fourth byte */
+	unsigned	ra: 1;		/** %< recursion available */
+	unsigned	unused :1;	/** %< unused bits (MBZ as of 4.9.3a3) */
+	unsigned	ad: 1;		/** %< authentic data from named */
+	unsigned	cd: 1;		/** %< checking disabled by resolver */
+	unsigned	rcode :4;	/** %< response code */
 #endif
 #ifdef __LITTLE_ENDIAN
-			/* fields in third byte */
-	unsigned	rd :1;		/*%< recursion desired */
-	unsigned	tc :1;		/*%< truncated message */
-	unsigned	aa :1;		/*%< authoritive answer */
-	unsigned	opcode :4;	/*%< purpose of message */
-	unsigned	qr :1;		/*%< response flag */
-			/* fields in fourth byte */
-	unsigned	rcode :4;	/*%< response code */
-	unsigned	cd: 1;		/*%< checking disabled by resolver */
-	unsigned	ad: 1;		/*%< authentic data from named */
-	unsigned	unused :1;	/*%< unused bits (MBZ as of 4.9.3a3) */
-	unsigned	ra :1;		/*%< recursion available */
+			/**  fields in third byte */
+	unsigned	rd :1;		/** %< recursion desired */
+	unsigned	tc :1;		/** %< truncated message */
+	unsigned	aa :1;		/** %< authoritive answer */
+	unsigned	opcode :4;	/** %< purpose of message */
+	unsigned	qr :1;		/** %< response flag */
+			/**  fields in fourth byte */
+	unsigned	rcode :4;	/** %< response code */
+	unsigned	cd: 1;		/** %< checking disabled by resolver */
+	unsigned	ad: 1;		/** %< authentic data from named */
+	unsigned	unused :1;	/** %< unused bits (MBZ as of 4.9.3a3) */
+	unsigned	ra :1;		/** %< recursion available */
 #endif
-			/* remaining bytes */
-	unsigned	qdcount :16;	/*%< number of question entries */
-	unsigned	ancount :16;	/*%< number of answer entries */
-	unsigned	nscount :16;	/*%< number of authority entries */
-	unsigned	arcount :16;	/*%< number of resource entries */
+			/**  remaining bytes */
+	unsigned	qdcount :16;	/** %< number of question entries */
+	unsigned	ancount :16;	/** %< number of answer entries */
+	unsigned	nscount :16;	/** %< number of authority entries */
+	unsigned	arcount :16;	/** %< number of resource entries */
 } HEADER;
 
 #define T_A      1
 #define T_CNAME  5
 #define T_AAAA  28
 
-#endif /* __NAMESER_H__ */
+#endif /**  __NAMESER_H__ */

@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" href="$a00012.html#ab5653041c631649649d96a230171aed4" title="handle_name_reply" alt="" coords="252,5,385,35"/>
+<area shape="rect" href="$a00012.html#a172f6049cd5399ec0bc24e100b4f7b35" title="handle_qualify_reply" alt="" coords="249,59,388,88"/>
+<area shape="rect" href="$a00012.html#aea9720b3f7120a0fc8e7b125b4513205" title="handle_register" alt="" coords="264,112,373,141"/>
+<area shape="rect" href="$a00012.html#acd0a97b7236ee141ed82564cd98fc027" title="handle_register_reply" alt="" coords="247,165,391,195"/>
+<area shape="rect" href="$a00015.html#a8bda9733b25a90bc533e4503c32830ad" title="name_delete_registration" alt="" coords="236,219,401,248"/>
+<area shape="rect" href="$a00012.html#aad7c42ddf9f6588ad36b5359ddd76075" title="nos_rcv_msg" alt="" coords="476,85,575,115"/>
+<area shape="rect" href="$a00012.html#a6cb1ad019f04f1b011374c160c16e1a1" title="nos_rcv_skb" alt="" coords="648,85,744,115"/>
+<area shape="rect" href="$a00012.html#a8342faf4c9f28a62034c9587e8c53dd9" title="namestack_init" alt="" coords="792,85,901,115"/>
+<area shape="rect" href="$a00009.html#a562b6dd09744c1ddb2d1a8378d30addc" title="name_stream_release" alt="" coords="451,219,600,248"/>
+</map>
