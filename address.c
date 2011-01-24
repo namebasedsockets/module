@@ -56,6 +56,16 @@ static void print_ip6addr(const struct in6_addr *addr)
 	printk(KERN_INFO "IPv6 address %s\n", address);
 }
 
+/**
+ * Select local-hosts addresses 
+ * \param num_v6_addresses is a pointer to an int. Will contain the amount of found v6 addresses
+ * \param v6_addresses is a pointer to an array of struct in6_addr containing the found v6 addresses
+ * \param num_v4_addresses is a pointer to an array of _be32* v4_addresses containing the found v4 addresses
+ * pointer to an int. Will contain the amount of found v4 addresses
+ * \param
+ */
+
+
 /* FIXME: this should use some heuristic to determine a preferred
  * interface/address.  For now, it simply chooses the first up, non-loopback
  * address as the "best".

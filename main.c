@@ -153,7 +153,7 @@ handle_register(const struct sk_buff *skb, const struct nlmsghdr *nlh)
 
 /**
  * This function handles messages sent by do_??() in the daemon
- * 
+ * R
  */
 
 
@@ -372,9 +372,10 @@ static void __exit namestack_exit(void)
 
 /**
  * Send a message to the daemon (using net-link).
+ * It creates a sequence number, sends a message to the daemon with that sequence number and puts a task with the same sequence number in the local execution-"queue" (pending_queue_push()). When a net-link message comes back (through nos_recv_msg()) its sequence number is matched to the queue and executed together with it's *cb function.
  * \param pid is the PID of the daemon
  * \param type is either one of NAME_STACK_* messages defined in name_stack_message_types
- * \param cb is the function to be executed by the daemon
+ * \param cb is the function to be when a reply comes back from the the daemon
  */
 static int
 namestack_send_message_tracked(int pid, int type, const void *payload, int size,
@@ -451,6 +452,13 @@ int name_fully_qualify(const char *name, qualify_cb cb, void *data)
 	return err;
 }
 
+/**
+ * \param num_v6_addresses is a pointer to an int contain the amount of local v6 addresses
+ * \param v6_addresses is a pointer to an array of struct in6_addr containing the found v6 addresses
+ * \param num_v4_addresses is a pointer to an array of _be32* v4_addresses containing the local v4 addresses
+ * pointer to an int. The amount of found v4 addresses
+ * \param
+ */
 int name_send_registration(const char *name,
 			   const struct in6_addr *v6_addresses,
 			   int num_v6_addresses,
@@ -489,6 +497,7 @@ int name_send_registration(const char *name,
 		ptr += sizeof(int);
 		memcpy(ptr, v4_addresses, num_v4_addresses * sizeof(__be32));
 		/* FIXME:  who handles retrying in case of failure? */
+		// at this point, payload = name, num_v6_addresses, v6_addresses[], num_v4_addresses, v4_addresses[]
 		err = namestack_send_message_tracked(daemon_pid,
 						     NAME_STACK_REGISTER_QUERY,
 						     payload, len,
