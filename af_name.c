@@ -1461,9 +1461,10 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 					sizeof(in6), in6.s6_addr);
 		}
 		/// If the addr-type is not given by the name resolve (daemon it and findout.
-		else
-			err = name_send_query(sname->sname_addr.name,
-					      name_stream_query_resolve, sock);
+		else  {
+		  err = name_send_query(sname->sname_addr.name,
+					name_stream_query_resolve, sock);
+		}
 		if (err)
 			goto out;
 
