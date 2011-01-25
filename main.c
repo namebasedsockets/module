@@ -424,8 +424,8 @@ int name_send_query(const char *name, query_resolv_cb cb, void *data)
 	}
 	else {
 		printk(KERN_INFO "resolving %s\n", name);
-		sname = (struct sockaddr_name *)data;
-		printk(KERN_INFO "message: snname_family: %d, sname_port: %d, sname_addr: %s\n", sname->sname_family, sname->sname_port, sname->sname_addr.name);
+		sname = (struct sockaddr_name *)name;
+		printk(KERN_INFO "__FUNCTION__:message: snname_family: %d, sname_port: %d, sname_addr: %s\n", sname->sname_family, sname->sname_port, sname->sname_addr.name);
 		/* FIXME:  who handles retrying in case of failure? */
 		err = namestack_send_message_tracked(daemon_pid,
 						     NAME_STACK_NAME_QUERY,
