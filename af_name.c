@@ -1461,6 +1461,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			name->dname.sname_addr.name) != NULL) {
 			__be32 v4;
 
+			printk(KERN_DEBUG "%s:%d : Found a v4 canonical suffix!\n", __FUNCTION__, __LINE__);
 			err = name_parse_canonical_v4(
 				name->dname.sname_addr.name, &v4);
 			if (!err)
@@ -1471,7 +1472,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		else if (name_find_v6_canonical_suffix(
 			name->dname.sname_addr.name) != NULL) {
 			struct in6_addr in6;
-
+			printk(KERN_DEBUG "%s:%d : Found a v4 canonical suffix!\n", __FUNCTION__, __LINE__);
 			err = name_parse_canonical_v6(
 				name->dname.sname_addr.name, &in6);
 			if (!err)
