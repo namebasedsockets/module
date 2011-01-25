@@ -45,34 +45,34 @@ static void name_stream_state_change(struct sock *sk)
 	read_lock(&sk->sk_callback_lock);
 	if (!(name = sk->sk_user_data))
 		goto out;
-
-	printk(KERN_INFO "sk_state is %d:", sk->sk_state);
+	printk(KERN_INFO "sk_state is %d:\n", sk->sk_state);
+	printk(KERN_DEBUG "sk_state is %d:", sk->sk_state);
 	switch (sk->sk_state) {
 	case TCP_ESTABLISHED:
-		printk(KERN_INFO "TCP_ESTABLISHED\n");
+		printk(KERN_DEBUG "TCP_ESTABLISHED\n");
 		name->sk.sk_state = TCP_ESTABLISHED;
 		name->sk.sk_state_change(&name->sk);
 		break;
 	case TCP_FIN_WAIT1:
 		/* The client initiated a shutdown of the socket */
-		printk(KERN_INFO "TCP_FIN_WAIT1\n");
+		printk(KERN_DEBUG "TCP_FIN_WAIT1\n");
 		break;
 	case TCP_CLOSE_WAIT:
 		/* The server initiated a shutdown of the socket */
-		printk(KERN_INFO "TCP_CLOSE_WAIT\n");
+		printk(KERN_DEBUG "TCP_CLOSE_WAIT\n");
 	case TCP_SYN_SENT:
 	case TCP_CLOSING:
 		/*
 		 * If the server closed down the connection, make sure that
 		 * we back off before reconnecting
 		 */
-		printk(KERN_INFO "TCP_SYN_SENT || TCP_CLOSING\n");
+		printk(KERN_DEBUG "TCP_SYN_SENT || TCP_CLOSING\n");
 		break;
 	case TCP_LAST_ACK:
-		printk(KERN_INFO "TCP_LAST_ACK\n");
+		printk(KERN_DEBUG "TCP_LAST_ACK\n");
 		break;
 	case TCP_CLOSE:
-		printk(KERN_INFO "TCP_CLOSE\n");
+		printk(KERN_DEBUG "TCP_CLOSE\n");
 		break;
 	}
  out:
@@ -1279,7 +1279,7 @@ static int name_stream_connect_to_v4_address(struct sock *sk, uint16_t rdlength,
 	printk(KERN_INFO "connect to IPv4 address %s:%d\n", address,
 	       ntohs(name->dname.sname_port));
 	err = sock_create_kern(PF_INET, SOCK_STREAM, 0, &name->ipv4_sock);
-	printk(KERN_INFO "%s:%d : v4 sock created: err:%d,%s\n", __FUNCTION__, __LINE__, err, strerror(err));
+	printk(KERN_DEBUG "%s:%d : v4 sock created: err:%d\n", __FUNCTION__, __LINE__, err);
 	if (err)
 		goto out;
 	name->ipv4_sock->sk->sk_user_data = name;
@@ -1290,7 +1290,7 @@ static int name_stream_connect_to_v4_address(struct sock *sk, uint16_t rdlength,
 	sin.sin_addr.s_addr = *(uint32_t *)rdata;
 	err = kernel_connect(name->ipv4_sock, (struct sockaddr *)&sin,
 			     sizeof(sin), O_NONBLOCK);
-	printk(KERN_INFO "%s:%d : v4 kernel_connect: err:%d,%s\n", __FUNCTION__, __LINE__, err, strerror(err));
+	printk(KERN_DEBUG "%s:%d : v4 kernel_connect: err:%d\n", __FUNCTION__, __LINE__, err);
 	/* The expected error is EINPROGRESS, as the socket connection kicks
 	 * off.  Return success in this case.
 	 */
