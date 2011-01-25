@@ -46,27 +46,33 @@ static void name_stream_state_change(struct sock *sk)
 	if (!(name = sk->sk_user_data))
 		goto out;
 
-	printk(KERN_INFO "sk_state is %d\n", sk->sk_state);
+	printk(KERN_INFO "sk_state is %d:", sk->sk_state);
 	switch (sk->sk_state) {
 	case TCP_ESTABLISHED:
+		printk(KERN_INFO "TCP_ESTABLISHED\n");
 		name->sk.sk_state = TCP_ESTABLISHED;
 		name->sk.sk_state_change(&name->sk);
 		break;
 	case TCP_FIN_WAIT1:
 		/* The client initiated a shutdown of the socket */
+		printk(KERN_INFO "TCP_FIN_WAIT1\n");
 		break;
 	case TCP_CLOSE_WAIT:
 		/* The server initiated a shutdown of the socket */
+		printk(KERN_INFO "TCP_CLOSE_WAIT\n");
 	case TCP_SYN_SENT:
 	case TCP_CLOSING:
 		/*
 		 * If the server closed down the connection, make sure that
 		 * we back off before reconnecting
 		 */
+		printk(KERN_INFO "TCP_SYN_SENT || TCP_CLOSING\n");
 		break;
 	case TCP_LAST_ACK:
+		printk(KERN_INFO "TCP_LAST_ACK\n");
 		break;
 	case TCP_CLOSE:
+		printk(KERN_INFO "TCP_CLOSE\n");
 		break;
 	}
  out:
@@ -733,7 +739,6 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 			     const struct in6_addr *v6addr)
 {
 	int err = 0;
-
 	printk(KERN_INFO "bound to %s\n", fqdn);
 	/* If a particular port or address is specified, bind() must fail if
 	 * the port or address is unavailable, hence we must create the
@@ -746,6 +751,7 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 	 */
 	if (name->sname.sname_port || v4addr) {
 		struct sockaddr_in sin;
+		printk(KERN_INFO "%s:%d : v4addr\n", __FUNCTION__, __LINE__);
 
 		if (!name->ipv4_sock) {
 			err = name_create_v4_sock(SOCK_STREAM, 0,
@@ -753,17 +759,20 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 			if (err)
 				goto out;
 		}
+		printk(KERN_INFO "%s:%d : v4sock successfully created\n", __FUNCTION__, __LINE__);
 		memset(&sin, 0, sizeof(sin));
 		if (v4addr)
 			memcpy(&sin.sin_addr.s_addr, &v4addr, sizeof(v4addr));
 		sin.sin_port = name->sname.sname_port;
 		err = kernel_bind(name->ipv4_sock, (struct sockaddr *)&sin,
 				  sizeof(sin));
+		printk(KERN_INFO "%s:%d : v4sock successfully? bound: err: %d\n", __FUNCTION__, __LINE__, err);
 		if (err)
 			goto out;
 	}
 	if (name->sname.sname_port || v6addr) {
 		struct sockaddr_in6 sin;
+		printk(KERN_INFO "%s:%d : v6addr\n", __FUNCTION__, __LINE__);
 
 		if (!name->ipv6_sock) {
 			err = name_create_v6_sock(SOCK_STREAM, 0,
@@ -771,6 +780,7 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 			if (err)
 				goto out;
 		}
+		printk(KERN_INFO "%s:%d : v6sock successfully created\n", __FUNCTION__, __LINE__);
 		memset(&sin, 0, sizeof(sin));
 		if (v6addr) {
 			memcpy(&sin.sin6_addr, v6addr, sizeof(sin.sin6_addr));
@@ -789,8 +799,10 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 		sin.sin6_port = name->sname.sname_port;
 		err = kernel_bind(name->ipv6_sock, (struct sockaddr *)&sin,
 				  sizeof(sin));
+		printk(KERN_INFO "%s:%d : v6sock successfully? bound: err: %d\n", __FUNCTION__, __LINE__, err);
 	}
 out:
+	printk(KERN_INFO "%s: err:%d\n", __FUNCTION__, __LINE__, err);
 	return err;
 }
 
@@ -1040,6 +1052,7 @@ static int name_qualify_and_register(struct sockaddr_name *addr,
 	len = strlen(addr->sname_addr.name);
 	if (addr->sname_addr.name[len - 1] == '.') {
 		/* Name is already fully qualified, register it directly */
+		printk(KERN_INFO "%s:%d : Name is fully qualified (ends on '.')\n", __FUNCTION__, __LINE__);
 		err = name_register(sock, addr->sname_addr.name,
 				    addr->sname_port);
 	}
