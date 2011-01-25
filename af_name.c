@@ -1193,6 +1193,7 @@ static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 	printk(KERN_INFO "connect to IPv6 address %s:%d\n", address,
 	       ntohs(name->dname.sname_port));
 	err = sock_create_kern(PF_INET6, SOCK_STREAM, 0, &name->ipv6_sock);
+	printk(KERN_INFO "%s:%d : v6 sock created: err:%d\n", __FUNCTION__, __LINE__, err);
 	if (err)
 		goto out;
 	name->ipv6_sock->sk->sk_user_data = name;
@@ -1230,11 +1231,13 @@ static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 
 	err = set_name_option(name->ipv6_sock, name->dname.sname_addr.name,
 			      NAME_OPTION_DEST_NAME);
+	printk(KERN_INFO "%s:%d : v6 SET_NAME_OPTION!: err:%d\n", __FUNCTION__, __LINE__, err);
 	if (err)
 		goto out;
 
 	err = kernel_connect(name->ipv6_sock, (struct sockaddr *)&sin6,
 			     sizeof(sin6), O_NONBLOCK);
+	printk(KERN_INFO "%s:%d : v6 kernel_connect: err:%d\n", __FUNCTION__, __LINE__, err);
 	/* The expected error is EINPROGRESS, as the socket connection kicks
 	 * off.  Return success in this case.
 	 */
@@ -1276,6 +1279,7 @@ static int name_stream_connect_to_v4_address(struct sock *sk, uint16_t rdlength,
 	printk(KERN_INFO "connect to IPv4 address %s:%d\n", address,
 	       ntohs(name->dname.sname_port));
 	err = sock_create_kern(PF_INET, SOCK_STREAM, 0, &name->ipv4_sock);
+	printk(KERN_INFO "%s:%d : v4 sock created: err:%d\n", __FUNCTION__, __LINE__, err);
 	if (err)
 		goto out;
 	name->ipv4_sock->sk->sk_user_data = name;
@@ -1286,6 +1290,7 @@ static int name_stream_connect_to_v4_address(struct sock *sk, uint16_t rdlength,
 	sin.sin_addr.s_addr = *(uint32_t *)rdata;
 	err = kernel_connect(name->ipv4_sock, (struct sockaddr *)&sin,
 			     sizeof(sin), O_NONBLOCK);
+	printk(KERN_INFO "%s:%d : v4 kernel_connect: err:%d\n", __FUNCTION__, __LINE__, err);
 	/* The expected error is EINPROGRESS, as the socket connection kicks
 	 * off.  Return success in this case.
 	 */
