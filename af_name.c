@@ -696,21 +696,26 @@ static int name_tcp6_af_ops_init;
 static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 			       struct name_stream_sock *name)
 {
+	printk(KERN_DEBUG "%s:%d \n", __FUNCTION__, __LINE__);
 	int err = sock_create_kern(PF_INET6, type, protocol, sock);
-
+	printk(KERN_DEBUG "%s:%s:%d %d = sock_create_kern(PF_INET6, type, protocol, sock) \n", __FILE__,  __FUNCTION__, __LINE__, err);
+	printk(KERN_DEBUG "%s:%s:%d ipv6 sock* points to: %p or is it %p ?  \n", ___FILE__, _FUNCTION__, __LINE__, sock, *sock);
 	if (!err) {
 		err = set_name_option(*sock, name->sname.sname_addr.name,
 				      NAME_OPTION_SOURCE_NAME);
+		printk(KERN_DEBUG "%s:%d %d = set_name_option(*sock, name->sname.sname_addr.name, NAME_OPTION_SOURCE_NAME); \n", __FUNCTION__, __LINE__, err);
 	}
 	if (!err) {
 		int on = 1;
 
 		err = kernel_setsockopt(*sock, IPPROTO_IPV6, IPV6_V6ONLY,
 					(char *)&on, sizeof(on));
+		printk(KERN_DEBUG "%s:%d %d = kernel_setsockopt(*sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&on, sizeof(on)); \n", __FUNCTION__, __LINE__, err);
+
 	}
 	if (!err) {
 		struct inet_connection_sock *icsk = inet_csk((*sock)->sk);
-
+		printk(KERN_DEBUG "%s:%s:%d ipv6 \"icsk\" points to: %p !  \n", ___FILE__, _FUNCTION__, __LINE__, icsk);
 		(*sock)->sk->sk_user_data = name;
 		(*sock)->sk->sk_state_change = name_stream_state_change;
 		if (!name_tcp6_af_ops_init) {
@@ -1889,6 +1894,7 @@ static int name_stream_recvmsg(struct kiocb *iocb, struct socket *sock,
 	if (name->ipv6_sock) {
 		connected_sock = name->ipv6_sock;
 		printk(KERN_DEBUG "%s:%d  connecte_sock = ipv6_sock\n", __FUNCTION__, __LINE__);
+		
 	}
 	else if (name->ipv4_sock) {
 		connected_sock = name->ipv4_sock;
