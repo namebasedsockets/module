@@ -184,6 +184,7 @@ static
 struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
 					   struct ipv6_txoptions *opt)
 {
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 	if (inet_sk(sk)->is_icsk) {
 		/* The original version of this only updates the options if the
 		 * socket is not listening or closed, but I want the options to
@@ -216,6 +217,7 @@ static int ipv6_renew_option(void *ohdr,
 			     struct ipv6_opt_hdr **hdr,
 			     char **p)
 {
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 	if (inherit) {
 		if (ohdr) {
 			memcpy(*p, ohdr, ipv6_optlen((struct ipv6_opt_hdr *)ohdr));
@@ -241,6 +243,7 @@ namestack_ipv6_renew_options(struct sock *sk, struct ipv6_txoptions *opt,
 		   int newtype,
 		   struct ipv6_opt_hdr *newopt, int newoptlen)
 {
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 	int tot_len = 0;
 	char *p;
 	struct ipv6_txoptions *opt2;
@@ -324,7 +327,7 @@ struct name_opt_hdr
 static void rfc1035_encode_name(char *dst, const char *name)
 {
 	const char *p = name;
-
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 	while (p && *p)
 	{
 		const char *dot = strchr(p, '.');
@@ -357,6 +360,8 @@ static int set_name_option(struct socket *sock, const char *name, __u8 opt_type)
         struct ipv6_opt_hdr *opt_hdr;
         struct name_opt_hdr *name_opt_hdr;
         int err, name_opt_len;
+
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 
         /// If the extensionheader is already allocated
          if (np->opt && np->opt->dst1opt) {
@@ -446,6 +451,7 @@ out:
  */
 int ipv6_find_tlv(struct sk_buff *skb, int offset, int type)
 {
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
 	const unsigned char *nh = skb_network_header(skb);
 	int packet_len = skb->tail - skb->network_header;
 	struct ipv6_opt_hdr *hdr;
@@ -1531,10 +1537,12 @@ out:
 static int name_stream_wait_for_accept(struct socket *sock, long timeo)
 {
 	struct sock *sk = sock->sk;
+	printk(KERN_INFO "%s:%d : started\n", __FUNCTION__, __LINE__);
 	DEFINE_WAIT(wait);
 
 	prepare_to_wait(sk->sk_sleep, &wait, TASK_INTERRUPTIBLE);
 	while ((1 << sk->sk_state) & TCPF_LISTEN) {
+		printk(KERN_INFO "%s:%d : wait, timeo:%ld\n", __FUNCTION__, __LINE__, timeo);
 		release_sock(sk);
 		timeo = schedule_timeout(timeo);
 		lock_sock(sk);
@@ -1543,6 +1551,7 @@ static int name_stream_wait_for_accept(struct socket *sock, long timeo)
 		prepare_to_wait(sk->sk_sleep, &wait, TASK_INTERRUPTIBLE);
 	}
 	finish_wait(sk->sk_sleep, &wait);
+	printk(KERN_INFO "%s:%d : ending\n", __FUNCTION__, __LINE__);
 	return timeo;
 }
 
@@ -1642,7 +1651,7 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 	struct inet_connection_sock *v6_icsk, *v4_icsk;
 	struct name_stream_sock *name = name_stream_sk(sk), *new_name;
 	int err;
-
+	printk(KERN_INFO "%s:%d : started\n", __FUNCTION__, __LINE__);
 	lock_sock(sk);
 	/* This handles accepting connections on two incoming sockets, the IPv6
 	 * and the IPv4 socket.  Rather than call kernel_accept on each one,
@@ -1653,10 +1662,15 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 	 * by both, in ipv4/af_inet.c.
 	 */
 	err = -EINVAL;
-	if (!name->ipv6_sock || !name->ipv6_sock->sk->sk_prot->accept)
+	if (!name->ipv6_sock || !name->ipv6_sock->sk->sk_prot->accept) {
+		printk(KERN_INFO "%s:%d : ipv6_sock failed\n", __FUNCTION__, __LINE__);
 		goto out_err;
-	if (!name->ipv4_sock || !name->ipv4_sock->sk->sk_prot->accept)
+	}
+	if (!name->ipv4_sock || !name->ipv4_sock->sk->sk_prot->accept) {
+		printk(KERN_INFO "%s:%d : ipv4_sock failed\n", __FUNCTION__, __LINE__);
 		goto out_err;
+	}
+	printk(KERN_INFO "%s:%d : both socs are fine\n", __FUNCTION__, __LINE__);
 
 	err = -EAGAIN;
 	new_v6_sk = name->ipv6_sock->sk->sk_prot->accept(name->ipv6_sock->sk,
@@ -1673,7 +1687,7 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 		goto out_err;
 
 	sk->sk_state = TCP_LISTEN;
-
+	printk(KERN_INFO "%s:%d : my state is now TCP_LISTEN\n", __FUNCTION__, __LINE__);
 	v6_sk = name->ipv6_sock->sk;
 	v6_icsk = inet_csk(v6_sk);
 	v4_sk = name->ipv4_sock->sk;
@@ -1681,13 +1695,16 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 
 	if (reqsk_queue_empty(&v6_icsk->icsk_accept_queue) &&
 	    reqsk_queue_empty(&v4_icsk->icsk_accept_queue)) {
+		printk(KERN_INFO "%s:%d : both reqsk queues are empty\n", __FUNCTION__, __LINE__);
 		long timeo = sock_rcvtimeo(sk, flags & O_NONBLOCK);
 
 		err = -EAGAIN;
 		if (!timeo)
 			goto out_wait_err;
 		release_sock(sk);
+		printk(KERN_INFO "%s:%d : wait_for_accept\n", __FUNCTION__, __LINE__);
 		err = name_stream_wait_for_accept(sock, timeo);
+		printk(KERN_INFO "%s:%d : wait_for_accept returned: %d\n", __FUNCTION__, __LINE__, err);
 		if (err)
 			goto out_wait_err;
 	}
@@ -1697,9 +1714,11 @@ static int name_stream_accept(struct socket *sock, struct socket *newsock,
 	else if (!reqsk_queue_empty(&v4_icsk->icsk_accept_queue))
 		new_v4_sk = reqsk_queue_get_child(&v4_icsk->icsk_accept_queue,
 						  v4_sk);
+	printk(KERN_INFO "%s:%d : release_soc(sk)\n", __FUNCTION__, __LINE__);
 	release_sock(sk);
 
 handle_incoming:
+	printk(KERN_INFO "%s:%d : handle_incoming: (goto)\n", __FUNCTION__, __LINE__);
 	if (new_v4_sk) {
 		err = -ENOMEM;
 		incoming_sock = name_alloc_stream_socket(&init_net, newsock);
@@ -1776,9 +1795,11 @@ handle_incoming:
 	return err;
 
 out_wait_err:
+	printk(KERN_INFO "%s:%d : out_wait_err (goto)\n", __FUNCTION__, __LINE__);
 	release_sock(sk);
 
 out_err:
+	printk(KERN_INFO "%s:%d : out_err (goto)\n", __FUNCTION__, __LINE__);
 	release_sock(sk);
 	return err;
 }
@@ -1861,14 +1882,23 @@ static int name_stream_recvmsg(struct kiocb *iocb, struct socket *sock,
 	struct name_stream_sock *name = name_stream_sk(sk);
 	struct socket *connected_sock;
 
+	printk(KERN_DEBUG "%s:%d  \n", __FUNCTION__, __LINE__);
+
 	if (sock->state != SS_CONNECTED)
 		return -ENOTCONN;
-	if (name->ipv6_sock)
+	if (name->ipv6_sock) {
 		connected_sock = name->ipv6_sock;
-	else if (name->ipv4_sock)
+		printk(KERN_DEBUG "%s:%d  connecte_sock = ipv6_sock\n", __FUNCTION__, __LINE__);
+	}
+	else if (name->ipv4_sock) {
 		connected_sock = name->ipv4_sock;
+		printk(KERN_DEBUG "%s:%d  connecte_sock = ipv4_sock\n", __FUNCTION__, __LINE__);
+	}
 	else
 		return -ENOTCONN;
+
+	printk(KERN_DEBUG "%s:%d  sock->state == SS_CONNECTED && connected_sock == a sock\n", __FUNCTION__, __LINE__);
+
 	return connected_sock->ops->recvmsg(iocb, connected_sock, msg, len,
 					    flags);
 }
