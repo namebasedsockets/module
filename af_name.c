@@ -38,6 +38,11 @@ enum {
 	NAMEF_CONNECTING  = (1 << NAME_CONNECTING),
 };
 
+static void callback_handler(struct sk_buff skb, void *data)
+{
+	/* do something */
+}
+
 static void name_stream_state_change(struct sock *sk)
 {
 	struct name_stream_sock *name;
@@ -678,7 +683,7 @@ static struct sock *name_v6_recv_syn(struct sock *sk, struct sk_buff *skb,
 static struct inet_connection_sock_af_ops name_tcp6_af_ops;
 static int name_tcp6_af_ops_init;
 
-/** 
+/*
  * Create an IPv6 sub-socket
  */
 static int name_create_v6_sock(int type, int protocol, struct socket **sock,
@@ -698,6 +703,13 @@ static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 	}
 	if (!err) {
 		struct inet_connection_sock *icsk = inet_csk((*sock)->sk);
+
+		/* FIXME: Do we even need this? */
+		(*sock)->sk->sk_on_rcv_finish = alloc_callback();
+		if ((*sock)->sk->sk_on_rcv_finish) {
+			(*sock)->sk->sk_on_rcv_finish->f = callback_handler;
+			(*sock)->sk->sk_on_rcv_finish->data = name;
+		}
 
 		(*sock)->sk->sk_user_data = name;
 		(*sock)->sk->sk_state_change = name_stream_state_change;
