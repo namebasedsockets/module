@@ -29,6 +29,11 @@ struct name_stream_sock {
   struct sock *(*orig_syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
 				     struct request_sock *req,
 				     struct dst_entry *dst);
+
+	struct time_t name_exchange_timer;
+	int name_exchange_counter;
+	int name_exchange_state;
+
 };
 
 static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
