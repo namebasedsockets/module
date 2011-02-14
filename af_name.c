@@ -1,11 +1,3 @@
-/** @file module/af_name.c
- *  @brief AF_NAME behavior.
- *  @author Juan Lang
- *  @author Javier Ubillos
- *  @author Mattias Ekström
- *  @date 2011-01-18
- */
-
 #include <linux/ctype.h>
 #include <linux/types.h>
 #include <linux/socket.h>
@@ -24,14 +16,12 @@
 #include "nameser.h"
 #include "namestack_priv.h"
 
-/** Enum for namestack states, these should _not_ overlap with TCP states */
 enum {
 	NAME_RESOLVING = TCP_MAX_STATES, /* Don't overlap with TCP states */
 	NAME_BINDING,
 	NAME_CONNECTING,
 };
 
-/** Bit-mask enum for namestack states, these should _not_ overlap with TCP states */
 enum {
 	NAMEF_RESOLVING   = (1 << NAME_RESOLVING),
 	NAMEF_BINDING     = (1 << NAME_BINDING),
@@ -89,8 +79,7 @@ static int name_is_local(const char *name)
 	return !strcasecmp(p + 1, "localhost.");
 }
 
-/**
- * If name ends in the IPv4 canonical suffix .in-addr.arpa., returns a
+/* If name ends in the IPv4 canonical suffix .in-addr.arpa., returns a
  * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
  */
 static const char *name_find_v4_canonical_suffix(const char *name)
@@ -106,8 +95,7 @@ static const char *name_find_v4_canonical_suffix(const char *name)
 	return NULL;
 }
 
-/**
- * If name ends in the IPv6 canonical suffix .ip6.arpa., returns a
+/* If name ends in the IPv6 canonical suffix .ip6.arpa., returns a
  * pointer to the suffix, beginning with the dot.  Otherwise returns NULL.
  */
 static const char *name_find_v6_canonical_suffix(const char *name)
@@ -171,9 +159,7 @@ out:
 	return 0;
 }
 
-/** 
- * Stolen from net/ipv6/ipv6_sockglue.c 
- */
+/* Stolen from net/ipv6/ipv6_sockglue.c */
 static
 struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
 					   struct ipv6_txoptions *opt)
@@ -200,8 +186,7 @@ struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
 	return opt;
 }
 
-/**
- * Stolen from net/ipv6/exthdrs.c.  That one takes an ipv6_opt_hdr from user-
+/* Stolen from net/ipv6/exthdrs.c.  That one takes an ipv6_opt_hdr from user-
  * space, but this doesn't, so the copy_from_user is removed.
  */
 static int ipv6_renew_option(void *ohdr,
@@ -226,8 +211,7 @@ static int ipv6_renew_option(void *ohdr,
 	return 0;
 }
 
-/**
- * Identical to ipv6_renew_options in net/ipv6/exthdrs.c, but calls the
+/* Identical to ipv6_renew_options in net/ipv6/exthdrs.c, but calls the
  * modified ipv6_renew_option (above).
  */
 struct ipv6_txoptions *
@@ -309,7 +293,7 @@ struct name_opt_hdr
 	/* Followed by the actual name */
 };
 
-/** FIXME: Change name options to the "real" values once they're known.  Must
+/* FIXME: Change name options to the "real" values once they're known.  Must
  * <= 63.
  */
 #define NAME_OPTION_SOURCE_NAME 17
@@ -338,106 +322,92 @@ static void rfc1035_encode_name(char *dst, const char *name)
 	*dst = 0;
 }
 
-
-/**
- * Adds a name-extensionheader
- */
 static int set_name_option(struct socket *sock, const char *name, __u8 opt_type)
 {
-        struct sock *sk = sock->sk;
-        struct ipv6_pinfo *np = inet6_sk(sk);
-        struct ipv6_txoptions *opt;
-        char *name_opt_buf;
-        struct ipv6_opt_hdr *opt_hdr;
-        struct name_opt_hdr *name_opt_hdr;
-        int err, name_opt_len;
+	struct sock *sk = sock->sk;
+	struct ipv6_pinfo *np = inet6_sk(sk);
+	struct ipv6_txoptions *opt;
+	char *name_opt_buf;
+	struct ipv6_opt_hdr *opt_hdr;
+	struct name_opt_hdr *name_opt_hdr;
+	int err, name_opt_len;
 
-        /// If the extensionheader is already allocated
-         if (np->opt && np->opt->dst1opt) {
-                 name_opt_len = ipv6_optlen(np->opt->dst1opt); // Read current length of the options
-                 name_opt_len += sizeof(struct name_opt_hdr) + strlen(name) + 1; // Add space for the name option
-                 err = -ENOMEM;
-                 name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC); // Allocate memory for the new buffer
-                 if (!name_opt_buf)
-                         goto out;
-                 memset(name_opt_buf, 0, name_opt_len); 
-                 memcpy(name_opt_buf, np->opt->dst1opt,
-                        ipv6_optlen(np->opt->dst1opt)); // Copy the old buffer into the new one 
+ 	if (np->opt && np->opt->dst1opt) {
+ 		name_opt_len = ipv6_optlen(np->opt->dst1opt);
+ 		name_opt_len += sizeof(struct name_opt_hdr) + strlen(name) + 1;
+ 		err = -ENOMEM;
+ 		name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
+ 		if (!name_opt_buf)
+ 			goto out;
+ 		memset(name_opt_buf, 0, name_opt_len);
+ 		memcpy(name_opt_buf, np->opt->dst1opt,
+ 		       ipv6_optlen(np->opt->dst1opt));
  
-                 opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
-                 name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
-                 name_opt_hdr = (struct name_opt_hdr *)((char *)name_opt_hdr +
-                         sizeof(struct name_opt_hdr) + name_opt_hdr->len); // find where in the buffer to put the name option 
-                 name_opt_hdr->type = opt_type;
-                 /* Happily the RFC1035-encoded name has the same length as the
-                  * C string.
-                  */
-                 name_opt_hdr->len = strlen(name) + 1;
-                 rfc1035_encode_name((char *)(name_opt_hdr + 1), name); // Actually put the name option into the buffer 
-                 opt_hdr->nexthdr = 0;
-                 opt_hdr->hdrlen = (name_opt_len + 1) >> 3;
-         }
-         /// Else, if the extensionheader is not yet allocated, create it
-         else {
-                 struct ipv6_opt_hdr tmp_opt_hdr;
+ 		opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
+ 		name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
+ 		name_opt_hdr = (struct name_opt_hdr *)((char *)name_opt_hdr +
+ 			sizeof(struct name_opt_hdr) + name_opt_hdr->len);
+ 		name_opt_hdr->type = opt_type;
+ 		/* Happily the RFC1035-encoded name has the same length as the
+ 		 * C string.
+ 		 */
+ 		name_opt_hdr->len = strlen(name) + 1;
+ 		rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
+ 		opt_hdr->nexthdr = 0;
+ 		opt_hdr->hdrlen = (name_opt_len + 1) >> 3;
+ 	}
+ 	else {
+ 		struct ipv6_opt_hdr tmp_opt_hdr;
  
-                 /* Use to calculate the required length */
-                 tmp_opt_hdr.nexthdr = 0;
-                 /* FIXME: this is the reverse of ipv6_optlen, used to calculate
-                  * name_opt_len.  Are you sure it's correct?  Is there a nice
-                  * macro/calculation somewhere?
-                  */
-                 tmp_opt_hdr.hdrlen =
-                         (sizeof(struct name_opt_hdr) + strlen(name) + 1) >> 3;
-                 name_opt_len = ipv6_optlen(&tmp_opt_hdr);
-                 err = -ENOMEM;
-                 // Now that we have the required length, allocate it!
-                 name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
-                 if (!name_opt_buf) 
-                         goto out;
+ 		/* Use to calculate the required length */
+ 		tmp_opt_hdr.nexthdr = 0;
+ 		/* FIXME: this is the reverse of ipv6_optlen, used to calculate
+ 		 * name_opt_len.  Are you sure it's correct?  Is there a nice
+ 		 * macro/calculation somewhere?
+ 		 */
+ 		tmp_opt_hdr.hdrlen =
+ 			(sizeof(struct name_opt_hdr) + strlen(name) + 1) >> 3;
+ 		name_opt_len = ipv6_optlen(&tmp_opt_hdr);
+ 		err = -ENOMEM;
+ 		name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
+ 		if (!name_opt_buf)
+ 			goto out;
  
-                 memset(name_opt_buf, 0, name_opt_len);
-                 // opt_hdr = name_opt_buf (allocated space for our extension)
-                 opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
-                 // name_opt_hdr is one pointer size into the buffer
-                 name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
-                 name_opt_hdr->type = opt_type;
-                 /* Happily the RFC1035-encoded name has the same length as the
-                  * C string.
-                  */
-                 name_opt_hdr->len = strlen(name) + 1;
-                 rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
-                 opt_hdr->nexthdr = 0;
-                 opt_hdr->hdrlen =
-                         (sizeof(struct name_opt_hdr) + name_opt_hdr->len) >> 3;
-         }
-         
-        /* Rather than calling kernel_setsockopt, set the option directly to
-         * avoid a permissions check on the calling process.
-         */
-        opt = namestack_ipv6_renew_options(sk, np->opt, IPV6_DSTOPTS,
-                                 (struct ipv6_opt_hdr *)name_opt_buf,
-                                 name_opt_len);
-        if (IS_ERR(opt)) {
-                err = PTR_ERR(opt);
-                goto out;
-        }
-        err = 0;
-        
-        opt = ipv6_update_options(sk, opt);
-        if (opt)
-                sock_kfree_s(sk, opt, opt->tot_len);
+ 		memset(name_opt_buf, 0, name_opt_len);
+ 		opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
+ 		name_opt_hdr = (struct name_opt_hdr *)(opt_hdr + 1);
+ 		name_opt_hdr->type = opt_type;
+ 		/* Happily the RFC1035-encoded name has the same length as the
+ 		 * C string.
+ 		 */
+ 		name_opt_hdr->len = strlen(name) + 1;
+ 		rfc1035_encode_name((char *)(name_opt_hdr + 1), name);
+ 		opt_hdr->nexthdr = 0;
+ 		opt_hdr->hdrlen =
+ 			(sizeof(struct name_opt_hdr) + name_opt_hdr->len) >> 3;
+ 	}
+	/* Rather than calling kernel_setsockopt, set the option directly to
+	 * avoid a permissions check on the calling process.
+	 */
+	opt = namestack_ipv6_renew_options(sk, np->opt, IPV6_DSTOPTS,
+				 (struct ipv6_opt_hdr *)name_opt_buf,
+				 name_opt_len);
+	if (IS_ERR(opt)) {
+		err = PTR_ERR(opt);
+		goto out;
+	}
+	err = 0;
+	opt = ipv6_update_options(sk, opt);
+	if (opt)
+		sock_kfree_s(sk, opt, opt->tot_len);
 out:
-        if (name_opt_buf)
-                kfree(name_opt_buf);
-        return err;
+	if (name_opt_buf)
+		kfree(name_opt_buf);
+	return err;
 }
 
-
 #if defined(CONFIG_NAMESTACK_MODULE)
-/**
- * Stolen from net/ipv6/exthdrs.c 
- */
+/* Stolen from net/ipv6/exthdrs.c */
 int ipv6_find_tlv(struct sk_buff *skb, int offset, int type)
 {
 	const unsigned char *nh = skb_network_header(skb);
@@ -517,9 +487,6 @@ static inline char *name_option_to_str(struct sk_buff *skb, u16 offset)
 	return rfc1035_decode_name(name_ptr, name_hdr->len);
 }
 
-/**
- * Check if a name matches the name in an option
- */
 static int name_option_matches(struct sk_buff *skb, u16 offset,
 			       const char *name)
 {
@@ -543,8 +510,7 @@ struct syn_entry
 	struct hlist_node entry;
 };
 
-/* *
- * NAME_SYN_BUCKETS must be a power of 2, or the "& (NAME_SYN_BUCKETS - 1)"
+/* NAME_SYN_BUCKETS must be a power of 2, or the "& (NAME_SYN_BUCKETS - 1)"
  * below must be changed to "% NAME_SYN_BUCKETS".
  */
 #define NAME_SYN_BUCKETS 16
@@ -678,13 +644,11 @@ static struct sock *name_v6_recv_syn(struct sock *sk, struct sk_buff *skb,
 static struct inet_connection_sock_af_ops name_tcp6_af_ops;
 static int name_tcp6_af_ops_init;
 
-/** 
- * Create an IPv6 sub-socket
- */
 static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 			       struct name_stream_sock *name)
 {
 	int err = sock_create_kern(PF_INET6, type, protocol, sock);
+	printk("%s:%d - %s : sock_create_kern() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 
 	if (!err) {
 		err = set_name_option(*sock, name->sname.sname_addr.name,
@@ -713,13 +677,11 @@ static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 	return err;
 }
 
-/**
- * Create an IPv4 sub-sock
- */
 static int name_create_v4_sock(int type, int protocol, struct socket **sock,
 			       struct name_stream_sock *name)
 {
 	int err = sock_create_kern(PF_INET, type, protocol, sock);
+	printk("%s:%d - %s : sock_create_kern() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 
 	if (!err) {
 		(*sock)->sk->sk_user_data = name;
@@ -741,15 +703,17 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 	 * bind to the specified address and port.  If no address or port is
 	 * specified, name_register() has already checked that the name is
 	 * available, so bind() succeeds without needing to create the sockets
-	 * yet.  (The sockets will be created as necessary during connect() or
-	 * listen().)
+	 * yet.  (The sockets will be created as necessary during connect())
 	 */
+	// v4addr and v6addr are _not_ set when called from name_register_cb
+	printk("%s:%d - %s : v4addr: %p\n", __FILE__, __LINE__, __FUNCTION__, v4addr);
 	if (name->sname.sname_port || v4addr) {
 		struct sockaddr_in sin;
 
 		if (!name->ipv4_sock) {
 			err = name_create_v4_sock(SOCK_STREAM, 0,
 						  &name->ipv4_sock, name);
+			printk("%s:%d - %s : name_create_v4_sock() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 			if (err)
 				goto out;
 		}
@@ -768,6 +732,7 @@ static int name_bind_to_fqdn(struct name_stream_sock *name, const char *fqdn,
 		if (!name->ipv6_sock) {
 			err = name_create_v6_sock(SOCK_STREAM, 0,
 						  &name->ipv6_sock, name);
+			printk("%s:%d - %s : name_create_v6_sock() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 			if (err)
 				goto out;
 		}
@@ -800,20 +765,21 @@ static void name_register_cb(int result, const char *bound_name, void *data)
 	struct sock *sk = sock->sk;
 	struct name_stream_sock *name = name_stream_sk(sk);
 
-	if (!result)
+	if (!result) {
 		result = name_bind_to_fqdn(name, bound_name, NULL, NULL);
+		printk("%s:%d - %s : name_bind_to_fqdn() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, result);
+	}
 	sk->sk_state &= ~NAMEF_BINDING;
 	name->async_error = -result;
 }
 
-/**
- * Parses the canonical name into the IPv4 address it represents, in host
+/* Parses the canonical name into the IPv4 address it represents, in host
  * byte order.
  * Returns -EINVAL if the name is not an IPv4 address, and 0 otherwise.
  */
 static int name_parse_canonical_v4(const char *name, unsigned int *addr)
 {
-	const char *p;
+	const char *p; 
 	int i, r;
 	unsigned int a1, a2, a3, a4;
 
@@ -895,8 +861,7 @@ static int name_parse_v6_label(const char *label, uint8_t addr[16],
 		return -EINVAL;
 }
 
-/**
- * Parses the canonical name into the IPv6 address it represents, in host
+/* Parses the canonical name into the IPv6 address it represents, in host
  * byte order.
  * Returns -EINVAL if the name is not an IPv6 address, and 0 otherwise.
  */
@@ -955,22 +920,27 @@ static int name_register(struct socket *sock, const char *fully_qualified_name,
 
 		err = name_bind_to_fqdn(name, fully_qualified_name, &v4loopback,
 					&v6loopback);
+		printk("%s:%d - %s : name_bind_to_fqdn() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 	}
 	else if (name_find_v4_canonical_suffix(fully_qualified_name) != NULL) {
 		__be32 v4addr;
 
 		err = name_parse_canonical_v4(fully_qualified_name, &v4addr);
-		if (!err)
+		if (!err) {
 			err = name_bind_to_fqdn(name, fully_qualified_name,
 						&v4addr, NULL);
+			printk("%s:%d - %s : name_bind_to_fqdn() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
+		}
 	}
 	else if (name_find_v6_canonical_suffix(fully_qualified_name) != NULL) {
 		struct in6_addr v6addr;
 
 		err = name_parse_canonical_v6(fully_qualified_name, &v6addr);
-		if (!err)
+		if (!err) { 
 			err = name_bind_to_fqdn(name, fully_qualified_name,
 						NULL, &v6addr);
+			printk("%s:%d - %s : name_bind_to_fqdn() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
+		}
 	}
 	else {
 		struct in6_addr *v6_addresses;
@@ -1114,10 +1084,6 @@ out:
 	return err;
 }
 
-/**
- * Wait for either a signal OR the timeo(ut) to expire
- * \param timeo is the timeout
- */
 static long name_wait_for_connect(struct sock *sk, long timeo)
 {
 	DEFINE_WAIT(wait);
@@ -1134,11 +1100,6 @@ static long name_wait_for_connect(struct sock *sk, long timeo)
 	finish_wait(sk->sk_sleep, &wait);
 	return timeo;
 }
-
-/**
- * \param rdlength _must_ be equal to sizeof(struct in6_addr)
- * \param rdata one single ipv6 address
- */
 
 static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 					     const u_char *rdata)
@@ -1180,6 +1141,7 @@ static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 	printk(KERN_INFO "connect to IPv6 address %s:%d\n", address,
 	       ntohs(name->dname.sname_port));
 	err = sock_create_kern(PF_INET6, SOCK_STREAM, 0, &name->ipv6_sock);
+	printk("%s:%d - %s : sock_create_kern() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 	if (err)
 		goto out;
 	name->ipv6_sock->sk->sk_user_data = name;
@@ -1262,7 +1224,9 @@ static int name_stream_connect_to_v4_address(struct sock *sk, uint16_t rdlength,
 	}
 	printk(KERN_INFO "connect to IPv4 address %s:%d\n", address,
 	       ntohs(name->dname.sname_port));
+
 	err = sock_create_kern(PF_INET, SOCK_STREAM, 0, &name->ipv4_sock);
+	printk("%s:%d - %s : sock_create_kern() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 	if (err)
 		goto out;
 	name->ipv4_sock->sk->sk_user_data = name;
@@ -1338,9 +1302,6 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 	name->async_error = err;
 }
 
-/**
- * The daemon uses this function(pointer) to register the result of a resolution
- */
 static void name_stream_query_resolve(const u_char *response, int len,
 				      void *data)
 {
@@ -1376,20 +1337,6 @@ static void name_stream_query_resolve(const u_char *response, int len,
 	}
 }
 
-/**
- * This function handles connections. It sends SYN on the resolved addresses
- * Resolutions are done by the daemon.
- * The call sequence is:
- * * name_stream_connect
- * * name_stream_connect_to_v4_address() OR name_stream_connect_to_v6_address()
- * (here's a long one)
- *      name_send_query( source address, name_stream_query_resolve, socket ) 
- *      namestack_send_message_tracked( daemon_pid, NAME_STACK_NAME_QUERY, sourcename, strlen, (pointer to) namestream_query_resolv(), socket)
- *      this sends a message to the daemon to resolve name (?), AND
- *      enqueues a call to namestream_query_reslove() awaiting the response
- *      and THEN calls name_stream_connect_to_v4_address() OR name_stream_connect_to_v6_address()
- *      
- */
 static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			       int addr_len, int flags)
 {
@@ -1411,7 +1358,6 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 	name = name_stream_sk(sk);
 	lock_sock(sk);
 
-	/// Verify that we are in an unconnected state
 	switch (sock->state) {
 	default:
 		err = -EINVAL;
@@ -1427,9 +1373,8 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		err = -EISCONN;
 
 		sock->state = SS_CONNECTING;
-		sk->sk_state = NAME_RESOLVING; 
+		sk->sk_state = NAME_RESOLVING;
 		memcpy(&name->dname, uaddr, addr_len);
-		/// If the name is a local name, connect to v6-loopback
 		if (name_is_local(name->dname.sname_addr.name)) {
 			__u8 loopback[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
 			struct in6_addr in6;
@@ -1438,7 +1383,6 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 			err = name_stream_connect_to_v6_address(sk, sizeof(in6),
 								(const u_char *)&in6);
 		}
-		/// If the name ends in in-addr.arpa it is an ipv4-address
 		else if (name_find_v4_canonical_suffix(
 			name->dname.sname_addr.name) != NULL) {
 			__be32 v4;
@@ -1449,7 +1393,6 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 				err = name_stream_connect_to_v4_address(sk,
 					sizeof(v4), (const u_char *)&v4);
 		}
-		/// If the name ends in ip6.arpa it is an ipv6-address
 		else if (name_find_v6_canonical_suffix(
 			name->dname.sname_addr.name) != NULL) {
 			struct in6_addr in6;
@@ -1460,7 +1403,6 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 				err = name_stream_connect_to_v6_address(sk,
 					sizeof(in6), in6.s6_addr);
 		}
-		/// If the addr-type is not given by the name resolve (daemon it and findout.
 		else
 			err = name_send_query(sname->sname_addr.name,
 					      name_stream_query_resolve, sock);
@@ -1475,13 +1417,8 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		break;
 	}
 
-
-
 	timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
-
 	if ((1 << sk->sk_state) & (NAMEF_RESOLVING | NAMEF_CONNECTING)) {
-	  /// If either timeo = 0 OR name_wait_for_connect returns non-zero
-	  /// name_wait_for_connect waits for a signal OR the timeout to expire...
 		if (!timeo || !name_wait_for_connect(sk, timeo)) {
 			/* err set above */
 			goto out;
@@ -1535,6 +1472,7 @@ static struct socket *create_stream_sock_from_sk(int pf, struct sock *sk)
 	struct socket *sock = NULL;
 
 	err = sock_create_kern(pf, SOCK_STREAM, 0, &sock);
+	printk("%s:%d - %s : sock_create_kern() : err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 	if (err)
 		goto out;
 	sock_orphan(sock->sk);
@@ -1789,30 +1727,34 @@ static int name_stream_listen(struct socket *sock, int backlog)
 	int err = -EINVAL;
 
 	lock_sock(sk);
+	// If we have no allocated socks, break
+	if(!name->ipv6_sock && !name->ipv4_sock) {
+		printk("%s:%d - %s : No socks, break!\n", __FILE__, __LINE__, __FUNCTION__);
+		goto out;
+	}
+
 	if (sock->state != SS_UNCONNECTED)
 		goto out;
 
-	/* FIXME: what does it mean to listen on more than one socket?  And
-	 * what does backlog mean?
-	 */
-	if (!name->ipv6_sock) {
-		err = name_create_v6_sock(SOCK_STREAM, 0, &name->ipv6_sock,
-					  name);
+	/* FIXME: what does it mean to listen on more than one socket?	 */
+	if (name->ipv6_sock) {
+		printk("%s:%d - %s : listening on name->ipv6_sock\n", __FILE__, __LINE__, __FUNCTION__);
+		err = kernel_listen(name->ipv6_sock, backlog);
+		// If err, could not listen on bound socket, break
 		if (err)
 			goto out;
 	}
-	if (!name->ipv4_sock) {
-		err = name_create_v4_sock(SOCK_STREAM, 0, &name->ipv4_sock,
-					  name);
-		if (err)
-			goto out;
-	}
-	err = kernel_listen(name->ipv6_sock, backlog);
-	if (!err)
+	if (name->ipv4_sock) {
+		printk("%s:%d - %s : listening on name->ipv4_sock\n", __FILE__, __LINE__, __FUNCTION__);
 		err = kernel_listen(name->ipv4_sock, backlog);
-
+		// If err, could not listen on bound socket, break
+		if (err)
+			goto out;
+	}
 out:
 	release_sock(sk);
+	
+	printk("%s:%d - %s : returnning err: %d\n", __FILE__, __LINE__, __FUNCTION__, err);
 	return err;
 }
 
@@ -1860,9 +1802,6 @@ static int name_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned lon
 }
 #endif
 
-/**
- * Proto_ops for name_stream
- */
 static const struct proto_ops name_stream_ops = {
 	.family = PF_NAME,
 	.owner = THIS_MODULE,
