@@ -24,11 +24,19 @@ struct name_stream_sock {
   int dname_answer_len;
   uint16_t dname_answer_index;
   int async_error;
+  /*prefered_sock will have the socket which got
+   * connected first
+   */
+  struct socket *prefered_sock; 
   struct socket *ipv4_sock;
   struct socket *ipv6_sock;
   struct sock *(*orig_syn_recv_sock)(struct sock *sk, struct sk_buff *skb,
 				     struct request_sock *req,
 				     struct dst_entry *dst);
+  /* first_connected_sock will hold the address family of the first socket that got connected
+   * The value is 2 for IPV4 and 10 for IPV6
+   */ 
+	int first_sock_connected; 
 };
 
 static inline struct name_stream_sock *name_stream_sk(const struct sock *sk)
