@@ -38,7 +38,15 @@ static void name_stream_state_change(struct sock *sk)
 
 	printk(KERN_INFO "sk_state is %d\n", sk->sk_state);
 	switch (sk->sk_state) {
-	case TCP_ESTABLISHED:
+	case TCP_ESTABLISHED: 
+		/*
+		 * Check if first_connected_sock is NULL,
+		 * if so, then it is the first time and so, assign it to the 
+		 * address family of the first socket that got connected
+		 */
+		if (!name->first_sock_connected) {
+			name->first_sock_connected = sk->sk_family;
+		} 
 		name->sk.sk_state = TCP_ESTABLISHED;
 		name->sk.sk_state_change(&name->sk);
 		break;
@@ -1251,7 +1259,7 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 	struct name_stream_sock *name = name_stream_sk(sk);
 	uint16_t rdlength;
 	const u_char *rdata;
-	int err;
+	int err = 0;
 
 	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
 				 T_CNAME, 0, &rdlength, &rdata)) {
@@ -1266,6 +1274,12 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 			kfree(fqdn);
 		}
 	}
+	
+	/* This is the happy eye-balls implementation. 
+	 * Send TCP SYN to both IPv6 and IPv4 addresses. 
+	 * Send it first to IPv6 because name based sockets prefers IPv6.
+	 */
+	 
 	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
 				 T_AAAA, name->dname_answer_index, &rdlength,
 				 &rdata)) {
@@ -1279,7 +1293,13 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 			sk->sk_state_change(sk);
 		}
 	}
-	else if (!find_answer_of_type(name->dname_answer,
+//	else {
+//		printk(KERN_WARNING "no supported address type found\n");
+//		sk->sk_state = TCP_CLOSE;
+//		sk->sk_state_change(sk);
+//		err = -EHOSTUNREACH;
+//	}
+	if (!find_answer_of_type(name->dname_answer,
 				      name->dname_answer_len,
 				      T_A, name->dname_answer_index, &rdlength,
 				      &rdata)) {
@@ -1374,6 +1394,12 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 
 		sock->state = SS_CONNECTING;
 		sk->sk_state = NAME_RESOLVING;
+		
+		/*Since socket state is SS_CONNECTING and no socket is connected yet,
+		 * initialize the first_connected_sock to 0 here 
+		 */
+		 name->first_sock_connected = 0;
+		 
 		memcpy(&name->dname, uaddr, addr_len);
 		if (name_is_local(name->dname.sname_addr.name)) {
 			__u8 loopback[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
@@ -1427,6 +1453,17 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		if (signal_pending(current))
 			goto out;
 	}
+	
+	/*Assign the prefered_sock to the first_connected_sock */
+	if(name->first_sock_connected == 2) {
+		name->prefered_sock = name->ipv4_sock;
+		printk(KERN_INFO "IPv4 is the prefered sock\n");
+	} else if(name->first_sock_connected == 10){
+		name->prefered_sock = name->ipv6_sock;
+		printk(KERN_INFO "IPv6 is the prefered sock\n");
+	}
+	else
+		printk(KERN_INFO "Error\n");
 
 	if ((1 << sk->sk_state) & (TCPF_CLOSE)) {
 		sock->state = SOCK_DEAD;
@@ -1767,12 +1804,13 @@ static int name_stream_sendmsg(struct kiocb *iocb, struct socket *sock,
 
 	if (sock->state != SS_CONNECTED)
 		return -ENOTCONN;
-	if (name->ipv6_sock)
-		connected_sock = name->ipv6_sock;
-	else if (name->ipv4_sock)
-		connected_sock = name->ipv4_sock;
+	
+	/*Assign the prefered_sock to connected_sock*/	
+	if(name->prefered_sock) 
+		connected_sock = name->prefered_sock;
 	else
 		return -ENOTCONN;
+		
 	return connected_sock->ops->sendmsg(iocb, connected_sock, msg, len);
 }
 
@@ -1785,12 +1823,13 @@ static int name_stream_recvmsg(struct kiocb *iocb, struct socket *sock,
 
 	if (sock->state != SS_CONNECTED)
 		return -ENOTCONN;
-	if (name->ipv6_sock)
-		connected_sock = name->ipv6_sock;
-	else if (name->ipv4_sock)
-		connected_sock = name->ipv4_sock;
+		
+	/*Assign connected_sock to prefered_sock*/
+	if(name->prefered_sock)
+		connected_sock = name->prefered_sock;
 	else
 		return -ENOTCONN;
+		
 	return connected_sock->ops->recvmsg(iocb, connected_sock, msg, len,
 					    flags);
 }
