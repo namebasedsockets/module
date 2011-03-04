@@ -37,6 +37,7 @@ static void name_stream_state_change(struct sock *sk)
 		goto out;
 
 	printk(KERN_INFO "sk_state is %d\n", sk->sk_state);
+	printk(KERN_INFO "sk_family is %d\n", sk->sk_family);
 	switch (sk->sk_state) {
 	case TCP_ESTABLISHED: 
 		/*
@@ -46,6 +47,15 @@ static void name_stream_state_change(struct sock *sk)
 		 */
 		if (!name->first_sock_connected) {
 			name->first_sock_connected = sk->sk_family;
+			printk(KERN_INFO "sk_family inside TCP_ESTABLISHED is %d\n",sk->sk_family);
+	    	if(sk->sk_family == 10){
+	    		name->funcptr = happy_eyeballs_v6_success;
+	    		name->funcptr();
+	    	}
+	    	else if(sk->sk_family == 2){
+	    		name->funcptr = happy_eyeballs_v4_success;
+	    		name->funcptr();
+	    	}
 		} 
 		name->sk.sk_state = TCP_ESTABLISHED;
 		name->sk.sk_state_change(&name->sk);
@@ -1254,18 +1264,19 @@ out:
 	return err;
 }
 
-static void name_stream_connect_to_resolved_name(struct sock *sk)
+/*Function to connect to cname*/
+static void connect_to_cname(struct sock *sk)
 {
 	struct name_stream_sock *name = name_stream_sk(sk);
 	uint16_t rdlength;
 	const u_char *rdata;
-	int err = 0;
-
+	
 	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
 				 T_CNAME, 0, &rdlength, &rdata)) {
 		char *fqdn = rfc1035_decode_name(rdata, rdlength);
 
-		/* The response contains a CNAME.  Use this as the destination
+		/* 
+		 * The response contains a CNAME.  Use this as the destination
 		 * name, rather than name the application provided.
 		 */
 		if (fqdn) {
@@ -1274,51 +1285,95 @@ static void name_stream_connect_to_resolved_name(struct sock *sk)
 			kfree(fqdn);
 		}
 	}
+}
+
+/*
+ * The following function extracts the IPv6 address from the response from the
+ * daemon and connects to V6 address
+ */
+static int name_stream_connect_to_v6_name(struct sock *sk)
+{
+	struct name_stream_sock *name = name_stream_sk(sk);
+	uint16_t rdlength;
+	const u_char *rdata;
+	int err = 0;
 	
-	/* This is the happy eye-balls implementation. 
-	 * Send TCP SYN to both IPv6 and IPv4 addresses. 
-	 * Send it first to IPv6 because name based sockets prefers IPv6.
+		if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
+				 T_AAAA, name->dname_answer_index, &rdlength, &rdata)) {
+			err = name_stream_connect_to_v6_address(sk, rdlength, rdata);
+			if (err) {
+			// FIXME: get next address rather than closing the connection request.
+				sk->sk_state = TCP_CLOSE;
+				sk->sk_state_change(sk);
+			}
+		}
+		else {
+			printk(KERN_WARNING "no supported address type found\n");
+			sk->sk_state = TCP_CLOSE;
+			sk->sk_state_change(sk);
+			err = -EHOSTUNREACH;
+		}
+	return err;
+}
+
+/*
+ * The following function extracts the IPv4 address from the response from the
+ * daemon and connects to V4 address
+ */
+static int name_stream_connect_to_v4_name(struct sock *sk)
+{
+	struct name_stream_sock *name = name_stream_sk(sk);
+	uint16_t rdlength;
+	const u_char *rdata;
+	int err = 0;
+
+		if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,     
+				T_A, name->dname_answer_index, &rdlength, &rdata)) {
+			err = name_stream_connect_to_v4_address(sk, rdlength, rdata);
+			if (err) {
+			// FIXME: get next address rather than closing the connection request.
+				sk->sk_state = TCP_CLOSE;
+				sk->sk_state_change(sk);
+			}
+		}
+		else {
+			printk(KERN_WARNING "no supported address type found\n");
+			sk->sk_state = TCP_CLOSE;
+			sk->sk_state_change(sk);
+			err = -EHOSTUNREACH;
+		}
+	return err;
+}
+
+/*
+ * The following function calls the functions to connect to cname, V6 address
+ * V4 address depending on the value of system wide P (Happy eyeballs implementation)
+ */
+static void name_stream_connect_to_resolved_name(struct sock *sk)
+{
+	struct name_stream_sock *name = name_stream_sk(sk);
+	int err = 0;
+
+	connect_to_cname(sk);
+	
+	/* 
+	 * This is the happy eye-balls implementation. 
+	 * Check the value of system wide P value and depending on the value of P,
+	 * send SYN to IPv4 and/or IPv6 
+	 * If P = 0, then send SYN to both IPv4 and IPv6 but, 
+	 * send it first to IPv6 because name based sockets support IPv6.
 	 */
-	 
-	if (!find_answer_of_type(name->dname_answer, name->dname_answer_len,
-				 T_AAAA, name->dname_answer_index, &rdlength,
-				 &rdata)) {
-		err = name_stream_connect_to_v6_address(sk, rdlength,
-							    rdata);
-		if (err) {
-			/* FIXME: get next address rather than closing the
-			 * connection request.
-			 */
-			sk->sk_state = TCP_CLOSE;
-			sk->sk_state_change(sk);
-		}
+	
+	name->funcptr1 = happy_eyeballs_af_pref;
+				
+	if(0 <= name->funcptr1()) {
+		err = name_stream_connect_to_v6_name(sk);
 	}
-//	else {
-//		printk(KERN_WARNING "no supported address type found\n");
-//		sk->sk_state = TCP_CLOSE;
-//		sk->sk_state_change(sk);
-//		err = -EHOSTUNREACH;
-//	}
-	if (!find_answer_of_type(name->dname_answer,
-				      name->dname_answer_len,
-				      T_A, name->dname_answer_index, &rdlength,
-				      &rdata)) {
-		err = name_stream_connect_to_v4_address(sk, rdlength,
-							    rdata);
-		if (err) {
-			/* FIXME: get next address rather than closing the
-			 * connection request.
-			 */
-			sk->sk_state = TCP_CLOSE;
-			sk->sk_state_change(sk);
-		}
+	
+	if (0 >= name->funcptr1()) {
+		err = name_stream_connect_to_v4_name(sk);
 	}
-	else {
-		printk(KERN_WARNING "no supported address type found\n");
-		sk->sk_state = TCP_CLOSE;
-		sk->sk_state_change(sk);
-		err = -EHOSTUNREACH;
-	}
+	
 	name->async_error = err;
 }
 
@@ -1346,7 +1401,12 @@ static void name_stream_query_resolve(const u_char *response, int len,
 			memcpy(name->dname_answer, response, len);
 			sk->sk_state = NAME_CONNECTING;
 			sk->sk_state_change(sk);
-			name_stream_connect_to_resolved_name(sk);
+			/*
+			 * At this point of execution, we have received the response (addresses)
+			 * from the daemon and it is stored in dname->answer.
+			 * So, we release the mutex which was locked in name_stream_connect() 
+			 */
+			up(&name->sem);
 		}
 	}
 	else
@@ -1364,7 +1424,7 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 	int err;
 	struct sock *sk;
 	struct name_stream_sock *name;
-	long timeo;
+	long timeo, timeo_af;
 
 	if (addr_len < sizeof(struct sockaddr_name))
 		return -EINVAL;
@@ -1395,10 +1455,14 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		sock->state = SS_CONNECTING;
 		sk->sk_state = NAME_RESOLVING;
 		
-		/*Since socket state is SS_CONNECTING and no socket is connected yet,
+		/*
+		 * Since socket state is SS_CONNECTING and no socket is connected yet,
 		 * initialize the first_connected_sock to 0 here 
 		 */
-		 name->first_sock_connected = 0;
+		name->first_sock_connected = 0;
+		/*Call to happy_eyeballs_init function to initialize the value of system wide P*/
+		name->funcptr = happy_eyeballs_init;
+		name->funcptr();
 		 
 		memcpy(&name->dname, uaddr, addr_len);
 		if (name_is_local(name->dname.sname_addr.name)) {
@@ -1443,11 +1507,55 @@ static int name_stream_connect(struct socket *sock, struct sockaddr *uaddr,
 		break;
 	}
 
-	timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);
-	if ((1 << sk->sk_state) & (NAMEF_RESOLVING | NAMEF_CONNECTING)) {
-		if (!timeo || !name_wait_for_connect(sk, timeo)) {
-			/* err set above */
-			goto out;
+	/*Initialize the mutex*/
+	init_MUTEX(&name->sem);
+	
+	/*Lock the mutex*/
+	init_MUTEX_LOCKED(&name->sem);
+	
+	/*Start the loop to wait for the mutex to be released*/
+	if( 0 == down_interruptible(&name->sem)) {
+		timeo = sock_sndtimeo(sk, flags & MSG_DONTWAIT);	
+		
+		name_stream_connect_to_resolved_name(sk);
+		
+		/*
+		 * The following loop is when the value of P is 0
+		 * When the value of P is 0, it indicates that both IPv6 and IPv4 have
+		 * the same preference and we should try to connect to both.
+		 * So, set the timeout value to MAX_SCHEDULE_TIMEOUT
+		 */
+		name->funcptr1 = happy_eyeballs_af_pref;
+		if (0 == name->funcptr1()){
+			timeo_af = MAX_SCHEDULE_TIMEOUT;
+			if (!timeo || !name_wait_for_connect(sk, timeo_af))	
+				goto out;
+		}
+		/*
+		 * The following loop is when the value of P is not 0
+		 * When the value of P is not 0, it indicates that one address family is 
+		 * prefered over the other. So, depending on the value of P, we set the timeout
+		 * value to be abs(p) * 10 milliseconds.
+		 */
+		else {
+			int p = name->funcptr1();
+			timeo_af = abs(p) * 10;
+		
+			if (!timeo || !name_wait_for_connect(sk, timeo_af)) {
+			   /*
+				* When name_wait_for_connect () returns 0, it enters this loop.
+			 	* so, here we try to connect to the other address
+			 	*/
+				
+				if(0 < name->funcptr1() && name->ipv6_sock->state != SS_CONNECTED)
+			 		name_stream_connect_to_v4_name(sk);
+			 	else if (0 > name->funcptr1() && name->ipv4_sock->state != SS_CONNECTED)
+			 		name_stream_connect_to_v6_name(sk);
+				
+			 	timeo_af = MAX_SCHEDULE_TIMEOUT;
+			 	if (!timeo || !name_wait_for_connect(sk, timeo_af)) 
+					goto out;
+			}
 		}
 		err = sock_intr_errno(timeo);
 		if (signal_pending(current))

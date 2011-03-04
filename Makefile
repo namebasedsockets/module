@@ -1,5 +1,5 @@
 obj-m += namestack.o
-namestack-objs := main.o af_name.o dns.o namecache.o address.o
+namestack-objs := main.o af_name.o dns.o namecache.o address.o happy_eyeballs.o
 
 EXTRA_CFLAGS := -DCONFIG_NAMESTACK_MODULE
 
