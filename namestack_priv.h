@@ -30,7 +30,7 @@ struct name_stream_sock {
 				     struct request_sock *req,
 				     struct dst_entry *dst);
 
-	struct time_t name_exchange_timer;
+	struct timespec name_exchange_timer;
 	int name_exchange_counter;
 	int name_exchange_state;
 

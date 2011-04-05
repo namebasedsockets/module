@@ -19,10 +19,18 @@
 #include <net/ipv6.h>
 #include <net/tcp_states.h>
 #include <net/transp_v6.h>
+#include <linux/tcp.h>
 #include <linux/inname.h>
+#include <linux/time.h>
 #include "dns.h"
 #include "nameser.h"
 #include "namestack_priv.h"
+
+/** FIXME: Change name options to the "real" values once they're known.  Must
+ * <= 63.
+ */
+#define NAME_OPTION_SOURCE_NAME 17
+#define NAME_OPTION_DEST_NAME   18
 
 /** Enum for namestack states, these should _not_ overlap with TCP states */
 enum {
@@ -53,11 +61,6 @@ enum {
         NAME_EVENT_RECVMSG,
 };
 
-
-static void callback_handler(struct sk_buff skb, void *data)
-{
-	/* do something */
-}
 
 static void name_stream_state_change(struct sock *sk)
 {
@@ -94,34 +97,67 @@ static void name_stream_state_change(struct sock *sk)
 	read_unlock(&sk->sk_callback_lock);
 }
 
-static void clear_name_option(struct sock *sock)
+static
+struct ipv6_txoptions *ipv6_update_options(struct sock *sk,
+	struct ipv6_txoptions *opt);
+
+struct ipv6_txoptions *
+namestack_ipv6_renew_options(struct sock *sk, struct ipv6_txoptions *opt,
+	int newtype,
+	struct ipv6_opt_hdr *newopt, int newoptlen);
+
+static void clear_name_option(struct sock *sk)
 {
-        struct sock *sk = sock->sk;
         struct ipv6_pinfo *np = inet6_sk(sk);
         struct ipv6_txoptions *opt;
-        char *name_opt_buf;
+        char *name_opt_buf = 0;
         struct ipv6_opt_hdr *opt_hdr;
         struct name_opt_hdr *name_opt_hdr;
-        int err, name_opt_Len;
+        int err, name_opt_len;
 
-        if(np->opt && np->opt->dstlopt)
+		printk(KERN_DEBUG "should be removing name options here but we don't because it's broken\n");
+		return;
+
+        if(np->opt && np->opt->dst1opt)
         {
-                name_opt_len = ipv6_optlen(np->opt->dst1opt);
+			// This assumes name options are the only destination options used
+			kfree(np->opt->dst1opt);
+			np->opt->dst1opt = 0;
+			
+			/* Rather than calling kernel_setsockopt, set the option directly to
+			 * avoid a permissions check on the calling process.
+			 */
+			opt = namestack_ipv6_renew_options(sk, np->opt, IPV6_DSTOPTS,
+			                                   (struct ipv6_opt_hdr *)name_opt_buf,
+			                                    name_opt_len);
+			if (IS_ERR(opt)) {
+				err = PTR_ERR(opt);
+				goto out;
+			}
+			err = 0;
+			
+			opt = ipv6_update_options(sk, opt);
+			if (opt)
+				sock_kfree_s(sk, opt, opt->tot_len);
+			
+			/*
+                name_opt_len = ipv6_optlen(np->opt->dst1opt); // allocate buffer of current option length
                 err = -ENOMEM;
-                name_opt_buf = kmalloc(name_opt_len, GFP_ATMIC);
+                name_opt_buf = kmalloc(name_opt_len, GFP_ATOMIC);
                 if(!name_opt_buf)
                         goto out;
-                memcpy(name_opt_buf, np->opt->dst1opt);
+                memcpy(name_opt_buf, np->opt->dst1opt, name_opt_len); // copy current option buffer into our temporary buffer
 
-                opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf;
+                opt_hdr = (struct ipv6_opt_hdr *)name_opt_buf; // 
                 name_opt_hdr = (struct name_opt_hdr *)(opt_hdr+1);
-                name_opt_hdr
-                /* copy the option header to a separate buffer */
-                /* find the name option */
-                /* remove it from the buffer */
-                /* replace the old option header with the new one */
+                //name_opt_hdr
+                // copy the option header to a separate buffer 
+                // find the name option 
+                // remove it from the buffer 
+                // replace the old option header with the new one 
+			*/
         }
-        else {} /* No name option set? */
+        //else {} /* No name option set? */
 
         out:
                 if(name_opt_buf)
@@ -129,43 +165,130 @@ static void clear_name_option(struct sock *sock)
         return;
 }
 
-int has_name_option(sk_buff skb)
+
+#if defined(CONFIG_NAMESTACK_MODULE)
+/**
+ * Stolen from net/ipv6/exthdrs.c 
+ */
+int ipv6_find_tlv(struct sk_buff *skb, int offset, int type)
 {
-	return 0;
+	const unsigned char *nh = skb_network_header(skb);
+	int packet_len = skb->tail - skb->network_header;
+	struct ipv6_opt_hdr *hdr;
+	int len;
+
+	if (offset + 2 > packet_len)
+		goto bad;
+	hdr = (struct ipv6_opt_hdr *)(nh + offset);
+	len = ((hdr->hdrlen + 1) << 3);
+
+	if (offset + len > packet_len)
+		goto bad;
+
+	offset += 2;
+	len -= 2;
+
+	while (len > 0) {
+		int opttype = nh[offset];
+		int optlen;
+
+		if (opttype == type)
+			return offset;
+
+		switch (opttype) {
+		case IPV6_TLV_PAD0:
+			optlen = 1;
+			break;
+		default:
+			optlen = nh[offset + 1] + 2;
+			if (optlen > len)
+				goto bad;
+			break;
+		}
+		offset += optlen;
+		len -= optlen;
+	}
+	/* not_found */
+ bad:
+	return -1;
 }
+#endif
+
+
+static int has_name_option(struct sk_buff *skb)
+{
+	struct name_stream_sock *name = skb->sk->sk_user_data;
+	u16 offset;
+	struct ipv6_opt_hdr *exthdr =
+		(struct ipv6_opt_hdr *)(ipv6_hdr(skb) + 1);
+	const unsigned char *nh = skb_network_header(skb);
+	unsigned int packet_len = skb->tail - skb->network_header;
+	u8 *nexthdr;
+	int source_name_offset = -1, dest_name_offset = -1;
+	
+	nexthdr = &ipv6_hdr(skb)->nexthdr;
+	
+	if(nexthdr == 6) return;
+	printk(KERN_DEBUG "%s:%s:%d, %p \n", __FILE__, __FUNCTION__, __LINE__, nexthdr);
+	
+	offset = sizeof(struct ipv6hdr);
+	while (offset + 1 <= packet_len) {
+		switch (*nexthdr) {
+		case NEXTHDR_DEST:
+			if (dest_name_offset == -1)
+				dest_name_offset = ipv6_find_tlv(skb, offset,
+					NAME_OPTION_DEST_NAME);
+			if (source_name_offset == -1)
+				source_name_offset = ipv6_find_tlv(skb, offset,
+					NAME_OPTION_SOURCE_NAME);
+			break;
+		}
+
+		offset += ipv6_optlen(exthdr);
+		nexthdr = &exthdr->nexthdr;
+		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+	}
+	return dest_name_offset != -1 || source_name_offset != -1;
+}
+
+static int set_name_option(struct socket *sock, const char *name, __u8 opt_type);
 
 static void name_stream_exchange_state_change(struct sock *sk, int event, struct sk_buff *skb)
 {
-	struct name_stream_sock *name;
+	struct name_stream_sock *name = sk->sk_user_data;
+	int err;
+	struct timespec t;
+//	read_lock(&sk->sk_callback_lock);
+	name = name_stream_sk(sk);
 
-	read_lock(&sk->sk_callback_lock);
-	if(!(name = sk->sk_user_data))
-		goto out;
+	printk(KERN_DEBUG "name_stream_exchange_state_change\n");
 
 	switch(name->name_exchange_state) {
 	case NAME_INIT:
 		if(event == NAME_EVENT_CONNECT) {
+			printk(KERN_DEBUG "s:NAME_INIT e:NAME_EVENT_CONNECT\n");
 			/*
 			 * Set the name option
 			 */
 			err = set_name_option(name->ipv6_sock,
-				      name->sname.sname_addr.name,
-				      NAME_OPTION_SOURCE_NAME);
+				      name->dname.sname_addr.name,
+				      NAME_OPTION_DEST_NAME);
 			if(err)
 				goto out;
 			name->name_exchange_state = NAME_CON_SENDING_NAME;
 
 		}
 		else if(event == NAME_EVENT_SYN_RECV) {
-			/*
+			 printk(KERN_DEBUG "s:NAME_INIT e:NAME_EVENT_SYN_RECV\n");
+			/*i
 			 * If there is a name option then 
 			 * name based sockets clearly are supported -> NAME_RECV_SEND_NAME
 			 * If not, it obviously isn't -> NAME_BASED_NOT_SUPPORTED
 			 */
 			if(has_name_option(skb)) {
 				err = set_name_option(name->ipv6_sock,
-					      name->sname.sname_addr.name,
-					      NAME_OPTION_SOURCE_NAME);
+					      name->dname.sname_addr.name,
+					      NAME_OPTION_DEST_NAME);
 				if(err)
 					goto out;
 				name->name_exchange_state = NAME_RECV_SENDING_NAME;
@@ -174,8 +297,9 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 				name->name_exchange_state = NAME_BASED_NOT_SUPPORTED;
 			}
 		}
+		t = current_kernel_time();
 		name->name_exchange_counter = 0;
-		name->name_exchange_timer = xtime;
+		name->name_exchange_timer = t;
 		name->name_exchange_timer.tv_sec += 60;
 		break;
 	case NAME_RECV_SENDING_NAME:
@@ -183,8 +307,10 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 		 * Keep sending name for 50 packets or 1 minute
 		 */
 		if(event == NAME_EVENT_RECVMSG) {
-		{
-			if(name->name_exchange_timer.tv_sec > xtime.tv_sec) {
+			 printk(KERN_DEBUG "s:NAME_RECV_SENDING_NAME e:NAME_EVENT_RCVMSG\n");
+		
+			t = current_kernel_time();
+			if(name->name_exchange_timer.tv_sec > t.tv_sec) {
 				/*
 				 * Name exchange done
 				 */
@@ -193,9 +319,11 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 			}
 		}
 		else if(event == NAME_EVENT_SENDMSG) {
-			name->name_echange_counter++;
-			if(name->name_exchange_timer.tv_sec > xtime.tv_sec
-				|| name->name_echange_counter > 50) {
+			printk(KERN_DEBUG "s:NAME_RECV_SENDING_NAME e:NAME_EVENT_SNDMSG\n");
+			name->name_exchange_counter++;
+			t = current_kernel_time();
+			if(name->name_exchange_timer.tv_sec > t.tv_sec
+				|| name->name_exchange_counter > 50) {
 				/*
 				 * Name exchange done
 				 */
@@ -204,21 +332,23 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 			}
 		}
 		break;
-	case NAME_CON_SENDING_NAME;
+	case NAME_CON_SENDING_NAME:
 		/*
 		 * Keep sending name for 50 packets or 1 minute
 		 * If the name option is set in any inomming packet -> NAME_BASED_ESTABLISHED
 		 * If no name option has been recieved  -> NAME_BASED_NOT_SUPPORTED
 		 */
 		if(event == NAME_EVENT_RECVMSG) {
-		{
-   			name->name_echange_counter++;
+			printk(KERN_DEBUG "s:NAME_CON_SENDING_NAME e:NAME_EVENT_RCVMSG\n");
+   			name->name_exchange_counter++;
+
+			t = current_kernel_time();
 			if(has_name_option(skb)) {
 				name->name_exchange_state = NAME_BASED_ESTABLISHED;
 				clear_name_option(sk);
 			}
-			else if(name->name_exchange_timer.tv_sec > xtime.tv_sec
-				|| name->name_echange_counter > 50) {
+			else if(name->name_exchange_timer.tv_sec > t.tv_sec
+				|| name->name_exchange_counter > 50) {
 				/*
 				 * Name exchange failed
 				 */
@@ -227,7 +357,9 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 			}
 		}
 		else if(event == NAME_EVENT_SENDMSG) {
-			if(name->name_exchange_timer.tv_sec > xtime.tv_sec) {
+			printk(KERN_DEBUG "s:NAME_CON_SENDING_NAME e:NAME_EVENT_SNDMSG\n");
+			t = current_kernel_time();
+			if(name->name_exchange_timer.tv_sec > t.tv_sec) {
 				/*
 				 * Name exchange failed
 				 */
@@ -237,18 +369,42 @@ static void name_stream_exchange_state_change(struct sock *sk, int event, struct
 		}
 
 		break;
-	case NAME_BASED_ESTABLISHED;
-	case NAME_BASED_NOT_SUPPORTED;
-			/*
-			 * Don't do anything
-			 */
-		break;
+	case NAME_BASED_ESTABLISHED:
+		printk(KERN_DEBUG "s:NAME_BASED_ESTABLISHED\n"); break;
+	case NAME_BASED_NOT_SUPPORTED:
+		printk(KERN_DEBUG "s:NAME_NOT_SUPPORTED\n"); break;
 	}
 
 	out:
-		read_unlock(&sk->sk_callback_lock);
+//		read_unlock(&sk->sk_callback_lock);
+	return;
 }
 
+void rcv_finish_cb(struct sk_buff *skb, void *data)
+{
+	printk(KERN_DEBUG "rcv cb\n");
+	if (!has_name_option(skb))
+		printk(KERN_DEBUG "rcv no name option\n");
+
+	name_stream_exchange_state_change((struct sock*)data, NAME_EVENT_RECVMSG, skb);
+}
+
+void snd_finish_cb(struct sk_buff *skb, void *data)
+{
+	struct tcphdr *th = tcp_hdr(skb);
+
+	printk(KERN_DEBUG "snd cb\n");
+
+	if (!has_name_option(skb))
+	{
+		printk(KERN_DEBUG "snd no name option\n");
+		return;
+	}
+	if(th->syn && !th->ack)
+		name_stream_exchange_state_change((struct sock*)data, NAME_EVENT_CONNECT, skb);
+	else
+		name_stream_exchange_state_change((struct sock*)data, NAME_EVENT_SENDMSG, skb);
+}
 
 static int name_is_local(const char *name)
 {
@@ -486,11 +642,6 @@ struct name_opt_hdr
 	/* Followed by the actual name */
 };
 
-/** FIXME: Change name options to the "real" values once they're known.  Must
- * <= 63.
- */
-#define NAME_OPTION_SOURCE_NAME 17
-#define NAME_OPTION_DEST_NAME   18
 
 static void rfc1035_encode_name(char *dst, const char *name)
 {
@@ -610,54 +761,6 @@ out:
         return err;
 }
 
-
-#if defined(CONFIG_NAMESTACK_MODULE)
-/**
- * Stolen from net/ipv6/exthdrs.c 
- */
-int ipv6_find_tlv(struct sk_buff *skb, int offset, int type)
-{
-	const unsigned char *nh = skb_network_header(skb);
-	int packet_len = skb->tail - skb->network_header;
-	struct ipv6_opt_hdr *hdr;
-	int len;
-
-	if (offset + 2 > packet_len)
-		goto bad;
-	hdr = (struct ipv6_opt_hdr *)(nh + offset);
-	len = ((hdr->hdrlen + 1) << 3);
-
-	if (offset + len > packet_len)
-		goto bad;
-
-	offset += 2;
-	len -= 2;
-
-	while (len > 0) {
-		int opttype = nh[offset];
-		int optlen;
-
-		if (opttype == type)
-			return offset;
-
-		switch (opttype) {
-		case IPV6_TLV_PAD0:
-			optlen = 1;
-			break;
-		default:
-			optlen = nh[offset + 1] + 2;
-			if (optlen > len)
-				goto bad;
-			break;
-		}
-		offset += optlen;
-		len -= optlen;
-	}
-	/* not_found */
- bad:
-	return -1;
-}
-#endif
 
 static char *rfc1035_decode_name(const u8 *p, int len)
 {
@@ -806,6 +909,8 @@ static struct sock *name_v6_recv_syn(struct sock *sk, struct sk_buff *skb,
 	int source_name_offset = -1, dest_name_offset = -1;
 
 	nexthdr = &ipv6_hdr(skb)->nexthdr;
+	printk(KERN_DEBUG "%s:%s:%d, %p \n", __FILE__, __FUNCTION__, __LINE__, nexthdr);
+
 	offset = sizeof(struct ipv6hdr);
 	while (offset + 1 <= packet_len) {
 		switch (*nexthdr) {
@@ -875,8 +980,9 @@ static int name_create_v6_sock(int type, int protocol, struct socket **sock,
 	}
 	if (!err) {
 		struct inet_connection_sock *icsk = inet_csk((*sock)->sk);
-
-		(*sock)->sk->sk_on_rcv_finish = callback_handler;
+		printk(KERN_DEBUG "%s:%s:%d: *sock = %p, (*sock)->sk = %p\n", __FILE__, __FUNCTION__, __LINE__, *sock, (*sock)->sk);
+		(*sock)->sk->sk_on_rcv_finish = rcv_finish_cb;
+		(*sock)->sk->sk_on_snd_finish = snd_finish_cb;
 
 		(*sock)->sk->sk_user_data = name;
 		(*sock)->sk->sk_state_change = name_stream_state_change;
@@ -1361,6 +1467,11 @@ static int name_stream_connect_to_v6_address(struct sock *sk, uint16_t rdlength,
 	err = sock_create_kern(PF_INET6, SOCK_STREAM, 0, &name->ipv6_sock);
 	if (err)
 		goto out;
+
+	printk(KERN_DEBUG "%s:%s:%d: name->ipv6_sock->sk = %p\n", __FILE__, __FUNCTION__, __LINE__, name->ipv6_sock->sk);
+	name->ipv6_sock->sk->sk_on_rcv_finish = rcv_finish_cb;
+	name->ipv6_sock->sk->sk_on_snd_finish = snd_finish_cb;
+
 	name->ipv6_sock->sk->sk_user_data = name;
 	name->ipv6_sock->sk->sk_state_change = name_stream_state_change;
 	memset(&sin6, 0, sizeof(sin6));
@@ -2010,6 +2121,7 @@ static int name_stream_sendmsg(struct kiocb *iocb, struct socket *sock,
 		connected_sock = name->ipv4_sock;
 	else
 		return -ENOTCONN;
+	name_stream_exchange_state_change(sk, NAME_EVENT_SENDMSG, 0);	
 	return connected_sock->ops->sendmsg(iocb, connected_sock, msg, len);
 }
 
